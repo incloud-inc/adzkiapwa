@@ -25,11 +25,18 @@ const GroupList: React.FC<GroupListProps> = ({ history, authData }) => {
   useIonViewDidEnter(() => {
     const BodyData = new FormData();
     setGroupList(undefined);
-    // BodyData.append("token", authToken);
-    fetch("https://api3.adzkia.id/group/list", {
-      method: "POST",
-      body: BodyData,
-    })
+    if (authData) {
+      BodyData.append("token", authData && authData.token);
+    }
+    fetch(
+      authData
+        ? "https://api3.adzkia.id/group/list"
+        : "https://api3.adzkia.id/grouppublic/list",
+      {
+        method: "POST",
+        body: BodyData,
+      }
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error("Server Bermasalah");

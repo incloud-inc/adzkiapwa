@@ -21,12 +21,24 @@ import Item from "antd/lib/list/Item";
 import { book, close, download, newspaper, star } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
+import { connect } from "../../data/connect";
 import GeneralSkeleton from "../Shared/GeneralSkeleton";
 interface OwnProps {
   gids: string;
 }
-interface LessonListProps extends OwnProps, RouteComponentProps {}
-const LessonList: React.FC<LessonListProps> = ({ history, gids }) => {
+
+interface StateProps {
+  authData: any;
+}
+
+interface DispatchProps {}
+
+interface LessonListProps
+  extends OwnProps,
+    StateProps,
+    DispatchProps,
+    RouteComponentProps {}
+const LessonList: React.FC<LessonListProps> = ({ history, gids, authData }) => {
   const [LessonList, setLessonList] = useState<any>(undefined);
   const [LessonDetail, setLessonDetail] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
@@ -35,11 +47,18 @@ const LessonList: React.FC<LessonListProps> = ({ history, gids }) => {
       return;
     }
     const BodyData = new FormData();
-    // BodyData.append("token", authToken);
-    fetch("https://api3.adzkia.id/lesson/list", {
-      method: "POST",
-      body: BodyData,
-    })
+    if (authData) {
+      BodyData.append("token", authData && authData.token);
+    }
+    fetch(
+      authData
+        ? "https://api3.adzkia.id/lesson/list"
+        : "https://api3.adzkia.id/lessonpublic/list",
+      {
+        method: "POST",
+        body: BodyData,
+      }
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error("Server Bermasalah");
@@ -154,4 +173,10 @@ const LessonList: React.FC<LessonListProps> = ({ history, gids }) => {
   }
 };
 
-export default withRouter(LessonList);
+export default connect<OwnProps, StateProps, DispatchProps>({
+  mapStateToProps: (state) => ({
+    authData: state.user.authData,
+  }),
+  mapDispatchToProps: {},
+  component: withRouter(LessonList),
+});

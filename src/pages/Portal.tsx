@@ -93,11 +93,11 @@ const Portal: React.FC<PortalProps> = ({ history, authData }) => {
                   <h5 className="ion-no-margin">
                     {(authData &&
                       authData.first_name &&
-                      authData.first_name.substring(0, 12)) ||
+                      authData.first_name.substring(0, 10)) ||
                       ""}
                     {authData &&
                     authData.first_name &&
-                    authData.first_name.length > 12
+                    authData.first_name.length > 10
                       ? "..."
                       : ""}
                   </h5>

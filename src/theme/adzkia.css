@@ -131,6 +131,9 @@
   font-weight: bold;
 }
 .quizanswer-active {
-  background: white !important;
+  background: #ffc409 !important;
   color: black;
+}
+.quizNumberButton {
+  width: 32px !important;
 }

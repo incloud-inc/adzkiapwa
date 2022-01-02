@@ -38,6 +38,7 @@ import { loadUserData } from "./data/user/user.actions";
 import Package from "./pages/Package";
 import Account from "./pages/Account";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
 import Signup from "./pages/Signup";
 import Support from "./pages/Support";
 import Tutorial from "./pages/Tutorial";
@@ -107,6 +108,7 @@ const IonicApp: React.FC<IonicAppProps> = ({
             <Route path="/package" component={Package} />
             <Route path="/account" component={Account} />
             <Route path="/login" component={Login} />
+            <Route path="/forgotpassword" component={ForgotPassword} />
             <Route path="/signup" component={Signup} />
             <Route path="/support" component={Support} />
             <Route path="/tutorial" component={Tutorial} />

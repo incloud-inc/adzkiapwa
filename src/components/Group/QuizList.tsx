@@ -17,6 +17,7 @@ interface OwnProps {
 
 interface StateProps {
   authData: any;
+  authToken: string;
 }
 
 interface DispatchProps {}
@@ -25,18 +26,30 @@ interface QuizListProps
     StateProps,
     DispatchProps,
     RouteComponentProps {}
-const QuizList: React.FC<QuizListProps> = ({ history, gids, authData }) => {
+const QuizList: React.FC<QuizListProps> = ({
+  history,
+  gids,
+  authData,
+  authToken,
+}) => {
   const [QuizList, setQuizList] = useState<any>(undefined);
   useEffect(() => {
     if (QuizList !== undefined) {
       return;
     }
     const BodyData = new FormData();
-    BodyData.append("token", authData.token || "");
-    fetch("https://api3.adzkia.id/quiz/list", {
-      method: "POST",
-      body: BodyData,
-    })
+    if (authData) {
+      BodyData.append("token", authData && authData.token);
+    }
+    fetch(
+      authData
+        ? "https://api3.adzkia.id/quiz/list"
+        : "https://api3.adzkia.id/quizpublic/list",
+      {
+        method: "POST",
+        body: BodyData,
+      }
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error("Server Bermasalah");
@@ -88,6 +101,7 @@ const QuizList: React.FC<QuizListProps> = ({ history, gids, authData }) => {
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
     authData: state.user.authData,
+    authToken: state.user.authToken,
   }),
   mapDispatchToProps: {},
   component: withRouter(QuizList),

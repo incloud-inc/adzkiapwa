@@ -17,12 +17,14 @@ import {
   IonText,
   IonRouterLink,
 } from "@ionic/react";
-import "./Login.scss";
+import "./ForgotPassword.scss";
 import { setAuthData } from "../data/user/user.actions";
 import { connect } from "../data/connect";
 import { RouteComponentProps } from "react-router";
 import Lottie from "react-lottie-player";
 import SecureLogin from "../lotties/SecureLogin.json";
+import ForgotPasswordL from "../lotties/ForgotPassword.json";
+import WAL from "../lotties/WA.json";
 import { userReducer } from "../data/user/user.reducer";
 
 interface OwnProps extends RouteComponentProps {}
@@ -31,35 +33,32 @@ interface StateProps {
   authToken: string;
 }
 interface DispatchProps {
-  setAuthData: typeof setAuthData;
+  // setAuthData: typeof setAuthData;
 }
 
 interface LoginProps extends OwnProps, DispatchProps, StateProps {}
 
-const Login: React.FC<LoginProps> = ({ setAuthData, history, authToken }) => {
-  const [Email, setEmail] = useState("");
-  const [Password, setPassword] = useState("");
+const ForgotPassword: React.FC<LoginProps> = ({
+  // setAuthData,
+  history,
+  authToken,
+}) => {
+  const [Phone, setPhone] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [EmailError, setEmailError] = useState(false);
-  const [PasswordError, setPasswordError] = useState(false);
+  const [PhoneError, setPhoneError] = useState(false);
+  const [ForgotPasswordSuccess, setForgotPasswordSuccess] = useState(false);
 
-  const login = async (e: React.FormEvent) => {
+  const ForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormSubmitted(true);
-    if (!Email) {
-      setEmailError(true);
+    if (!Phone) {
+      setPhoneError(true);
     }
-    if (!Password) {
-      setPasswordError(true);
-    }
-
-    if (Email && Password) {
+    if (Phone) {
       setFormSubmitted(true);
       const BodyData = new FormData();
-      BodyData.append("email", Email);
-      BodyData.append("password", Password);
+      BodyData.append("phone", Phone);
       // BodyData.append("token", authToken);
-      fetch("https://api3.adzkia.id/auth/login", {
+      fetch("https://api3.adzkia.id/auth/forgotpassword", {
         method: "POST",
         body: BodyData,
       })
@@ -73,11 +72,13 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history, authToken }) => {
         .then((res) => {
           if (res.data && res.data.uid) {
             res.data.token = res.token;
-            alert(res.data.email + " berhasil login");
+            alert(
+              res.data.Phone + " Password baru telah terkirim di Phone anda"
+            );
             setAuthData(res.data);
             history.replace("/tabs/portal");
           } else {
-            alert(res.message || "Gagal Login");
+            alert(res.message || "Gagal Submit Phone");
           }
         })
         .catch((err) => {
@@ -92,65 +93,72 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history, authToken }) => {
         <div className="ion-text-center ion-margin-top ion-margin-bottom">
           <img src="/assets/img/brand/logo adzkia.png" width="80%" />
         </div>
-        <div style={{ width: "60%", margin: "0 auto" }}>
-          <Lottie animationData={SecureLogin} play={true}></Lottie>
+        <div
+          style={{ width: "100%", margin: "0 auto" }}
+          hidden={ForgotPasswordSuccess}
+        >
+          <Lottie animationData={ForgotPasswordL} play={true}></Lottie>
         </div>
-        <form noValidate onSubmit={login}>
+        <div
+          style={{ width: "30%", margin: "0 auto" }}
+          hidden={!ForgotPasswordSuccess}
+        >
+          <Lottie animationData={WAL} play={true}></Lottie>
+        </div>
+        <form noValidate onSubmit={ForgotPassword}>
           <IonList>
             <IonItem>
               <IonLabel position="stacked" color="primary">
-                Email
+                Nomor WA
               </IonLabel>
               <IonInput
-                name="Email"
+                placeholder="Contoh : 0812 3456 7890"
+                name="Phone"
                 type="text"
-                value={Email}
+                value={Phone}
                 spellCheck={false}
                 autocapitalize="off"
-                onIonChange={(e) => setEmail(e.detail.value!)}
+                onIonChange={(e) => setPhone(e.detail.value!)}
                 required
               ></IonInput>
             </IonItem>
 
-            {formSubmitted && EmailError && (
+            {PhoneError && (
               <IonText color="danger">
-                <p className="ion-padding-start">Email is required</p>
-              </IonText>
-            )}
-
-            <IonItem>
-              <IonLabel position="stacked" color="primary">
-                Password
-              </IonLabel>
-              <IonInput
-                name="Password"
-                type="password"
-                value={Password}
-                onIonChange={(e) => setPassword(e.detail.value!)}
-              ></IonInput>
-            </IonItem>
-
-            {formSubmitted && PasswordError && (
-              <IonText color="danger">
-                <p className="ion-padding-start">Password is required</p>
+                <p className="ion-padding-start">Phone is required</p>
               </IonText>
             )}
           </IonList>
-
+          <IonText className="ion-margin" color="medium">
+            <small>Password Baru akan dikrimkan ke nomor WA anda</small>
+          </IonText>
           <IonRow>
             <IonCol>
-              <IonButton type="submit" expand="block">
-                Masuk
+              <IonButton
+                type="submit"
+                expand="block"
+                disabled={formSubmitted}
+                color="success"
+              >
+                RESET PASSWORD
               </IonButton>
             </IonCol>
             <IonCol>
-              <IonButton color="light" expand="block" routerLink="/signup">
-                Daftar
+              <IonButton
+                type="submit"
+                expand="block"
+                disabled={formSubmitted}
+                routerLink="/login"
+              >
+                LOGIN
               </IonButton>
+              {/* <IonButton routerLink="/signup" color="light" expand="block">
+                Daftar
+              </IonButton> */}
             </IonCol>
             <IonCol size="12" className="ion-text-center">
-              <IonRouterLink color="primary" routerLink="/forgotpassword">
-                Lupa Password? Reset Password
+              <IonRouterLink color="primary" routerLink="/signup">
+                Belum punya akun? Daftar
               </IonRouterLink>
             </IonCol>
           </IonRow>
@@ -164,8 +172,8 @@ export default connect<OwnProps, {}, DispatchProps>({
   mapStateToProps: (state) => ({
     authToken: state.user.authToken,
   }),
-  mapDispatchToProps: {
-    setAuthData,
-  },
-  component: Login,
+  // mapDispatchToProps: {
+  //   setAuthData,
+  // },
+  component: ForgotPassword,
 });

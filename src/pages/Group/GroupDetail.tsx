@@ -20,18 +20,36 @@ import { RouteComponentProps, useParams, withRouter } from "react-router";
 import LessonList from "../../components/Group/LessonList";
 import QuizList from "../../components/Group/QuizList";
 import GeneralSkeleton from "../../components/Shared/GeneralSkeleton";
-interface GroupDetailProps extends RouteComponentProps {}
-const GroupDetail: React.FC<GroupDetailProps> = ({ history }) => {
+import { connect } from "../../data/connect";
+
+interface OwnProps extends RouteComponentProps {}
+
+interface StateProps {
+  authData: any;
+}
+
+interface DispatchProps {}
+interface GroupDetailProps extends OwnProps, StateProps, DispatchProps {}
+
+const GroupDetail: React.FC<GroupDetailProps> = ({ history, authData }) => {
   const [GroupDetail, setGroupDetail] = useState<any>(undefined);
   //   const param<any> = useParams();
   let param: any = useParams();
   useIonViewDidEnter(() => {
     const BodyData = new FormData();
+    if (authData) {
+      BodyData.append("token", authData && authData.token);
+    }
     BodyData.append("gid", param.id || "");
-    fetch("https://api3.adzkia.id/group/detail", {
-      method: "POST",
-      body: BodyData,
-    })
+    fetch(
+      authData
+        ? "https://api3.adzkia.id/group/detail"
+        : "https://api3.adzkia.id/grouppublic/detail",
+      {
+        method: "POST",
+        body: BodyData,
+      }
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error("Server Bermasalah");
@@ -131,4 +149,12 @@ const GroupDetail: React.FC<GroupDetailProps> = ({ history }) => {
   }
 };
 
-export default withRouter(GroupDetail);
+export default connect<OwnProps, StateProps, DispatchProps>({
+  mapStateToProps: (state) => ({
+    authData: state.user.authData,
+  }),
+  // mapDispatchToProps: {
+  //   setAuthData,
+  // },
+  component: GroupDetail,
+});
