@@ -73,6 +73,8 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history, authToken }) => {
         .then((res) => {
           if (res.data && res.data.uid) {
             res.data.token = res.token;
+            console.log(res.data);
+
             alert(res.data.email + " berhasil login");
             setAuthData(res.data);
             history.replace("/tabs/portal");

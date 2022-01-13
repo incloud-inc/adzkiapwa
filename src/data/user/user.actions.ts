@@ -54,12 +54,13 @@ export const setData = (data: Partial<UserState>) =>
   } as const);
 
 export const logoutUser = () => async (dispatch: React.Dispatch<any>) => {
-  dispatch(setAuthData());
+  dispatch(setAuthData(undefined));
 };
 export const setAuthData =
   (authData?: any) => async (dispatch: React.Dispatch<any>) => {
     setAuthDataData(authData);
-    loadUserData();
+    const data = await getUserData();
+    dispatch(setData(data));
     return {
       type: "set-auth-data",
       authData,

@@ -23,8 +23,10 @@ import {
   useIonViewDidEnter,
 } from "@ionic/react";
 import { reload, stopwatchOutline } from "ionicons/icons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { RouteComponentProps, useParams } from "react-router";
+import QuizAttempt from "../../components/Quiz/QuizAttempt";
+import GeneralSkeleton from "../../components/Shared/GeneralSkeleton";
 import { connect } from "../../data/connect";
 // import "./Account.scss";
 import { setAuthData } from "../../data/user/user.actions";
@@ -53,8 +55,9 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
   const [RecentQuestionNumber, setRecentQuestionNumber] = useState<number>(0);
   const [RecentQuestion, setRecentQuestion] = useState<any>(null);
   const [Answers, setAnswers] = useState<any>(null);
-  const [QuizData, setQuizData] = useState<any>(null);
-
+  const [QuizData, setQuizData] = useState<any>(undefined);
+  const [AnsweredQuestionTotal, setAnsweredQuestionTotal] = useState<any>(0);
+  const slideQuizRef = useRef<HTMLIonSlidesElement>(null);
   // const getQuiz = () => {
   //   fetch("/assets/data/question.json", {
   //     // method: "POST",
@@ -192,7 +195,7 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
               return res.json();
             })
             .then((res) => {
-              if (res) {
+              if (res && !res.message) {
                 setQuizData(res);
                 setRecentQuestion(res.questions[0]);
                 let AnswersArray = new Array();
@@ -205,8 +208,16 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
                   });
                 });
                 setAnswers(AnswersArray);
+              } else {
+                setQuizData(null);
+                history.push("/");
+                throw new Error((res && res.message) || "Server Bermasalah");
               }
             });
+        } else {
+          setQuizData(null);
+          history.push("/");
+          throw new Error((res && res.message) || "Server Bermasalah");
         }
       })
       .catch((err) => {
@@ -226,6 +237,7 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
     setAva("data:image/png;base64, " + image.base64String);
   };
   const NextPage = () => {
+    slideQuizRef.current?.slideNext();
     if (RecentQuestionNumber !== Answers.length - 1) {
       setRecentQuestionNumber(RecentQuestionNumber + 1);
       setRecentQuestion(QuizData.questions[RecentQuestionNumber + 1]);
@@ -243,6 +255,7 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
     AnswersArray[AIndex].Answer = AID;
     AnswersArray[AIndex].AnswerStatus = "answered";
     setAnswers(AnswersArray);
+    setAnsweredQuestionTotal(AnsweredQuestionTotal + 1);
     NextPage();
   };
   const setReviewLater = () => {
@@ -283,12 +296,22 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
               </b>
             </IonTitle>
             <IonButtons slot="end">
-              <IonButton color="danger">Submit Quiz</IonButton>
+              <IonButton
+                color="danger"
+                onClick={() => {
+                  console.log(Answers);
+                }}
+              >
+                Submit Quiz
+              </IonButton>
             </IonButtons>
           </IonToolbar>
         </IonHeader>
         <IonContent className="bg-gray ion-padding">
-          <IonProgressBar value={0.1} color="dark"></IonProgressBar>
+          <IonProgressBar
+            value={Answers ? (1 / Answers.length) * AnsweredQuestionTotal : 0}
+            color="dark"
+          ></IonProgressBar>
 
           <h2>
             <b>Nomor {RecentQuestionNumber + 1}</b>
@@ -346,6 +369,7 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
                   </IonCard>
                 ))
             : ""}
+          <QuizAttempt QuizData={QuizData}></QuizAttempt>
         </IonContent>
         <IonFooter className="ion-padding quizanswer">
           {/* {QuizData && QuizData.options && RecentQuestion
@@ -420,7 +444,7 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
               </IonCol>
             </IonRow>
           </IonGrid>
-          <IonSlides options={slideQuiz}>
+          <IonSlides options={slideQuiz} ref={slideQuizRef}>
             {QuizData && QuizData.questions
               ? QuizData.questions.map((item: any, index: any) => (
                   <IonSlide key={index}>
@@ -455,28 +479,23 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
                 ))
               : ""}
           </IonSlides>
-
-          <div className="ion-text-center ion-padding-top">
-            <IonBadge color="dark" style={{ margin: "4px" }}>
-              not visited
-            </IonBadge>
-            <IonBadge color="success" style={{ margin: "4px" }}>
-              answered
-            </IonBadge>
-            <IonBadge color="warning" style={{ margin: "4px" }}>
-              review later
-            </IonBadge>
-            <IonBadge color="medium" style={{ margin: "4px" }}>
-              skipped
-            </IonBadge>
-          </div>
         </IonFooter>
+      </IonPage>
+    );
+  } else if (QuizData === null) {
+    return (
+      <IonPage>
+        <IonContent>
+          <GeneralSkeleton></GeneralSkeleton>
+        </IonContent>
       </IonPage>
     );
   } else {
     return (
       <IonPage>
-        <IonContent>Please Wait...</IonContent>
+        <IonContent>
+          <GeneralSkeleton></GeneralSkeleton>
+        </IonContent>
       </IonPage>
     );
   }

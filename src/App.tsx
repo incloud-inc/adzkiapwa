@@ -9,8 +9,6 @@ import {
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 
-import Menu from "./components/Menu";
-
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
 
@@ -98,7 +96,6 @@ const IonicApp: React.FC<IonicAppProps> = ({
             subHeader={alert.subHeader}
             message={alert.message}
           ></IonAlert>
-          <Menu />
           <IonRouterOutlet id="main">
             {/*
                 We use IonRoute here to keep the tabs state intact,

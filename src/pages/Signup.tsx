@@ -102,6 +102,8 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history, authToken }) => {
         if (res.token) {
           res.data.token = res.token;
           alert(Email + " berhasil terdaftar");
+          alert(JSON.stringify(res.data));
+
           setAuthData(res.data);
           history.replace("/tabs/portal");
         } else {

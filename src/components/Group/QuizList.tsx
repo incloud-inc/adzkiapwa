@@ -70,7 +70,7 @@ const QuizList: React.FC<QuizListProps> = ({
         // alert(err);
         setQuizList(null);
       });
-  }, [QuizList]);
+  }, []);
   if (QuizList) {
     return (
       <IonList lines="full">
