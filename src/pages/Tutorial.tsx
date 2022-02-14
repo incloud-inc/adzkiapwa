@@ -122,7 +122,6 @@ const Tutorial: React.FC<TutorialProps> = ({
             </IonButton>
           </SwiperSlide>
         </Swiper>
-        <Button type="primary">Primary Button</Button>
       </IonContent>
     </IonPage>
   );

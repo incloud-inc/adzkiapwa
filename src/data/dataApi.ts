@@ -5,34 +5,34 @@ import { Location } from "../models/Location";
 
 const { Storage } = Plugins;
 
-const dataUrl = "/assets/data/data.json";
-const locationsUrl = "/assets/data/locations.json";
+// const dataUrl = "/assets/data/data.json";
+// const locationsUrl = "/assets/data/locations.json";
 
 const HAS_SEEN_TUTORIAL = "hasSeenTutorial";
 const AUTH_DATA = "authData";
 
-export const getConfData = async () => {
-  const response = await Promise.all([fetch(dataUrl), fetch(locationsUrl)]);
-  const responseData = await response[0].json();
-  const schedule = responseData.schedule[0] as Schedule;
-  const sessions = parseSessions(schedule);
-  const speakers = responseData.speakers as Speaker[];
-  const locations = (await response[1].json()) as Location[];
-  const allTracks = sessions
-    .reduce((all, session) => all.concat(session.tracks), [] as string[])
-    .filter((trackName, index, array) => array.indexOf(trackName) === index)
-    .sort();
+// export const getConfData = async () => {
+//   // const response = await Promise.all([fetch(dataUrl), fetch(locationsUrl)]);
+//   // const responseData = await response[0].json();
+//   // const schedule = responseData.schedule[0] as Schedule;
+//   // const sessions = parseSessions(schedule);
+//   // const speakers = responseData.speakers as Speaker[];
+//   // const locations = (await response[1].json()) as Location[];
+//   const allTracks = sessions
+//     .reduce((all, session) => all.concat(session.tracks), [] as string[])
+//     .filter((trackName, index, array) => array.indexOf(trackName) === index)
+//     .sort();
 
-  const data = {
-    schedule,
-    sessions,
-    locations,
-    speakers,
-    allTracks,
-    filteredTracks: [...allTracks],
-  };
-  return data;
-};
+//   const data = {
+//     // schedule,
+//     // sessions,
+//     // locations,
+//     // speakers,
+//     allTracks,
+//     filteredTracks: [...allTracks],
+//   };
+//   return data;
+// };
 
 export const getAuthToken = () => {
   fetch("https://api3.adzkia.id/auth/token")

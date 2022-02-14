@@ -140,6 +140,9 @@
 .bb-1 {
   border-bottom: 1px solid var(--ion-color-medium);
 }
+ion-modal {
+  --height: 100% !important;
+}
 @media only screen and (min-width: 480px) {
   ion-app {
     max-width: 420px;

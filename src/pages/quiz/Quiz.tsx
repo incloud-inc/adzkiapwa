@@ -12,6 +12,7 @@ import {
   IonGrid,
   IonHeader,
   IonIcon,
+  IonLoading,
   IonPage,
   IonProgressBar,
   IonRow,
@@ -25,11 +26,14 @@ import {
 import { reload, stopwatchOutline } from "ionicons/icons";
 import React, { useEffect, useRef, useState } from "react";
 import { RouteComponentProps, useParams } from "react-router";
+import { message, Statistic } from "antd";
+
 import QuizAttempt from "../../components/Quiz/QuizAttempt";
 import GeneralSkeleton from "../../components/Shared/GeneralSkeleton";
 import { connect } from "../../data/connect";
 // import "./Account.scss";
 import { setAuthData } from "../../data/user/user.actions";
+const { Countdown } = Statistic;
 const Camera = Plugins.Camera;
 // const CRT = CameraResultType.Uri;
 interface OwnProps extends RouteComponentProps {}
@@ -49,15 +53,58 @@ const slideQuiz = {
   speed: 400,
   spaceBetween: 20,
 };
-
+var countdownTimer: any;
+let TimeSaver = 0;
 const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
+  const QT = localStorage.getItem("QuizTime")
+    ? JSON.parse(localStorage.getItem("QuizTime") || "")
+    : "";
+  const getQT: any = QT ? QT.find((x: any) => x.QuizId === "6") : undefined;
   let param: any = useParams();
+  const [rid, setrid] = useState<number>(0);
   const [RecentQuestionNumber, setRecentQuestionNumber] = useState<number>(0);
   const [RecentQuestion, setRecentQuestion] = useState<any>(null);
   const [Answers, setAnswers] = useState<any>(null);
   const [QuizData, setQuizData] = useState<any>(undefined);
   const [AnsweredQuestionTotal, setAnsweredQuestionTotal] = useState<any>(0);
+  const [QuizDuration, setQuizDuration] = useState(0);
+  const [QuizDurationCountdown, setQuizDurationCountdown] = useState<any>(
+    new Date()
+  );
+  const [QuizSubmitable, setQuizSubmitable] = useState(true);
+  const [showLoading, setShowLoading] = useState(false);
+
+  useEffect(() => {
+    if (!countdownTimer) {
+    }
+  }, [QuizDuration]);
+
   const slideQuizRef = useRef<HTMLIonSlidesElement>(null);
+  const onFinish = () => {
+    submitQuiz();
+  };
+  // const setQuizTimer = (expiryTimestamp: Date) => {
+  //   const { seconds, minutes, hours } = useTimer({
+  //     expiryTimestamp,
+  //     onExpire: () => setQuizDuration("Expired"),
+  //   });
+  //   return setQuizDuration(hours + ":" + minutes + ":" + seconds);
+  // };
+  // const QuizTimer = (expiryTimestamp: any) => {
+  //   console.log(expiryTimestamp);
+
+  //   const { seconds, minutes, hours } = useTimer({
+  //     expiryTimestamp,
+  //     onExpire: () => setQuizDuration("Expired"),
+  //   });
+  //   console.log(hours + ":" + minutes + ":" + seconds);
+
+  //   return (
+  //     <IonText>
+  //       <b>{hours + ":" + minutes + ":" + seconds}</b>
+  //     </IonText>
+  //   );
+  // };
   // const getQuiz = () => {
   //   fetch("/assets/data/question.json", {
   //     // method: "POST",
@@ -178,6 +225,7 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
           if (authData) {
             BodyData2.append("token", authData && authData.token);
           }
+          setrid(res.rid);
           BodyData2.append("rid", res.rid || "");
           fetch(
             authData
@@ -197,18 +245,75 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
             .then((res) => {
               if (res && !res.message) {
                 setQuizData(res);
-                setRecentQuestion(res.questions[0]);
-                let AnswersArray = new Array();
-                res.questions.forEach((q: any, index: any) => {
-                  AnswersArray.push({
-                    AnswerIndex: index,
-                    qid: q.qid,
-                    Answer: "",
-                    AnswerStatus: index === 0 ? "notvisited" : "notvisited",
+                const GetAD = localStorage.getItem("AnswerData") || "";
+                let AD = GetAD ? JSON.parse(GetAD || "") : "";
+                AD = AD[res.quiz.quid];
+                if (AD) {
+                  const AI = AD.filter((a: any) => a.Answer === "")[0]
+                    ? AD.filter((a: any) => a.Answer === "")[0].AnswerIndex
+                    : null;
+                  const AL = AD.filter(
+                    (a: any) => a.AnswerStatus === "answered"
+                  ).length;
+                  if (AI) {
+                    setRecentQuestionNumber(AI);
+                    setRecentQuestion(res.questions[AI]);
+                    slideQuizRef.current?.slideTo(AI);
+                  } else {
+                    setRecentQuestionNumber(AL - 1);
+                    setRecentQuestion(res.questions[AL - 1]);
+                    slideQuizRef.current?.slideTo(AL - 1);
+                  }
+                  setAnsweredQuestionTotal(AL);
+
+                  setAnswers(AD);
+                } else {
+                  setRecentQuestion(res.questions[0]);
+                  let AnswersArray = new Array();
+                  res.questions.forEach((q: any, index: any) => {
+                    AnswersArray.push({
+                      AnswerIndex: index,
+                      qid: q.qid,
+                      Answer: "",
+                      AnswerStatus: index === 0 ? "notvisited" : "notvisited",
+                    });
                   });
-                });
-                setAnswers(AnswersArray);
+                  setAnswers(AnswersArray);
+                }
+                setQuizDuration(res.quiz.duration * 60);
+
+                if (getQT) {
+                  TimeSaver = getQT.Countdown;
+                } else {
+                  TimeSaver = res.quiz.duration * 60;
+                }
+                if (TimeSaver > 0 && !countdownTimer) {
+                  countdownTimer = setInterval(() => {
+                    TimeSaver = TimeSaver - 1;
+
+                    localStorage.setItem(
+                      "QuizTime",
+                      JSON.stringify([
+                        { QuizId: res.quiz.quid, Countdown: TimeSaver },
+                      ])
+                    );
+                    if (TimeSaver === 0) {
+                      clearInterval(countdownTimer);
+                    }
+                  }, 1000);
+                }
+                let cd = new Date();
+
+                if (getQT) {
+                  cd.setSeconds(cd.getSeconds() + getQT.Countdown);
+                } else {
+                  cd.setSeconds(cd.getSeconds() + res.quiz.duration * 60);
+                }
+                setQuizDurationCountdown(cd);
+                console.log("getQT");
               } else {
+                console.log("asd");
+
                 setQuizData(null);
                 history.push("/");
                 throw new Error((res && res.message) || "Server Bermasalah");
@@ -225,16 +330,44 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
         // setQuizList(null);
       });
   });
-  const takePicture = async () => {
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: true,
-      width: 300,
-      height: 300,
-      resultType: CameraResultType.Base64,
-    });
+  const submitQuiz = () => {
+    setShowLoading(true);
+    const BodyData = new FormData();
+    BodyData.append("token", (authData && authData.token) || "");
+    BodyData.append("rid", QuizData.quiz.quid || "");
+    BodyData.append(
+      "individual_time",
+      "[1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5]"
+    );
+    BodyData.append("answers", JSON.stringify(Answers));
+    BodyData.append("question_total", Answers.length);
+    fetch(
+      authData
+        ? "https://api3.adzkia.id/quiz/submitquiz"
+        : "https://api3.adzkia.id/quizpublic/submitquiz",
+      {
+        method: "POST",
+        body: BodyData,
+      }
+    )
+      .then((res) => {
+        setShowLoading(false);
 
-    setAva("data:image/png;base64, " + image.base64String);
+        if (!res.ok) {
+          throw new Error("Server Bermasalah");
+        }
+        return res.json();
+      })
+      .then((res) => {
+        if (res.message && res.message === "Submit answer successfully") {
+          history.replace("/quiz/result/" + rid);
+        }
+      })
+      .catch((err) => {
+        history.push("/");
+        alert(err);
+        // setQuizList(null);
+      });
   };
   const NextPage = () => {
     slideQuizRef.current?.slideNext();
@@ -255,25 +388,43 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
     AnswersArray[AIndex].Answer = AID;
     AnswersArray[AIndex].AnswerStatus = "answered";
     setAnswers(AnswersArray);
-    setAnsweredQuestionTotal(AnsweredQuestionTotal + 1);
-    NextPage();
+    SaveLocalAnswer(AnswersArray);
+    setAnsweredQuestionTotal(
+      AnswersArray.filter((a: any) => a.AnswerStatus === "answered").length
+    );
+    setTimeout(() => {
+      NextPage();
+    }, 500);
   };
   const setReviewLater = () => {
     const AnswersArray = Answers;
     AnswersArray[RecentQuestionNumber].AnswerStatus = "reviewlater";
     NextPage();
     setAnswers(AnswersArray);
+    SaveLocalAnswer(AnswersArray);
   };
   const setSkipped = () => {
     const AnswersArray = Answers;
     AnswersArray[RecentQuestionNumber].AnswerStatus = "skipped";
     NextPage();
     setAnswers(AnswersArray);
+    SaveLocalAnswer(AnswersArray);
   };
-
+  const SaveLocalAnswer = (data: any) => {
+    const GetAD = localStorage.getItem("AnswerData");
+    if (GetAD) {
+      let AD = JSON.parse(GetAD);
+      AD[QuizData.quiz.quid] = data;
+      localStorage.setItem("AnswerData", JSON.stringify(AD));
+    } else {
+      let AD: any = {};
+      AD[QuizData.quiz.quid] = data;
+      localStorage.setItem("AnswerData", JSON.stringify(AD));
+    }
+  };
   if (QuizData) {
     return (
-      <IonPage id="account-page">
+      <IonPage>
         <IonHeader>
           <IonToolbar>
             <IonButtons slot="start">
@@ -284,7 +435,7 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
             </IonButtons>
             <IonTitle className="ion-no-padding">
               <b>
-                {timeLeft.minutes !== undefined
+                {/* {timeLeft.minutes !== undefined
                   ? (timeLeft.minutes < 10
                       ? "0" + timeLeft.minutes
                       : timeLeft.minutes) +
@@ -292,14 +443,18 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
                     (timeLeft.seconds < 10
                       ? "0" + timeLeft.seconds
                       : timeLeft.seconds)
-                  : "Expired"}
+                  : "Expired"} */}
+
+                {/* {QuizDuration} */}
               </b>
+              <Countdown value={QuizDurationCountdown} onFinish={onFinish} />
+              {/* <QuizTimer expiryTimestamp={QuizDuration} /> */}
             </IonTitle>
             <IonButtons slot="end">
               <IonButton
                 color="danger"
                 onClick={() => {
-                  console.log(Answers);
+                  submitQuiz();
                 }}
               >
                 Submit Quiz
@@ -370,6 +525,7 @@ const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
                 ))
             : ""}
           <QuizAttempt QuizData={QuizData}></QuizAttempt>
+          <IonLoading isOpen={showLoading} message={"Proses..."} />
         </IonContent>
         <IonFooter className="ion-padding quizanswer">
           {/* {QuizData && QuizData.options && RecentQuestion

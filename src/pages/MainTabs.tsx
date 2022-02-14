@@ -23,8 +23,11 @@ import SpeakerList from "./SpeakerList";
 import SpeakerDetail from "./SpeakerDetail";
 import SessionDetail from "./SessionDetail";
 import Portal from "./Portal";
+import Payments from "./Payments";
+import ExamResults from "./ExamResults";
 import MapView from "./MapView";
 import About from "./About";
+import Account from "./Account";
 
 interface MainTabsProps {}
 
@@ -53,6 +56,9 @@ const MainTabs: React.FC<MainTabsProps> = () => {
           exact={true}
         />
         <Route path="/tabs/portal/" component={Portal} />
+        <Route path="/tabs/payments/" component={Payments} />
+        <Route path="/tabs/account/" component={Account} />
+        <Route path="/tabs/examresults/" component={ExamResults} />
         <Route path="/tabs/speakers/sessions/:id" component={SessionDetail} />
         <Route path="/tabs/map" render={() => <About />} exact={true} />
         <Route path="/tabs/about" render={() => <About />} exact={true} />
@@ -61,13 +67,13 @@ const MainTabs: React.FC<MainTabsProps> = () => {
         <IonTabButton tab="portal" href="/tabs/portal">
           <IonIcon icon={home} />
         </IonTabButton>
-        <IonTabButton tab="speakers" href="/tabs/speakers">
+        <IonTabButton tab="speakers" href="/tabs/payments">
           <IonIcon icon={grid} />
         </IonTabButton>
-        <IonTabButton tab="map" href="/tabs/map">
+        <IonTabButton tab="map" href="/tabs/examresults">
           <IonIcon icon={pieChart} />
         </IonTabButton>
-        <IonTabButton tab="about" href="/tabs/about">
+        <IonTabButton tab="about" href="/tabs/account">
           <IonIcon icon={settings} />
         </IonTabButton>
       </IonTabBar>

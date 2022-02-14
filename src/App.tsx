@@ -41,6 +41,7 @@ import Signup from "./pages/Signup";
 import Support from "./pages/Support";
 import Tutorial from "./pages/Tutorial";
 import Quiz from "./pages/quiz/Quiz";
+import Result from "./pages/quiz/Result";
 import GroupDetail from "./pages/Group/GroupDetail";
 import HomeOrTutorial from "./components/HomeOrTutorial";
 import { Schedule } from "./models/Schedule";
@@ -56,7 +57,7 @@ const App: React.FC = () => {
 
 interface StateProps {
   darkMode: boolean;
-  schedule: Schedule;
+  // schedule: Schedule;
   loading: boolean;
   authToken: string;
   alert: any;
@@ -71,7 +72,7 @@ interface IonicAppProps extends StateProps, DispatchProps {}
 
 const IonicApp: React.FC<IonicAppProps> = ({
   darkMode,
-  schedule,
+  // schedule,
   loading,
   authToken,
   alert,
@@ -80,12 +81,10 @@ const IonicApp: React.FC<IonicAppProps> = ({
 }) => {
   useEffect(() => {
     loadUserData();
-    loadConfData();
+    // loadConfData();
     // eslint-disable-next-line
   }, []);
-  return schedule.groups.length === 0 ? (
-    <div></div>
-  ) : (
+  return (
     <IonApp className={`${darkMode ? "dark-theme" : ""}`} class="md">
       <IonReactRouter>
         <IonSplitPane contentId="main">
@@ -98,9 +97,9 @@ const IonicApp: React.FC<IonicAppProps> = ({
           ></IonAlert>
           <IonRouterOutlet id="main">
             {/*
-                We use IonRoute here to keep the tabs state intact,
-                which makes transitions between tabs and non tab pages smooth
-                */}
+              We use IonRoute here to keep the tabs state intact,
+              which makes transitions between tabs and non tab pages smooth
+              */}
             <Route path="/tabs" render={() => <MainTabs />} />
             <Route path="/package" component={Package} />
             <Route path="/account" component={Account} />
@@ -111,17 +110,18 @@ const IonicApp: React.FC<IonicAppProps> = ({
             <Route path="/tutorial" component={Tutorial} />
             <Route path="/group/detail/:id" component={GroupDetail} />
             <Route path="/quiz/start/:quid" component={Quiz} />
+            <Route path="/quiz/result/:rid" component={Result} />
             {/* <Route
-              path="/logout"
-              render={() => {
-                return (
-                  <RedirectToLogin
-                    setIsLoggedIn={setIsLoggedIn}
-                    setUsername={setUsername}
-                  />
-                );
-              }}
-            /> */}
+            path="/logout"
+            render={() => {
+              return (
+                <RedirectToLogin
+                  setIsLoggedIn={setIsLoggedIn}
+                  setUsername={setUsername}
+                />
+              );
+            }}
+          /> */}
             <Route path="/" component={HomeOrTutorial} exact />
           </IonRouterOutlet>
         </IonSplitPane>
@@ -135,7 +135,7 @@ export default App;
 const IonicAppConnected = connect<{}, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
     darkMode: state.user.darkMode,
-    schedule: state.data.schedule,
+    // schedule: state.data.schedule,
     loading: state.user.loading,
     authToken: state.user.authToken,
     alert: state.user.alert,

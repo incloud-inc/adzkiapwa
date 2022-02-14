@@ -26,12 +26,18 @@ interface OwnProps {
 }
 interface QuizAttemptProps extends RouteComponentProps, OwnProps {}
 const QuizAttempt: React.FC<QuizAttemptProps> = ({ history, QuizData }) => {
+  const QT = localStorage.getItem("QuizTime")
+    ? JSON.parse(localStorage.getItem("QuizTime") || "")
+    : "";
+  const getQT: any = QT
+    ? QT.find((x: { QuizId: string }) => x.QuizId === "6")
+    : undefined;
   const [showAlert, setShowAlert] = useState(false);
   const [gid, setGid] = useState(null);
-  const [ShowModal, setShowModal] = useState(true);
+  const [ShowModal, setShowModal] = useState(getQT ? false : true);
   return (
     <IonModal isOpen={ShowModal}>
-      <IonContent className="ion-padding" fullscreen={true}>
+      <IonContent className="ion-padding" fullscreen>
         <br />
 
         <IonGrid>

@@ -141,6 +141,7 @@ const Account: React.FC<AccountProps> = ({
             <IonButton color="primary" size="large" className="ion-margin">
               <IonIcon icon={checkmark}></IonIcon>&nbsp; Simpan Perubahan
             </IonButton>
+            <br />
             <IonText
               onClick={() => {
                 setAuthData(undefined);
@@ -150,6 +151,8 @@ const Account: React.FC<AccountProps> = ({
             >
               Keluar
             </IonText>
+            <br />
+            <br />
           </div>
         )}
       </IonContent>
