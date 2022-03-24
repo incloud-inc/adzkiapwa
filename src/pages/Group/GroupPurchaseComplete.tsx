@@ -1,6 +1,7 @@
 import {
   IonBackButton,
   IonBadge,
+  IonButton,
   IonButtons,
   IonCard,
   IonCol,
@@ -29,28 +30,28 @@ interface StateProps {
 }
 
 interface DispatchProps {}
-interface GroupDetailProps extends OwnProps, StateProps, DispatchProps {}
+interface GroupPurchaseCompleteProps
+  extends OwnProps,
+    StateProps,
+    DispatchProps {}
 
-const GroupDetail: React.FC<GroupDetailProps> = ({ history, authData }) => {
-  const [GroupDetail, setGroupDetail] = useState<any>(undefined);
+const GroupPurchaseComplete: React.FC<GroupPurchaseCompleteProps> = ({
+  history,
+  authData,
+}) => {
+  const [GroupPurchaseComplete, setGroupPurchaseComplete] =
+    useState<any>(undefined);
   //   const param<any> = useParams();
   let param: any = useParams();
   useEffect(() => {
-    if (authData !== undefined) {
+    if (authData) {
       const BodyData = new FormData();
-      if (authData) {
-        BodyData.append("token", authData && authData.token);
-      }
-      BodyData.append("gid", param.id || "");
-      fetch(
-        authData
-          ? "https://api3.adzkia.id/group/detail"
-          : "https://api3.adzkia.id/grouppublic/detail",
-        {
-          method: "POST",
-          body: BodyData,
-        }
-      )
+      BodyData.append("token", authData && authData.token);
+      BodyData.append("pid", param.id || "");
+      fetch("https://api3.adzkia.id/payment/checkstatuspayment", {
+        method: "POST",
+        body: BodyData,
+      })
         .then((res) => {
           if (!res.ok) {
             throw new Error("Server Bermasalah");
@@ -58,13 +59,10 @@ const GroupDetail: React.FC<GroupDetailProps> = ({ history, authData }) => {
           return res.json();
         })
         .then((res) => {
-          if (res.result && res.result.gid) {
-            setGroupDetail(res.result);
-            if (res.result.price !== "0") {
-              history.replace("/group/purchase/" + res.result.gid);
-            }
+          if (res.status) {
+            setGroupPurchaseComplete(res.message);
           } else {
-            setGroupDetail(null);
+            // setGroupPurchaseComplete(null);
           }
         })
         .catch((err) => {
@@ -72,35 +70,41 @@ const GroupDetail: React.FC<GroupDetailProps> = ({ history, authData }) => {
         });
     }
   }, [authData]);
-  if (GroupDetail) {
+  if (GroupPurchaseComplete) {
     return (
       <IonPage id="session-detail-page ">
         <IonToolbar>
           <IonButtons slot="start">
             <IonBackButton defaultHref="/tabs/portal"></IonBackButton>
           </IonButtons>
-          <IonTitle>Paket</IonTitle>
+          <IonTitle>Beli Paket</IonTitle>
         </IonToolbar>
         <IonContent className="bg-gray">
-          <IonCard className="br-16 ion-p-8 ion-margin no-shadow">
+          <div
+            className="ion-text-center"
+            style={{ marginTop: "24px", marginBottom: "-40px" }}
+          >
+            <IonBadge color="primary" className="ion-p-8 br-8">
+              <IonIcon icon={star} color="light" size="large"></IonIcon>
+            </IonBadge>
+          </div>
+          <IonCard
+            className="br-16 ion-p-8 ion-margin no-shadow"
+            style={{ zIndex: "-1" }}
+          >
             <IonGrid>
               <IonRow class="ion-align-items-center">
                 {" "}
-                <IonCol size="2">
-                  <IonBadge color="primary" className="ion-p-8 br-8">
-                    <IonIcon icon={star} color="light"></IonIcon>
-                  </IonBadge>
-                </IonCol>
                 <IonCol size="6">
-                  <h5 className="ion-no-margin color-navy">
-                    <b>{GroupDetail.group_name || ""}</b>
-                  </h5>
+                  <h6 className="ion-no-margin color-navy">
+                    <b>Total</b>
+                  </h6>
                 </IonCol>
-                <IonCol size="4" className="ion-text-right">
+                <IonCol size="6" className="ion-text-right">
                   <h5 className="ion-no-margin color-navy">
                     <b>
-                      {GroupDetail.price !== "0"
-                        ? "Rp " + GroupDetail.price
+                      {GroupPurchaseComplete.gross_amount !== "0"
+                        ? "Rp " + GroupPurchaseComplete.gross_amount
                         : "GRATIS"}
                     </b>
                   </h5>
@@ -108,34 +112,25 @@ const GroupDetail: React.FC<GroupDetailProps> = ({ history, authData }) => {
               </IonRow>
               <IonRow
                 className="ion-padding-top ion-padding-bottom"
-                hidden={!GroupDetail.description}
+                hidden={!GroupPurchaseComplete.description}
               >
                 <IonCol>
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: GroupDetail.description || "",
+                      __html: GroupPurchaseComplete.description || "",
                     }}
                   ></div>
                 </IonCol>
               </IonRow>
             </IonGrid>
           </IonCard>
-          <div className="ion-margin">
-            <IonText color="medium">
-              <b>Materi Pembelajaran</b>
-            </IonText>
-          </div>
-          <LessonList gids={param.id}></LessonList>
-          <div className="ion-margin">
-            <IonText color="medium">
-              <b>Quiz</b>
-            </IonText>
-          </div>
-          <QuizList gids={param.id}></QuizList>
+          <IonButton expand="block" className="ion-margin" size="large">
+            PAY
+          </IonButton>
         </IonContent>
       </IonPage>
     );
-  } else if (GroupDetail === null) {
+  } else if (GroupPurchaseComplete === null) {
     return (
       <IonPage>
         <div className="ion-text-center">
@@ -161,5 +156,5 @@ export default connect<OwnProps, StateProps, DispatchProps>({
   // mapDispatchToProps: {
   //   setAuthData,
   // },
-  component: GroupDetail,
+  component: GroupPurchaseComplete,
 });

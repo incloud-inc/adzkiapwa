@@ -10,21 +10,37 @@ import {
   useIonViewDidEnter,
 } from "@ionic/react";
 import { star } from "ionicons/icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
 import GeneralSkeleton from "../Shared/GeneralSkeleton";
 interface OwnProps {
   authData: any;
 }
+let timers = 0;
+console.log(timers);
+
+setInterval(() => {
+  timers++;
+}, 1);
 interface GroupListProps extends RouteComponentProps, OwnProps {}
 const GroupList: React.FC<GroupListProps> = ({ history, authData }) => {
   const [GroupList, setGroupList] = useState<any>(undefined);
   const [showAlert, setShowAlert] = useState(false);
   const [gid, setGid] = useState(null);
-
-  useIonViewDidEnter(() => {
+  // useIonViewDidEnter(() => {
+  //   setTimeout(() => {
+  //     fetchGroup();
+  //   }, 5000);
+  // });
+  useEffect(() => {
+    if (authData !== undefined) {
+      fetchGroup();
+    }
+  }, [authData]);
+  const fetchGroup = () => {
     const BodyData = new FormData();
     setGroupList(undefined);
+
     if (authData) {
       BodyData.append("token", authData && authData.token);
     }
@@ -54,7 +70,7 @@ const GroupList: React.FC<GroupListProps> = ({ history, authData }) => {
         alert(err);
         setGroupList(null);
       });
-  });
+  };
   const SelectGroup = (item: any) => {
     if (item.gid) {
       if (authData) {

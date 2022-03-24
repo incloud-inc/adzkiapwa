@@ -35,13 +35,18 @@ interface OwnProps extends RouteComponentProps {}
 
 interface StateProps {
   authData: any;
+  hasSeenTutorial: boolean;
 }
 
 interface DispatchProps {}
 
 type PortalProps = OwnProps & StateProps & DispatchProps;
 
-const Portal: React.FC<PortalProps> = ({ history, authData }) => {
+const Portal: React.FC<PortalProps> = ({
+  history,
+  authData,
+  hasSeenTutorial,
+}) => {
   const [searchText, setSearchText] = useState("");
   return (
     <IonPage id="session-detail-page ">
@@ -136,6 +141,7 @@ const Portal: React.FC<PortalProps> = ({ history, authData }) => {
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state, OwnProps) => ({
     authData: state.user.authData,
+    hasSeenTutorial: state.user.hasSeenTutorial,
   }),
   mapDispatchToProps: {},
   component: withRouter(Portal),

@@ -52,6 +52,7 @@ export const getUserData = async () => {
   const hasSeenTutorial = (await response[0].value) === "true";
   const authDataTemp = (await response[1].value) || "";
   const authData = authDataTemp ? JSON.parse(authDataTemp) : null;
+
   // const authData = authDataTemp;
   const data = {
     hasSeenTutorial,

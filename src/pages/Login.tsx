@@ -23,20 +23,17 @@ import { connect } from "../data/connect";
 import { RouteComponentProps } from "react-router";
 import Lottie from "react-lottie-player";
 import SecureLogin from "../lotties/SecureLogin.json";
-import { userReducer } from "../data/user/user.reducer";
 
 interface OwnProps extends RouteComponentProps {}
 
-interface StateProps {
-  authToken: string;
-}
+interface StateProps {}
 interface DispatchProps {
   setAuthData: typeof setAuthData;
 }
 
 interface LoginProps extends OwnProps, DispatchProps, StateProps {}
 
-const Login: React.FC<LoginProps> = ({ setAuthData, history, authToken }) => {
+const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
   const [Email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -58,16 +55,12 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history, authToken }) => {
       const BodyData = new FormData();
       BodyData.append("email", Email);
       BodyData.append("password", Password);
-      // BodyData.append("token", authToken);
       fetch("https://api3.adzkia.id/auth/login", {
         method: "POST",
         body: BodyData,
       })
         .then((res) => {
           setFormSubmitted(false);
-          if (!res.ok) {
-            throw new Error("Server Bermasalah");
-          }
           return res.json();
         })
         .then((res) => {
@@ -160,9 +153,7 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history, authToken }) => {
 };
 
 export default connect<OwnProps, {}, DispatchProps>({
-  mapStateToProps: (state) => ({
-    authToken: state.user.authToken,
-  }),
+  mapStateToProps: (state) => ({}),
   mapDispatchToProps: {
     setAuthData,
   },

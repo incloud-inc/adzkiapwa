@@ -29,20 +29,12 @@ import { userReducer } from "../data/user/user.reducer";
 
 interface OwnProps extends RouteComponentProps {}
 
-interface StateProps {
-  authToken: string;
-}
-interface DispatchProps {
-  // setAuthData: typeof setAuthData;
-}
+interface StateProps {}
+interface DispatchProps {}
 
 interface LoginProps extends OwnProps, DispatchProps, StateProps {}
 
-const ForgotPassword: React.FC<LoginProps> = ({
-  // setAuthData,
-  history,
-  authToken,
-}) => {
+const ForgotPassword: React.FC<LoginProps> = ({ history }) => {
   const [Phone, setPhone] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [PhoneError, setPhoneError] = useState(false);
@@ -169,11 +161,6 @@ const ForgotPassword: React.FC<LoginProps> = ({
 };
 
 export default connect<OwnProps, {}, DispatchProps>({
-  mapStateToProps: (state) => ({
-    authToken: state.user.authToken,
-  }),
-  // mapDispatchToProps: {
-  //   setAuthData,
-  // },
+  mapStateToProps: (state) => ({}),
   component: ForgotPassword,
 });

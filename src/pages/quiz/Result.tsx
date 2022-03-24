@@ -40,9 +40,7 @@ interface StateProps {
   authData: any;
 }
 
-interface DispatchProps {
-  setAuthData: typeof setAuthData;
-}
+interface DispatchProps {}
 
 interface ResultProps extends OwnProps, StateProps, DispatchProps {}
 const slideQuiz = {
@@ -51,7 +49,7 @@ const slideQuiz = {
   speed: 400,
   spaceBetween: 20,
 };
-const Result: React.FC<ResultProps> = ({ setAuthData, authData, history }) => {
+const Result: React.FC<ResultProps> = ({ authData, history }) => {
   let param: any = useParams();
 
   const [showLoading, setShowLoading] = useState(false);
@@ -143,8 +141,5 @@ export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
     authData: state.user.authData,
   }),
-  mapDispatchToProps: {
-    setAuthData,
-  },
   component: Result,
 });

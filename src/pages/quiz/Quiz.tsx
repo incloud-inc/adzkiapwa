@@ -42,9 +42,7 @@ interface StateProps {
   authData: any;
 }
 
-interface DispatchProps {
-  setAuthData: typeof setAuthData;
-}
+interface DispatchProps {}
 
 interface AccountProps extends OwnProps, StateProps, DispatchProps {}
 const slideQuiz = {
@@ -55,7 +53,7 @@ const slideQuiz = {
 };
 var countdownTimer: any;
 let TimeSaver = 0;
-const Quiz: React.FC<AccountProps> = ({ setAuthData, authData, history }) => {
+const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
   const QT = localStorage.getItem("QuizTime")
     ? JSON.parse(localStorage.getItem("QuizTime") || "")
     : "";
@@ -661,8 +659,5 @@ export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
     authData: state.user.authData,
   }),
-  mapDispatchToProps: {
-    setAuthData,
-  },
   component: Quiz,
 });

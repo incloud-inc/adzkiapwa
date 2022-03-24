@@ -43,6 +43,8 @@ import Tutorial from "./pages/Tutorial";
 import Quiz from "./pages/quiz/Quiz";
 import Result from "./pages/quiz/Result";
 import GroupDetail from "./pages/Group/GroupDetail";
+import GroupPurchase from "./pages/Group/GroupPurchase";
+import GroupPurchaseComplete from "./pages/Group/GroupPurchaseComplete";
 import HomeOrTutorial from "./components/HomeOrTutorial";
 import { Schedule } from "./models/Schedule";
 import RedirectToLogin from "./components/RedirectToLogin";
@@ -57,9 +59,8 @@ const App: React.FC = () => {
 
 interface StateProps {
   darkMode: boolean;
-  // schedule: Schedule;
   loading: boolean;
-  authToken: string;
+  authData?: any;
   alert: any;
 }
 
@@ -72,18 +73,18 @@ interface IonicAppProps extends StateProps, DispatchProps {}
 
 const IonicApp: React.FC<IonicAppProps> = ({
   darkMode,
-  // schedule,
   loading,
-  authToken,
   alert,
+  authData,
   loadConfData,
   loadUserData,
 }) => {
   useEffect(() => {
     loadUserData();
-    // loadConfData();
-    // eslint-disable-next-line
   }, []);
+  console.log("njobo");
+  console.log(authData);
+
   return (
     <IonApp className={`${darkMode ? "dark-theme" : ""}`} class="md">
       <IonReactRouter>
@@ -109,6 +110,11 @@ const IonicApp: React.FC<IonicAppProps> = ({
             <Route path="/support" component={Support} />
             <Route path="/tutorial" component={Tutorial} />
             <Route path="/group/detail/:id" component={GroupDetail} />
+            <Route path="/group/purchase/:id" component={GroupPurchase} />
+            <Route
+              path="/group/purchasecomplete/:id"
+              component={GroupPurchaseComplete}
+            />
             <Route path="/quiz/start/:quid" component={Quiz} />
             <Route path="/quiz/result/:rid" component={Result} />
             {/* <Route
@@ -135,9 +141,8 @@ export default App;
 const IonicAppConnected = connect<{}, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
     darkMode: state.user.darkMode,
-    // schedule: state.data.schedule,
+    authData: state.data.authData,
     loading: state.user.loading,
-    authToken: state.user.authToken,
     alert: state.user.alert,
   }),
   mapDispatchToProps: {

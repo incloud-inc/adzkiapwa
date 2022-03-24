@@ -25,16 +25,14 @@ import SecureLogin from "../lotties/SecureLogin.json";
 
 interface OwnProps extends RouteComponentProps {}
 
-interface StateProps {
-  authToken: string;
-}
+interface StateProps {}
 interface DispatchProps {
   setAuthData: typeof setAuthData;
 }
 
 interface LoginProps extends OwnProps, StateProps, DispatchProps {}
 
-const Login: React.FC<LoginProps> = ({ setAuthData, history, authToken }) => {
+const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
   const [Email, setEmail] = useState("");
   const [FirstName, setFirstName] = useState("");
   const [LastName, setLastName] = useState("");
@@ -83,7 +81,6 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history, authToken }) => {
     BodyData.append("first_name", FirstName);
     BodyData.append("last_name", LastName);
     BodyData.append("phone", Phone);
-    BodyData.append("token", authToken);
     fetch("https://api3.adzkia.id/auth/register", {
       method: "POST",
       headers: {},
@@ -102,8 +99,6 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history, authToken }) => {
         if (res.token) {
           res.data.token = res.token;
           alert(Email + " berhasil terdaftar");
-          alert(JSON.stringify(res.data));
-
           setAuthData(res.data);
           history.replace("/tabs/portal");
         } else {
@@ -257,9 +252,7 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history, authToken }) => {
 };
 
 export default connect<OwnProps, {}, DispatchProps>({
-  mapStateToProps: (state) => ({
-    authToken: state.user.authToken,
-  }),
+  mapStateToProps: (state) => ({}),
   mapDispatchToProps: {
     setAuthData,
   },

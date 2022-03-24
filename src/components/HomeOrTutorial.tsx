@@ -7,6 +7,8 @@ interface StateProps {
 }
 
 const HomeOrTutorial: React.FC<StateProps> = ({ hasSeenTutorial }) => {
+  let hst = localStorage._cap_hasSeenTutorial || "false";
+  hst = "true" ? true : false;
   return hasSeenTutorial ? (
     <Redirect to="/tabs/portal" />
   ) : (

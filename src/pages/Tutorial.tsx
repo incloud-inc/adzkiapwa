@@ -37,7 +37,6 @@ const Tutorial: React.FC<TutorialProps> = ({
 }) => {
   const [showSkip, setShowSkip] = useState(true);
   let [swiper, setSwiper] = useState<SwiperCore>();
-
   useIonViewWillEnter(() => {
     setMenuEnabled(false);
   });
