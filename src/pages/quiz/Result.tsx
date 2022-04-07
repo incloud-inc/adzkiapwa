@@ -56,6 +56,8 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
   const slideQuizRef = useRef<HTMLIonSlidesElement>(null);
   const [ResultData, setResultData] = useState<any>(undefined);
   const fetchResult = () => {
+    alert("Hasil ujian bisa dilihat di blog.adzkia.id");
+
     const BodyData = new FormData();
     if (authData) {
       BodyData.append("token", authData && authData.token);
@@ -80,7 +82,7 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
         if (res.result && res.result.rid) {
           setResultData(res.result);
         } else {
-          history.replace("/tabs/examresults");
+          history.replace("/tabs/portal");
           setResultData(null);
         }
       })
