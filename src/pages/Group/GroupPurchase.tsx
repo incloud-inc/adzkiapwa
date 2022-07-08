@@ -116,7 +116,7 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData }) => {
                 </IonCol>
                 <IonCol size="12" class="ion-text-center">
                   <img
-                    src="/assets/img/brand/icon adzkia.png"
+                    src="/assets/img/brand/icon adzkia black.jpg"
                     width="48px"
                     style={{
                       position: "absolute",
@@ -124,8 +124,6 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData }) => {
                       left: "0px",
                       top: "96px",
                       margin: "0 auto",
-                      border: "4px solid white",
-                      borderRadius: "50%",
                     }}
                   />
                   <img
