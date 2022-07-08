@@ -1,21 +1,26 @@
 import {
   IonBackButton,
   IonBadge,
+  IonButton,
   IonButtons,
   IonCard,
   IonCardContent,
   IonCol,
   IonContent,
   IonGrid,
+  IonHeader,
   IonIcon,
+  IonModal,
   IonPage,
+  IonRefresher,
+  IonRefresherContent,
   IonRow,
   IonText,
   IonTitle,
   IonToolbar,
   useIonViewDidEnter,
 } from "@ionic/react";
-import { star } from "ionicons/icons";
+import { chevronDownCircleOutline, close, remove, star } from "ionicons/icons";
 import React, { useState } from "react";
 import Lottie from "react-lottie-player";
 import { RouteComponentProps, useParams, withRouter } from "react-router";
@@ -34,9 +39,13 @@ interface PaymentsProps extends OwnProps, StateProps, DispatchProps {}
 
 const Payments: React.FC<PaymentsProps> = ({ history, authData }) => {
   const [Payments, setPayments] = useState<any>(undefined);
+  const [showModal, setShowModal] = useState(false);
+  const [SelectedPayment, setSelectedPayment] = useState<any>(undefined);
+
   //   const param<any> = useParams();
   let param: any = useParams();
-  useIonViewDidEnter(() => {
+  const getPayments = () => {
+    setPayments(undefined);
     const BodyData = new FormData();
     if (authData) {
       BodyData.append("token", authData && authData.token);
@@ -53,8 +62,8 @@ const Payments: React.FC<PaymentsProps> = ({ history, authData }) => {
         return res.json();
       })
       .then((res) => {
-        if (res.result && res.result.gid) {
-          setPayments(res.result);
+        if (res.histories && res.histories.length > 0) {
+          setPayments(res.histories);
         } else {
           setPayments(null);
         }
@@ -62,60 +71,112 @@ const Payments: React.FC<PaymentsProps> = ({ history, authData }) => {
       .catch((err) => {
         alert(err);
       });
+  };
+  useIonViewDidEnter(() => {
+    getPayments();
   });
+  const DetailPayment = (data: any) => {
+    setShowModal(true);
+    setSelectedPayment(data);
+  };
   if (Payments) {
     return (
       <IonPage id="session-detail-page ">
         <IonToolbar>
-          {/* <IonButtons slot="start">
-            <IonBackButton defaultHref="/tabs/portal"></IonBackButton>
-          </IonButtons> */}
           <IonTitle>Histori Pembayaran</IonTitle>
         </IonToolbar>
         <IonContent className="bg-gray">
-          <IonCard className="br-16 ion-p-8 ion-margin no-shadow">
-            <IonGrid>
-              <IonRow class="ion-align-items-center">
-                {" "}
-                <IonCol size="2">
-                  <IonBadge color="primary" className="ion-p-8 br-8">
-                    <IonIcon icon={star} color="light"></IonIcon>
-                  </IonBadge>
-                </IonCol>
-                <IonCol size="6">
-                  <h5 className="ion-no-margin color-navy">
-                    <b>{Payments.group_name || ""}</b>
-                  </h5>
-                </IonCol>
-                <IonCol size="4" className="ion-text-right">
-                  <h5 className="ion-no-margin color-navy">
-                    <b>
-                      {Payments.price !== "0"
-                        ? "Rp " + Payments.price
-                        : "GRATIS"}
-                    </b>
-                  </h5>
-                </IonCol>
-              </IonRow>
-              <IonRow
-                className="ion-padding-top ion-padding-bottom"
-                hidden={!Payments.description}
-              >
-                <IonCol>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: Payments.description || "",
-                    }}
-                  ></div>
-                </IonCol>
-              </IonRow>
-            </IonGrid>
-          </IonCard>
-          <div className="ion-margin">
-            <IonText color="medium">
-              <b>Histori Pembayaran</b>
-            </IonText>
-          </div>
+          {Payments.map((item: any, index: any) => (
+            <IonCard key={index}>
+              <IonCardContent>
+                <IonRow onClick={() => DetailPayment(item)}>
+                  <IonCol> {item.trxdate}</IonCol>
+                  <IonCol> {item.paket.group_name}</IonCol>
+                  <IonCol> {item.paket.price}</IonCol>
+                </IonRow>
+                <IonRefresher slot="fixed" onIonRefresh={getPayments}>
+                  <IonRefresherContent
+                    pullingIcon={chevronDownCircleOutline}
+                    pullingText="Pull to refresh"
+                    refreshingSpinner="circles"
+                  ></IonRefresherContent>
+                </IonRefresher>
+                <IonModal isOpen={showModal}>
+                  <IonHeader>
+                    <IonToolbar>
+                      <IonTitle slot="start">Detail Pembayaran</IonTitle>
+                      <IonButtons slot="end">
+                        <IonButton onClick={() => setShowModal(false)}>
+                          <IonIcon icon={close}></IonIcon>
+                        </IonButton>
+                      </IonButtons>
+                    </IonToolbar>
+                  </IonHeader>
+                  <IonContent className="ion-padding">
+                    <IonGrid>
+                      <IonRow
+                        style={{ borderBottom: "1px solid lightgray" }}
+                        class="ion-margin-bottom ion-padding-bottom"
+                      >
+                        <IonCol size="12">ID Transaksi</IonCol>
+                        <IonCol size="12">
+                          {SelectedPayment
+                            ? SelectedPayment.transaction_id || ""
+                            : ""}
+                        </IonCol>
+                      </IonRow>
+                      <IonRow>
+                        <IonCol size="6">Nama Paket</IonCol>
+                        <IonCol size="6" className="ion-text-right">
+                          {SelectedPayment
+                            ? SelectedPayment.paket.group_name || ""
+                            : ""}
+                        </IonCol>
+                        <IonCol size="6">Harga</IonCol>
+                        <IonCol size="6" className="ion-text-right">
+                          {SelectedPayment ? SelectedPayment.amount || "" : ""}
+                        </IonCol>
+                        <IonCol size="6">Metode Pembayaran</IonCol>
+                        <IonCol size="6" className="ion-text-right">
+                          {SelectedPayment
+                            ? SelectedPayment.payment_gateway ||
+                              "tidak diketahui "
+                            : ""}
+                        </IonCol>
+                        <IonCol size="6">Tanggal Transaksi</IonCol>
+                        <IonCol size="6" className="ion-text-right">
+                          {SelectedPayment ? SelectedPayment.trxdate || "" : ""}
+                        </IonCol>
+                        <IonCol size="6">Tanggal Pembayaran</IonCol>
+                        <IonCol size="6" className="ion-text-right">
+                          {SelectedPayment
+                            ? SelectedPayment.paid_date || "belum dibayar "
+                            : ""}
+                        </IonCol>
+                        <IonCol size="6">Status Pembayaran</IonCol>
+                        <IonCol size="6" className="ion-text-right">
+                          {SelectedPayment
+                            ? SelectedPayment.payment_status ||
+                              "tidak diketahui "
+                            : ""}
+                        </IonCol>
+                      </IonRow>
+                    </IonGrid>
+                    <IonButton
+                      hidden={SelectedPayment && SelectedPayment.paid_date}
+                      expand="block"
+                      onClick={() => {
+                        if (SelectedPayment) setShowModal(false);
+                        history.push("/group/purchase/" + SelectedPayment.gid);
+                      }}
+                    >
+                      Bayar
+                    </IonButton>
+                  </IonContent>
+                </IonModal>
+              </IonCardContent>
+            </IonCard>
+          ))}
         </IonContent>
       </IonPage>
     );
@@ -132,18 +193,7 @@ const Payments: React.FC<PaymentsProps> = ({ history, authData }) => {
           <div className="ion-text-center">
             <Lottie animationData={PaymentsAnimation} play={true}></Lottie>
           </div>
-          {[...Array(10)].map((item, index) => (
-            <IonCard>
-              <IonCardContent>
-                <IonRow>
-                  <IonCol> {(index + 1) * 2} Feb 22</IonCol>
-                  <IonCol> Paket Tryout {index + 1}</IonCol>
-                  <IonCol> Rp {index + 3}0.000</IonCol>
-                </IonRow>
-              </IonCardContent>
-            </IonCard>
-          ))}
-          <div hidden className="ion-text-center ion-padding">
+          <div className="ion-text-center ion-padding">
             <IonText>Data Tidak ditemukan</IonText>
           </div>
         </IonContent>

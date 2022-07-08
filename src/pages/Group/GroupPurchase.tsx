@@ -6,6 +6,7 @@ import {
   IonCard,
   IonCol,
   IonContent,
+  IonFooter,
   IonGrid,
   IonIcon,
   IonPage,
@@ -113,10 +114,30 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData }) => {
                     }}
                   ></div>
                 </IonCol>
+                <IonCol size="12" class="ion-text-center">
+                  <img
+                    src="/assets/img/brand/icon adzkia.png"
+                    width="48px"
+                    style={{
+                      position: "absolute",
+                      right: "0px",
+                      left: "0px",
+                      top: "96px",
+                      margin: "0 auto",
+                      border: "4px solid white",
+                      borderRadius: "50%",
+                    }}
+                  />
+                  <img
+                    src={GroupPurchase.message.actions[0].url || ""}
+                    width="auto"
+                    height="240px"
+                  />
+                </IonCol>
               </IonRow>
               <IonRow
                 class="ion-align-items-center ion-padding"
-                style={{ background: "#E2E2F0", marginTop: "240px" }}
+                style={{ background: "#E2E2F0" }}
               >
                 {" "}
                 <IonCol size="6">
@@ -136,6 +157,8 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData }) => {
               </IonRow>
             </IonGrid>
           </IonCard>
+        </IonContent>
+        <IonFooter class="bg-white">
           <IonButton
             expand="block"
             className="ion-margin"
@@ -145,9 +168,9 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData }) => {
               history.push("/group/purchasecomplete/" + GroupPurchase.pid);
             }}
           >
-            PAY
+            Cek status pembayaran
           </IonButton>
-        </IonContent>
+        </IonFooter>
       </IonPage>
     );
   } else if (GroupPurchase === null) {

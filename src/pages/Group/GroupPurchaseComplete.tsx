@@ -59,10 +59,10 @@ const GroupPurchaseComplete: React.FC<GroupPurchaseCompleteProps> = ({
           return res.json();
         })
         .then((res) => {
-          if (res.status) {
-            setGroupPurchaseComplete(res.message);
+          if (res.message) {
+            setGroupPurchaseComplete(res);
           } else {
-            // setGroupPurchaseComplete(null);
+            setGroupPurchaseComplete(null);
           }
         })
         .catch((err) => {
@@ -103,10 +103,20 @@ const GroupPurchaseComplete: React.FC<GroupPurchaseCompleteProps> = ({
                 <IonCol size="6" className="ion-text-right">
                   <h5 className="ion-no-margin color-navy">
                     <b>
-                      {GroupPurchaseComplete.gross_amount !== "0"
-                        ? "Rp " + GroupPurchaseComplete.gross_amount
+                      {GroupPurchaseComplete.price !== "0"
+                        ? "Rp " + GroupPurchaseComplete.price
                         : "GRATIS"}
                     </b>
+                  </h5>
+                </IonCol>
+                <IonCol size="6">
+                  <h6 className="ion-no-margin color-navy">
+                    <b>Status</b>
+                  </h6>
+                </IonCol>
+                <IonCol size="6" className="ion-text-right">
+                  <h5 className="ion-no-margin color-navy">
+                    <b>{GroupPurchaseComplete.message}</b>
                   </h5>
                 </IonCol>
               </IonRow>
@@ -124,8 +134,23 @@ const GroupPurchaseComplete: React.FC<GroupPurchaseCompleteProps> = ({
               </IonRow>
             </IonGrid>
           </IonCard>
-          <IonButton expand="block" className="ion-margin" size="large">
-            PAY
+          <IonButton
+            expand="block"
+            className="ion-margin"
+            size="large"
+            hidden={GroupPurchaseComplete.status}
+            onClick={() => history.goBack()}
+          >
+            Bayar
+          </IonButton>
+          <IonButton
+            expand="block"
+            className="ion-margin"
+            size="large"
+            onClick={() => history.replace("/")}
+            hidden={!GroupPurchaseComplete.status}
+          >
+            Kembali
           </IonButton>
         </IonContent>
       </IonPage>

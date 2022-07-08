@@ -8,12 +8,8 @@ interface StateProps {
 
 const HomeOrTutorial: React.FC<StateProps> = ({ hasSeenTutorial }) => {
   let hst = localStorage._cap_hasSeenTutorial || "false";
-  hst = "true" ? true : false;
-  return hasSeenTutorial ? (
-    <Redirect to="/tabs/portal" />
-  ) : (
-    <Redirect to="/tutorial" />
-  );
+  hst = hst === "true" ? true : false;
+  return hst ? <Redirect to="/tabs/portal" /> : <Redirect to="/tutorial" />;
 };
 
 export default connect<{}, StateProps, {}>({
