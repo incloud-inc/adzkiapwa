@@ -82,9 +82,6 @@ const IonicApp: React.FC<IonicAppProps> = ({
   useEffect(() => {
     loadUserData();
   }, []);
-  console.log("njobo");
-  console.log(authData);
-
   return (
     <IonApp className={`${darkMode ? "dark-theme" : ""}`} class="md">
       <IonReactRouter>

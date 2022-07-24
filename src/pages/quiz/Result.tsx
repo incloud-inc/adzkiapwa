@@ -24,7 +24,14 @@ import {
   useIonViewDidEnter,
   useIonViewWillEnter,
 } from "@ionic/react";
-import { reload, stopwatchOutline } from "ionicons/icons";
+import {
+  briefcase,
+  camera,
+  cart,
+  radio,
+  reload,
+  stopwatchOutline,
+} from "ionicons/icons";
 import React, { useEffect, useRef, useState } from "react";
 import { RouteComponentProps, useParams } from "react-router";
 import { message, Statistic } from "antd";
@@ -33,7 +40,7 @@ import { connect } from "../../data/connect";
 import { setAuthData } from "../../data/user/user.actions";
 import Lottie from "react-lottie-player";
 import SuccessLottie from "../../lotties/Success.json";
-
+import "./Result.scss";
 interface OwnProps extends RouteComponentProps {}
 
 interface StateProps {
@@ -91,9 +98,9 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
       });
   };
   useIonViewWillEnter(() => {
-    fetchResult();
+    // fetchResult();
   });
-  if (ResultData) {
+  if (!ResultData) {
     return (
       <IonPage>
         <IonHeader>
@@ -104,18 +111,111 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
             <IonTitle className="ion-no-padding">Hasil Ujian</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonContent className="bg-gray ion-padding">
-          <IonGrid>
+        <IonContent className="bg-white">
+          <IonGrid className="bg-gray ion-padding">
             <IonRow>
               <IonCol>
                 <Lottie
                   animationData={SuccessLottie}
                   play={true}
-                  style={{ marginTop: "-100px" }}
+                  style={{ marginTop: "-80px", marginBottom: "-80px" }}
                 ></Lottie>
               </IonCol>
             </IonRow>
+            <IonRow>
+              <IonCol size="6">Rata-rata</IonCol>
+              <IonCol size="6">: 8.250</IonCol>
+              <IonCol size="6">Jumlah Quiz</IonCol>
+              <IonCol size="6">: 10</IonCol>
+              <IonCol size="6">Jumlah Percobaan</IonCol>
+              <IonCol size="6">: 20</IonCol>
+            </IonRow>
           </IonGrid>
+          <div className="bg-gray resultDetailCard">
+            <IonGrid className="bg-white ion-padding">
+              <IonRow>
+                <IonCol size="12">
+                  <IonText color="medium">Ujian yang dicoba</IonText>
+                </IonCol>
+              </IonRow>
+              <IonRow class="ion-align-items-center">
+                <IonCol size="2">
+                  <IonIcon icon={cart} size="large"></IonIcon>
+                </IonCol>
+                <IonCol size="5">
+                  <IonText color="medium">
+                    <b>Nama Ujian</b>
+                  </IonText>
+                  <br />
+                  <IonText color="medium">ID Ujian</IonText>
+                </IonCol>
+                <IonCol size="5" className="ion-text-right">
+                  <IonText color="medium">
+                    <b>NILAI</b>
+                  </IonText>
+                  <br />
+                  <IonText color="medium">Ranking</IonText>
+                </IonCol>
+              </IonRow>
+              <IonRow class="ion-align-items-center">
+                <IonCol size="2">
+                  <IonIcon icon={radio} size="large"></IonIcon>
+                </IonCol>
+                <IonCol size="5">
+                  <IonText color="medium">
+                    <b>Ujian lainnya</b>
+                  </IonText>
+                  <br />
+                  <IonText color="medium">15 Jan</IonText>
+                </IonCol>
+                <IonCol size="5" className="ion-text-right">
+                  <IonText color="medium">
+                    <b>100.000</b>
+                  </IonText>
+                  <br />
+                  <IonText color="medium">Futsal</IonText>
+                </IonCol>
+              </IonRow>
+              <IonRow class="ion-align-items-center">
+                <IonCol size="2">
+                  <IonIcon icon={camera} size="large"></IonIcon>
+                </IonCol>
+                <IonCol size="5">
+                  <IonText color="medium">
+                    <b>Ujian berikutnya</b>
+                  </IonText>
+                  <br />
+                  <IonText color="medium">18 Agu</IonText>
+                </IonCol>
+                <IonCol size="5" className="ion-text-right">
+                  <IonText color="medium">
+                    <b>400.000</b>
+                  </IonText>
+                  <br />
+                  <IonText color="medium">Badminton</IonText>
+                </IonCol>
+              </IonRow>
+              <IonRow class="ion-align-items-center">
+                <IonCol size="2">
+                  <IonIcon icon={briefcase} size="large"></IonIcon>
+                </IonCol>
+                <IonCol size="5">
+                  <IonText color="medium">
+                    <b>Try out</b>
+                  </IonText>
+                  <br />
+                  <IonText color="medium">17 Nov</IonText>
+                </IonCol>
+                <IonCol size="5" className="ion-text-right">
+                  <IonText color="medium">
+                    <b>300.000</b>
+                  </IonText>
+                  <br />
+                  <IonText color="medium">Footbal</IonText>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+          </div>
           <IonLoading isOpen={showLoading} message={"Proses..."} />
         </IonContent>
       </IonPage>
