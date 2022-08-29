@@ -112,7 +112,7 @@ const IonicApp: React.FC<IonicAppProps> = ({
               path="/group/purchasecomplete/:id"
               component={GroupPurchaseComplete}
             />
-            <Route path="/quiz/start/:quid" component={Quiz} />
+            <Route path="/quiz/start/:quid" exact component={Quiz} />
             <Route path="/quiz/result/:rid" component={Result} />
             {/* <Route
             path="/logout"

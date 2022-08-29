@@ -201,7 +201,11 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
   useIonViewDidEnter(() => {
     const BodyData = new FormData();
     BodyData.append("token", (authData && authData.token) || "");
-    BodyData.append("quid", param.quid || "");
+    if (localStorage.getItem("quidSelected")) {
+      BodyData.append("quid", localStorage.getItem("quidSelected") || "");
+    } else {
+      history.goBack();
+    }
     fetch(
       authData
         ? "https://api3.adzkia.id/quiz/validatequiz"
@@ -308,10 +312,7 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
                   cd.setSeconds(cd.getSeconds() + res.quiz.duration * 60);
                 }
                 setQuizDurationCountdown(cd);
-                console.log("getQT");
               } else {
-                console.log("asd");
-
                 setQuizData(null);
                 history.push("/");
                 throw new Error((res && res.message) || "Server Bermasalah");
@@ -319,7 +320,7 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
             });
         } else {
           setQuizData(null);
-          history.push("/");
+          history.goBack();
           throw new Error((res && res.message) || "Server Bermasalah");
         }
       })
@@ -358,6 +359,10 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
       })
       .then((res) => {
         if (res.message && res.message === "Submit answer successfully") {
+          let DataArray = JSON.parse(localStorage.getItem("AnswerData") || "");
+          delete DataArray[QuizData.quiz.quid || 0];
+          localStorage.setItem("AnswerData", JSON.stringify(DataArray));
+
           history.replace("/quiz/result/" + rid);
         }
       })

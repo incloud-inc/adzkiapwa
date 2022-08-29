@@ -71,7 +71,10 @@ const QuizList: React.FC<QuizListProps> = ({ history, gids, authData }) => {
         {QuizList.map((item: any, index: React.Key | undefined) => (
           <IonItem
             key={index}
-            onClick={() => history.push("/quiz/start/" + item.quid || "")}
+            onClick={() => {
+              localStorage.setItem("quidSelected", item.quid);
+              history.push("/quiz/start/" + item.quid || "");
+            }}
           >
             <IonBadge color="primary" className="ion-p-8 br-8" slot="start">
               <IonIcon icon={star} color="light"></IonIcon>

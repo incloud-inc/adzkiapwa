@@ -63,8 +63,6 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
   const slideQuizRef = useRef<HTMLIonSlidesElement>(null);
   const [ResultData, setResultData] = useState<any>(undefined);
   const fetchResult = () => {
-    alert("Hasil ujian bisa dilihat di blog.adzkia.id");
-
     const BodyData = new FormData();
     if (authData) {
       BodyData.append("token", authData && authData.token);
@@ -86,8 +84,8 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
         return res.json();
       })
       .then((res) => {
-        if (res.result && res.result.rid) {
-          setResultData(res.result);
+        if (res.status === "Open") {
+          setResultData(res);
         } else {
           history.replace("/tabs/portal");
           setResultData(null);
@@ -98,9 +96,9 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
       });
   };
   useIonViewWillEnter(() => {
-    // fetchResult();
+    fetchResult();
   });
-  if (!ResultData) {
+  if (ResultData) {
     return (
       <IonPage>
         <IonHeader>
@@ -123,16 +121,89 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
               </IonCol>
             </IonRow>
             <IonRow>
-              <IonCol size="6">Rata-rata</IonCol>
-              <IonCol size="6">: 8.250</IonCol>
-              <IonCol size="6">Jumlah Quiz</IonCol>
-              <IonCol size="6">: 10</IonCol>
-              <IonCol size="6">Jumlah Percobaan</IonCol>
-              <IonCol size="6">: 20</IonCol>
+              <IonCol size="6">Score</IonCol>
+              <IonCol size="6">: {ResultData.score || 0}</IonCol>
+              <IonCol size="6">Right Percentage</IonCol>
+              <IonCol size="6">: {ResultData.right_percentage || 0} %</IonCol>
+              <IonCol size="6">Total Time</IonCol>
+              <IonCol size="6">: {ResultData.total_time || 0}</IonCol>
             </IonRow>
           </IonGrid>
+          <div className="bg-gray ion-padding">
+            <IonText>
+              <h5>Categorywise Analysis</h5>
+            </IonText>
+            <IonSlides options={{ slidesPerView: 1.2 }}>
+              {ResultData.categories.map(
+                (Category: any, CategoryIndex: any) => (
+                  <IonSlide key={CategoryIndex} class="ion-text-left">
+                    <IonCard className="ion-padding">
+                      <IonText>
+                        <h5>{Category.category_name}</h5>
+                      </IonText>
+                      <IonGrid>
+                        <IonRow>
+                          <IonCol size="6">Score</IonCol>
+                          <IonCol size="6">: {Category.score || 0}</IonCol>
+                          <IonCol size="6">Time Spent</IonCol>
+                          <IonCol size="6">
+                            : {Category.time_spent || 0} %
+                          </IonCol>
+                          <IonCol size="6">Correct</IonCol>
+                          <IonCol size="6">: {Category.correct || 0}</IonCol>
+                          <IonCol size="6">Incorrect</IonCol>
+                          <IonCol size="6">: {Category.incorrect || 0}</IonCol>
+                          <IonCol size="6">Not Attempted</IonCol>
+                          <IonCol size="6">
+                            : {Category.not_attempted || 0}
+                          </IonCol>
+                        </IonRow>
+                      </IonGrid>
+                    </IonCard>
+                  </IonSlide>
+                )
+              )}
+            </IonSlides>
+          </div>
+
           <div className="bg-gray resultDetailCard">
             <IonGrid className="bg-white ion-padding">
+              <IonRow>
+                <IonCol size="12">
+                  <IonText color="medium">Top 10</IonText>
+                </IonCol>
+              </IonRow>
+              <IonRow>
+                <IonCol size="1">
+                  <IonText color="medium">#</IonText>
+                </IonCol>
+                <IonCol size="9">
+                  <IonText color="medium">Quiz Name</IonText>
+                </IonCol>
+                <IonCol size="2">
+                  <IonText color="medium">(%)</IonText>
+                </IonCol>
+              </IonRow>
+              {JSON.parse(ResultData.top_10_results).map(
+                (TopItem: any, TopIndex: any) => (
+                  <IonRow hidden={TopIndex == 0}>
+                    <IonCol size="1">
+                      <IonText color="medium">{TopIndex}</IonText>
+                    </IonCol>
+                    <IonCol size="9">
+                      <IonText color="medium">{TopItem[0]}</IonText>
+                    </IonCol>
+                    <IonCol
+                      size="2
+                    "
+                    >
+                      <IonText color="medium">{TopItem[1]}%</IonText>
+                    </IonCol>
+                  </IonRow>
+                )
+              )}
+            </IonGrid>
+            <IonGrid className="bg-white ion-padding" hidden>
               <IonRow>
                 <IonCol size="12">
                   <IonText color="medium">Ujian yang dicoba</IonText>

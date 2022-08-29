@@ -60,8 +60,6 @@ export const setAuthData =
   (authData?: any) => async (dispatch: React.Dispatch<any>) => {
     setAuthDataData(authData);
     const data = await getUserData();
-    console.log("njeroan");
-    console.log(data);
 
     dispatch(setData(data));
     return {
