@@ -51,7 +51,7 @@ const Payments: React.FC<PaymentsProps> = ({ history, authData }) => {
       BodyData.append("token", authData && authData.token);
     }
     BodyData.append("gid", param.id || "");
-    fetch("https://api3.adzkia.id/payment/history", {
+    fetch("https://api.adzkia.id/payment/history", {
       method: "POST",
       body: BodyData,
     })

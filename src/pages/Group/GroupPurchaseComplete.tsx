@@ -48,7 +48,7 @@ const GroupPurchaseComplete: React.FC<GroupPurchaseCompleteProps> = ({
       const BodyData = new FormData();
       BodyData.append("token", authData && authData.token);
       BodyData.append("pid", param.id || "");
-      fetch("https://api3.adzkia.id/payment/checkstatuspayment", {
+      fetch("https://api.adzkia.id/payment/checkstatuspayment", {
         method: "POST",
         body: BodyData,
       })

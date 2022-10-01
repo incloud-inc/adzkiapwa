@@ -48,7 +48,7 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData }) => {
           ? "http://localhost:8100/group/purchase/" + param.id
           : "http://localhost:8100/"
       );
-      fetch("https://api3.adzkia.id/payment/createtransactiongopay", {
+      fetch("https://api.adzkia.id/payment/createtransactiongopay", {
         method: "POST",
         body: BodyData,
       })

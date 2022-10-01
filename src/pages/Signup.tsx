@@ -81,7 +81,7 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
     BodyData.append("first_name", FirstName);
     BodyData.append("last_name", LastName);
     BodyData.append("phone", Phone);
-    fetch("https://api3.adzkia.id/auth/register", {
+    fetch("https://api.adzkia.id/auth/register", {
       method: "POST",
       headers: {},
       body: BodyData,

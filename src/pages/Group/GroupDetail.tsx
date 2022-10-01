@@ -44,8 +44,8 @@ const GroupDetail: React.FC<GroupDetailProps> = ({ history, authData }) => {
       BodyData.append("gid", param.id || "");
       fetch(
         authData
-          ? "https://api3.adzkia.id/group/detail"
-          : "https://api3.adzkia.id/grouppublic/detail",
+          ? "https://api.adzkia.id/group/detail"
+          : "https://api.adzkia.id/grouppublic/detail",
         {
           method: "POST",
           body: BodyData,

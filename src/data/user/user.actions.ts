@@ -11,7 +11,7 @@ export const loadUserData = () => async (dispatch: React.Dispatch<any>) => {
   dispatch(setLoading(true));
   const data = await getUserData();
   dispatch(setData(data));
-  fetch("https://api3.adzkia.id/auth/token")
+  fetch("https://api.adzkia.id/auth/token")
     .then((response) => response.json())
     .then((response) => {
       if (response.token) {

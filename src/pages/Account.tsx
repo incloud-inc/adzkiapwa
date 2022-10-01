@@ -56,7 +56,7 @@ const Account: React.FC<AccountProps> = ({
     } else {
       const BodyData = new FormData();
       BodyData.append("token", authData.token || "");
-      fetch("https://api3.adzkia.id/page/profile", {
+      fetch("https://api.adzkia.id/page/profile", {
         method: "POST",
         body: BodyData,
       })

@@ -52,8 +52,8 @@ const LessonList: React.FC<LessonListProps> = ({ history, gids, authData }) => {
     }
     fetch(
       authData
-        ? "https://api3.adzkia.id/lesson/list"
-        : "https://api3.adzkia.id/lessonpublic/list",
+        ? "https://api.adzkia.id/lesson/list"
+        : "https://api.adzkia.id/lessonpublic/list",
       {
         method: "POST",
         body: BodyData,

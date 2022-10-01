@@ -50,7 +50,7 @@ const ForgotPassword: React.FC<LoginProps> = ({ history }) => {
       const BodyData = new FormData();
       BodyData.append("phone", Phone);
       // BodyData.append("token", authToken);
-      fetch("https://api3.adzkia.id/auth/forgotpassword", {
+      fetch("https://api.adzkia.id/auth/forgotpassword", {
         method: "POST",
         body: BodyData,
       })

@@ -42,7 +42,7 @@ const ExamResults: React.FC<ExamResultsProps> = ({ history, authData }) => {
       BodyData.append("token", authData && authData.token);
     }
     BodyData.append("gid", param.id || "");
-    fetch("https://api3.adzkia.id/quiz/resultlist", {
+    fetch("https://api.adzkia.id/quiz/resultlist", {
       method: "POST",
       body: BodyData,
     })

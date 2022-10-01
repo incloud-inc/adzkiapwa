@@ -46,8 +46,8 @@ const GroupList: React.FC<GroupListProps> = ({ history, authData }) => {
     }
     fetch(
       authData
-        ? "https://api3.adzkia.id/group/list"
-        : "https://api3.adzkia.id/grouppublic/list",
+        ? "https://api.adzkia.id/group/list"
+        : "https://api.adzkia.id/grouppublic/list",
       {
         method: "POST",
         body: BodyData,

@@ -35,7 +35,7 @@ const AUTH_DATA = "authData";
 // };
 
 export const getAuthToken = () => {
-  fetch("https://api3.adzkia.id/auth/token")
+  fetch("https://api.adzkia.id/auth/token")
     .then((response) => response.json())
     .then((data) => {
       return data.token;

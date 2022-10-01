@@ -37,8 +37,8 @@ const QuizList: React.FC<QuizListProps> = ({ history, gids, authData }) => {
     }
     fetch(
       authData
-        ? "https://api3.adzkia.id/quiz/list"
-        : "https://api3.adzkia.id/quizpublic/list",
+        ? "https://api.adzkia.id/quiz/list"
+        : "https://api.adzkia.id/quizpublic/list",
       {
         method: "POST",
         body: BodyData,

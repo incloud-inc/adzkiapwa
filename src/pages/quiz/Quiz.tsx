@@ -208,8 +208,8 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
     }
     fetch(
       authData
-        ? "https://api3.adzkia.id/quiz/validatequiz"
-        : "https://api3.adzkia.id/quizpublic/validatequiz",
+        ? "https://api.adzkia.id/quiz/validatequiz"
+        : "https://api.adzkia.id/quizpublic/validatequiz",
       {
         method: "POST",
         body: BodyData,
@@ -231,8 +231,8 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
           BodyData2.append("rid", res.rid || "");
           fetch(
             authData
-              ? "https://api3.adzkia.id/quiz/attempt"
-              : "https://api3.adzkia.id/quizpublic/attempt",
+              ? "https://api.adzkia.id/quiz/attempt"
+              : "https://api.adzkia.id/quizpublic/attempt",
             {
               method: "POST",
               body: BodyData2,
@@ -342,8 +342,8 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
     BodyData.append("question_total", Answers.length);
     fetch(
       authData
-        ? "https://api3.adzkia.id/quiz/submitquiz"
-        : "https://api3.adzkia.id/quizpublic/submitquiz",
+        ? "https://api.adzkia.id/quiz/submitquiz"
+        : "https://api.adzkia.id/quizpublic/submitquiz",
       {
         method: "POST",
         body: BodyData,
@@ -358,13 +358,15 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
         return res.json();
       })
       .then((res) => {
-        if (res.message && res.message === "Submit answer successfully") {
-          let DataArray = JSON.parse(localStorage.getItem("AnswerData") || "");
-          delete DataArray[QuizData.quiz.quid || 0];
-          localStorage.setItem("AnswerData", JSON.stringify(DataArray));
+        console.log(res);
 
-          history.replace("/quiz/result/" + rid);
-        }
+        // if (res.message && res.message === "Submit answer successfully") {
+        //   let DataArray = JSON.parse(localStorage.getItem("AnswerData") || "");
+        //   delete DataArray[QuizData.quiz.quid || 0];
+        //   localStorage.setItem("AnswerData", JSON.stringify(DataArray));
+
+        //   history.replace("/quiz/result/" + rid);
+        // }
       })
       .catch((err) => {
         history.push("/");

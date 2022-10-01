@@ -70,8 +70,8 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
     BodyData.append("rid", param.rid || "");
     fetch(
       authData
-        ? "https://api3.adzkia.id/quiz/resultdetail"
-        : "https://api3.adzkia.id/quizpublic/resultdetail",
+        ? "https://api.adzkia.id/quiz/resultdetail"
+        : "https://api.adzkia.id/quizpublic/resultdetail",
       {
         method: "POST",
         body: BodyData,
