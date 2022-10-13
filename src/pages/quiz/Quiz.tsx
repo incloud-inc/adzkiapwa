@@ -33,6 +33,7 @@ import GeneralSkeleton from "../../components/Shared/GeneralSkeleton";
 import { connect } from "../../data/connect";
 // import "./Account.scss";
 import { setAuthData } from "../../data/user/user.actions";
+import { BaseUrl } from "../../AppConfig";
 const { Countdown } = Statistic;
 const Camera = Plugins.Camera;
 // const CRT = CameraResultType.Uri;
@@ -208,8 +209,8 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
     }
     fetch(
       authData
-        ? "https://api.adzkia.id/quiz/validatequiz"
-        : "https://api.adzkia.id/quizpublic/validatequiz",
+        ? BaseUrl+"quiz/validatequiz"
+        : BaseUrl+"quizpublic/validatequiz",
       {
         method: "POST",
         body: BodyData,
@@ -231,8 +232,8 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
           BodyData2.append("rid", res.rid || "");
           fetch(
             authData
-              ? "https://api.adzkia.id/quiz/attempt"
-              : "https://api.adzkia.id/quizpublic/attempt",
+              ? BaseUrl+"quiz/attempt"
+              : BaseUrl+"quizpublic/attempt",
             {
               method: "POST",
               body: BodyData2,
@@ -333,7 +334,7 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
     setShowLoading(true);
     const BodyData = new FormData();
     BodyData.append("token", (authData && authData.token) || "");
-    BodyData.append("rid", QuizData.quiz.quid || "");
+    BodyData.append("rid", QuizData.quiz.rid || "");
     BodyData.append(
       "individual_time",
       "[1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5]"
@@ -342,8 +343,8 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
     BodyData.append("question_total", Answers.length);
     fetch(
       authData
-        ? "https://api.adzkia.id/quiz/submitquiz"
-        : "https://api.adzkia.id/quizpublic/submitquiz",
+        ? BaseUrl+"quiz/submitquiz"
+        : BaseUrl+"quizpublic/submitquiz",
       {
         method: "POST",
         body: BodyData,

@@ -2,6 +2,7 @@ import { Plugins } from "@capacitor/core";
 import { Schedule, Session } from "../models/Schedule";
 import { Speaker } from "../models/Speaker";
 import { Location } from "../models/Location";
+import { BaseUrl } from "../AppConfig";
 
 const { Storage } = Plugins;
 
@@ -35,7 +36,7 @@ const AUTH_DATA = "authData";
 // };
 
 export const getAuthToken = () => {
-  fetch("https://api.adzkia.id/auth/token")
+  fetch(BaseUrl+"auth/token")
     .then((response) => response.json())
     .then((data) => {
       return data.token;

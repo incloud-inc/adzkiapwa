@@ -24,6 +24,7 @@ import { chevronDownCircleOutline, close, remove, star } from "ionicons/icons";
 import React, { useState } from "react";
 import Lottie from "react-lottie-player";
 import { RouteComponentProps, useParams, withRouter } from "react-router";
+import { BaseUrl } from "../AppConfig";
 import GeneralSkeleton from "../components/Shared/GeneralSkeleton";
 import { connect } from "../data/connect";
 import PaymentsAnimation from "../lotties/payments.json";
@@ -51,7 +52,7 @@ const Payments: React.FC<PaymentsProps> = ({ history, authData }) => {
       BodyData.append("token", authData && authData.token);
     }
     BodyData.append("gid", param.id || "");
-    fetch("https://api.adzkia.id/payment/history", {
+    fetch(BaseUrl+"payment/history", {
       method: "POST",
       body: BodyData,
     })

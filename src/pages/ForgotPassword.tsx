@@ -26,6 +26,7 @@ import SecureLogin from "../lotties/SecureLogin.json";
 import ForgotPasswordL from "../lotties/ForgotPassword.json";
 import WAL from "../lotties/WA.json";
 import { userReducer } from "../data/user/user.reducer";
+import { BaseUrl } from "../AppConfig";
 
 interface OwnProps extends RouteComponentProps {}
 
@@ -50,7 +51,7 @@ const ForgotPassword: React.FC<LoginProps> = ({ history }) => {
       const BodyData = new FormData();
       BodyData.append("phone", Phone);
       // BodyData.append("token", authToken);
-      fetch("https://api.adzkia.id/auth/forgotpassword", {
+      fetch(BaseUrl+"auth/forgotpassword", {
         method: "POST",
         body: BodyData,
       })

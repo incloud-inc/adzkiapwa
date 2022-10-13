@@ -9,6 +9,7 @@ import {
 import { star } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
+import { BaseUrl } from "../../AppConfig";
 import { connect } from "../../data/connect";
 import GeneralSkeleton from "../Shared/GeneralSkeleton";
 interface OwnProps {
@@ -37,8 +38,8 @@ const QuizList: React.FC<QuizListProps> = ({ history, gids, authData }) => {
     }
     fetch(
       authData
-        ? "https://api.adzkia.id/quiz/list"
-        : "https://api.adzkia.id/quizpublic/list",
+        ? BaseUrl + "quiz/list"
+        : BaseUrl +"quizpublic/list",
       {
         method: "POST",
         body: BodyData,

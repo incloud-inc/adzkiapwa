@@ -24,6 +24,7 @@ import { connect } from "../data/connect";
 import { RouteComponentProps } from "react-router";
 import { checkmark, logOut, save } from "ionicons/icons";
 import { CameraResultType, Plugins } from "@capacitor/core";
+import { BaseUrl } from "../AppConfig";
 const Camera = Plugins.Camera;
 // const CRT = CameraResultType.Uri;
 interface OwnProps extends RouteComponentProps {}
@@ -56,7 +57,7 @@ const Account: React.FC<AccountProps> = ({
     } else {
       const BodyData = new FormData();
       BodyData.append("token", authData.token || "");
-      fetch("https://api.adzkia.id/page/profile", {
+      fetch(BaseUrl+"page/profile", {
         method: "POST",
         body: BodyData,
       })

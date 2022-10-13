@@ -19,6 +19,7 @@ import {
 import { star } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps, useParams, withRouter } from "react-router";
+import { BaseUrl } from "../../AppConfig";
 import LessonList from "../../components/Group/LessonList";
 import QuizList from "../../components/Group/QuizList";
 import GeneralSkeleton from "../../components/Shared/GeneralSkeleton";
@@ -48,7 +49,7 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData }) => {
           ? "http://localhost:8100/group/purchase/" + param.id
           : "http://localhost:8100/"
       );
-      fetch("https://api.adzkia.id/payment/createtransactiongopay", {
+      fetch(BaseUrl+"payment/createtransactiongopay", {
         method: "POST",
         body: BodyData,
       })

@@ -6,12 +6,13 @@ import {
 } from "../dataApi";
 import { ActionType } from "../../util/types";
 import { UserState } from "./user.state";
+import { BaseUrl } from "../../AppConfig";
 
 export const loadUserData = () => async (dispatch: React.Dispatch<any>) => {
   dispatch(setLoading(true));
   const data = await getUserData();
   dispatch(setData(data));
-  fetch("https://api.adzkia.id/auth/token")
+  fetch(BaseUrl +"auth/token")
     .then((response) => response.json())
     .then((response) => {
       if (response.token) {

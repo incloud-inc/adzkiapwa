@@ -34,6 +34,7 @@ import {
 } from "ionicons/icons";
 import React, { useEffect, useRef, useState } from "react";
 import { RouteComponentProps, useParams } from "react-router";
+import {checkmarkCircleSharp, closeCircleSharp } from "ionicons/icons"
 import { message, Statistic } from "antd";
 import GeneralSkeleton from "../../components/Shared/GeneralSkeleton";
 import { connect } from "../../data/connect";
@@ -41,6 +42,7 @@ import { setAuthData } from "../../data/user/user.actions";
 import Lottie from "react-lottie-player";
 import SuccessLottie from "../../lotties/Success.json";
 import "./Result.scss";
+import { BaseUrl } from "../../AppConfig";
 interface OwnProps extends RouteComponentProps {}
 
 interface StateProps {
@@ -62,6 +64,22 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
   const [showLoading, setShowLoading] = useState(false);
   const slideQuizRef = useRef<HTMLIonSlidesElement>(null);
   const [ResultData, setResultData] = useState<any>(undefined);
+//   const discussion = [
+//   {
+//     kategori: 'Penalaran Umum',
+//     benar: '19',
+//     salah: '1',
+//     skor: '19'
+//   },
+
+//   {
+//     name: 'Pe',
+//     email: 'something@gmail.com'
+//   }
+// ];
+// const listItems = numbers.map((number) =>
+//   <li>{number}</li>
+// );
   const fetchResult = () => {
     const BodyData = new FormData();
     if (authData) {
@@ -70,8 +88,8 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
     BodyData.append("rid", param.rid || "");
     fetch(
       authData
-        ? "https://api.adzkia.id/quiz/resultdetail"
-        : "https://api.adzkia.id/quizpublic/resultdetail",
+        ? BaseUrl+"quiz/resultdetail"
+        : BaseUrl+"quizpublic/resultdetail",
       {
         method: "POST",
         body: BodyData,
@@ -85,19 +103,26 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
       })
       .then((res) => {
         if (res.status === "Open") {
-          setResultData(res);
-        } else {
           history.replace("/tabs/portal");
           setResultData(null);
+        } else {
+          setResultData(res);
         }
       })
       .catch((err) => {
         alert(err);
       });
   };
-  useIonViewWillEnter(() => {
-    fetchResult();
-  });
+  // useIonViewWillEnter(() => {
+  //   // fetchResult();
+  //   console.log(param.rid)
+  // });
+  useEffect(()=>{
+    if (authData && authData.token) {
+      fetchResult();
+    }
+  },[authData])
+  
   if (ResultData) {
     return (
       <IonPage>
@@ -165,7 +190,101 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
               )}
             </IonSlides>
           </div>
+          {/* <div className="bg-gray ion-padding">
+          <IonGrid className="bg-white ion-padding ion-br-8 text-center">
+              <IonRow className="lala">
+                <IonCol size="3">
+                  <IonText color="medium">Kategori</IonText>
+                </IonCol>
+                <IonCol size="3">
+                  <IonText color="medium">Benar</IonText>
+                </IonCol>
+                <IonCol size="3">
+                  <IonText color="medium">Salah</IonText>
+                </IonCol>
+                <IonCol size="3">
+                  <IonText color="medium">Score</IonText>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+          </div> */}
+          <div className="bg-gray ion-padding">
+            <IonText>
+              <h5>discussion</h5>
+            </IonText>
+            <IonSlides options={{ slidesPerView: 1.2 }}>
+              {ResultData.questions.map(
+                
+                (Category: any, CategoryIndex: any) => {
+                  return Category.status_answer === "Incorrect" ? (
+                  <IonSlide key={CategoryIndex} class="ion-text-left">
+                    <IonCard className="ion-padding">
+                      <IonText>
+                      <p className="textkui mb-16">Soal Nomer {CategoryIndex + 1} dari {ResultData.questions.length}</p>
+                        
+                      </IonText>
+                      <IonText>
+                        <p className="textkui mb-16" dangerouslySetInnerHTML={{__html: Category.question}}/>
+                      </IonText>
+                      
+                      <div className="FalseAnswer">
+                        <div className="d-flex align-center mb-16">
+                          <IonText>
+                            <p className="textkui">Jawaban Anda</p>
+                          </IonText>
+                          <IonIcon className="ml-8 closemark" icon={closeCircleSharp} />
+                        </div>
 
+                        <IonText dangerouslySetInnerHTML={{__html: Category.your_answer}}/>
+                      </div>
+                      <div className="TrueAnswer">
+                      <div className="d-flex align-center mb-16">
+                          <IonText>
+                            <p className="textkui">Jawaban Benar</p>
+                          </IonText>
+                          <IonIcon className="ml-8 checkmark" icon={checkmarkCircleSharp} />
+                        </div>
+                        <IonText dangerouslySetInnerHTML={{__html: Category.correct_answer}}/>
+                      </div>
+                      <div className="discussionTask">
+                        <IonText>
+                          <p className="textkui mb-16">Pembahasan</p>
+                        </IonText>
+                        <IonText dangerouslySetInnerHTML={{__html: Category.discussion}}/>
+                      </div>
+                    </IonCard>
+                  </IonSlide>
+                  ) : (
+                    <IonSlide key={CategoryIndex} class="ion-text-left">
+                    <IonCard className="ion-padding">
+                      <IonText>
+                        <p className="textkui mb-16">Soal Nomer {CategoryIndex + 1} dari {ResultData.questions.length}</p>
+                      </IonText>
+                      <IonText>
+                        <p className="textkui mb-16" dangerouslySetInnerHTML={{__html: Category.question}}/>
+                      </IonText>
+                      <div className="TrueAnswer">
+                      <div className="d-flex align-center mb-16">
+                          <IonText>
+                            <p className="textkui">Jawaban Benar</p>
+                          </IonText>
+                          <IonIcon className="ml-8 checkmark" icon={checkmarkCircleSharp} />
+                        </div>
+                        <IonText dangerouslySetInnerHTML={{__html: Category.correct_answer}}/>
+                      </div>
+                      <div className="discussionTask">
+                        <IonText>
+                          <p className="textkui mb-16">Pembahasan</p>
+                        </IonText>
+                        <IonText dangerouslySetInnerHTML={{__html: Category.discussion}}/>
+                      </div>
+                    </IonCard>
+                  </IonSlide>
+                  )
+              }
+              )}
+            </IonSlides>
+          </div>
           <div className="bg-gray resultDetailCard">
             <IonGrid className="bg-white ion-padding">
               <IonRow>

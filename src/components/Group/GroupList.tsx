@@ -13,6 +13,7 @@ import { star } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
 import GeneralSkeleton from "../Shared/GeneralSkeleton";
+import { BaseUrl } from "../../AppConfig";
 interface OwnProps {
   authData: any;
 }
@@ -46,8 +47,8 @@ const GroupList: React.FC<GroupListProps> = ({ history, authData }) => {
     }
     fetch(
       authData
-        ? "https://api.adzkia.id/group/list"
-        : "https://api.adzkia.id/grouppublic/list",
+        ? BaseUrl + "group/list"
+        : BaseUrl + "grouppublic/list",
       {
         method: "POST",
         body: BodyData,
@@ -134,6 +135,7 @@ const GroupList: React.FC<GroupListProps> = ({ history, authData }) => {
                 </IonCol>
                 <IonCol size="6">
                   <h5 className="ion-no-margin color-navy">
+                    
                     <b>{item.group_name || ""}</b>
                   </h5>
                 </IonCol>

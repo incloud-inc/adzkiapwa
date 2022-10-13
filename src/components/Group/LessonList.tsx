@@ -23,6 +23,7 @@ import React, { useEffect, useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
 import { connect } from "../../data/connect";
 import GeneralSkeleton from "../Shared/GeneralSkeleton";
+import { BaseUrl } from "../../AppConfig";
 interface OwnProps {
   gids: string;
 }
@@ -52,8 +53,8 @@ const LessonList: React.FC<LessonListProps> = ({ history, gids, authData }) => {
     }
     fetch(
       authData
-        ? "https://api.adzkia.id/lesson/list"
-        : "https://api.adzkia.id/lessonpublic/list",
+        ? BaseUrl+"lesson/list"
+        : BaseUrl+"lessonpublic/list",
       {
         method: "POST",
         body: BodyData,

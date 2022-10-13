@@ -16,9 +16,10 @@ import {
   useIonViewDidEnter,
 } from "@ionic/react";
 import { star } from "ionicons/icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Lottie from "react-lottie-player";
 import { RouteComponentProps, useParams, withRouter } from "react-router";
+import { BaseUrl } from "../AppConfig";
 import GeneralSkeleton from "../components/Shared/GeneralSkeleton";
 import { connect } from "../data/connect";
 import Student from "../lotties/Student.json";
@@ -36,13 +37,13 @@ const ExamResults: React.FC<ExamResultsProps> = ({ history, authData }) => {
   const [ExamResults, setExamResults] = useState<any>(undefined);
   //   const param<any> = useParams();
   let param: any = useParams();
-  useIonViewDidEnter(() => {
+  useEffect(() => {    
     const BodyData = new FormData();
     if (authData) {
       BodyData.append("token", authData && authData.token);
     }
     BodyData.append("gid", param.id || "");
-    fetch("https://api.adzkia.id/quiz/resultlist", {
+    fetch(BaseUrl+"quiz/resultlist", {
       method: "POST",
       body: BodyData,
     })
@@ -62,7 +63,7 @@ const ExamResults: React.FC<ExamResultsProps> = ({ history, authData }) => {
       .catch((err) => {
         alert(err);
       });
-  });
+    }, [authData]);
   if (ExamResults) {
     return (
       <IonPage id="session-detail-page ">
@@ -74,7 +75,10 @@ const ExamResults: React.FC<ExamResultsProps> = ({ history, authData }) => {
         </IonToolbar>
         <IonContent className="bg-gray">
           {ExamResults.map((item: any, index: any) => (
-            <IonCard>
+            <IonCard             
+            onClick={() => {
+              history.push("/quiz/result/" + item.rid);
+            }}>
               <IonCardContent>
                 <IonRow>
                   <IonCol> Paket Tryout {index + 1}</IonCol>

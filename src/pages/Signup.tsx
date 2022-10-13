@@ -22,6 +22,7 @@ import { connect } from "../data/connect";
 import { RouteComponentProps } from "react-router";
 import Lottie from "react-lottie-player";
 import SecureLogin from "../lotties/SecureLogin.json";
+import { BaseUrl } from "../AppConfig";
 
 interface OwnProps extends RouteComponentProps {}
 
@@ -81,7 +82,7 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
     BodyData.append("first_name", FirstName);
     BodyData.append("last_name", LastName);
     BodyData.append("phone", Phone);
-    fetch("https://api.adzkia.id/auth/register", {
+    fetch(BaseUrl+"auth/register", {
       method: "POST",
       headers: {},
       body: BodyData,

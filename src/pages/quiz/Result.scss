@@ -6,3 +6,55 @@
     }
   }
 }
+.ion-br-8{
+  border-radius: 8px;
+}
+.text-center{
+  text-align: center;
+}
+.lala{
+  display: flex;
+  justify-content: space-evenly;
+}
+.TrueAnswer{
+  border-radius: 6px;
+  border: 1px solid green;
+  padding: 16px;
+  margin-bottom: 8px;
+}
+.checkmark{
+  color: green;
+}
+.closemark{
+  color: red;
+}
+.FalseAnswer{
+  border-radius: 6px;
+  border: 1px solid red;
+  padding: 16px;
+  margin-bottom: 8px;
+}
+.discussionTask{
+  border-radius: 6px;
+  border: 1px solid blue;
+  padding: 16px;
+  margin-bottom: 8px;
+}
+.textkui{
+  line-height: 20px;
+  font-weight: 400;
+  font-size: 14px;
+  margin: 0px;
+}
+.mb-16{
+  margin-bottom: 16px;
+}
+.ml-8{
+  margin-left: 8px;
+}
+.d-flex{
+  display: flex;
+}
+.align-center{
+  align-items: center;
+}

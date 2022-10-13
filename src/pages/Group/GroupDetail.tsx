@@ -17,6 +17,7 @@ import {
 import { star } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps, useParams, withRouter } from "react-router";
+import { BaseUrl } from "../../AppConfig";
 import LessonList from "../../components/Group/LessonList";
 import QuizList from "../../components/Group/QuizList";
 import GeneralSkeleton from "../../components/Shared/GeneralSkeleton";
@@ -44,8 +45,8 @@ const GroupDetail: React.FC<GroupDetailProps> = ({ history, authData }) => {
       BodyData.append("gid", param.id || "");
       fetch(
         authData
-          ? "https://api.adzkia.id/group/detail"
-          : "https://api.adzkia.id/grouppublic/detail",
+          ? BaseUrl+"group/detail"
+          : BaseUrl+"grouppublic/detail",
         {
           method: "POST",
           body: BodyData,

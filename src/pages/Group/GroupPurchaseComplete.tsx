@@ -18,6 +18,7 @@ import {
 import { star } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps, useParams, withRouter } from "react-router";
+import { BaseUrl } from "../../AppConfig";
 import LessonList from "../../components/Group/LessonList";
 import QuizList from "../../components/Group/QuizList";
 import GeneralSkeleton from "../../components/Shared/GeneralSkeleton";
@@ -48,7 +49,7 @@ const GroupPurchaseComplete: React.FC<GroupPurchaseCompleteProps> = ({
       const BodyData = new FormData();
       BodyData.append("token", authData && authData.token);
       BodyData.append("pid", param.id || "");
-      fetch("https://api.adzkia.id/payment/checkstatuspayment", {
+      fetch(BaseUrl+"payment/checkstatuspayment", {
         method: "POST",
         body: BodyData,
       })
