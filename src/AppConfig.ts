@@ -1,1 +1,1 @@
-export const BaseUrl = `http://localhost/projectKantor/apiadzkia/`;
+export const BaseUrl = `https://api.adzkia.id/`;
