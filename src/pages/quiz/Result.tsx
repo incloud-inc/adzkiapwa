@@ -1,48 +1,30 @@
-import { CameraResultType, Plugins } from "@capacitor/core";
 import {
-  IonBackButton,
-  IonBadge,
-  IonButton,
-  IonButtons,
-  IonCard,
-  IonCardContent,
-  IonCol,
-  IonContent,
-  IonFooter,
-  IonGrid,
+  IonBackButton, IonButtons,
+  IonCard, IonCol,
+  IonContent, IonGrid,
   IonHeader,
   IonIcon,
   IonLoading,
-  IonPage,
-  IonProgressBar,
-  IonRow,
+  IonPage, IonRow,
   IonSlide,
   IonSlides,
   IonText,
   IonTitle,
-  IonToolbar,
-  useIonViewDidEnter,
-  useIonViewWillEnter,
+  IonToolbar
 } from "@ionic/react";
 import {
   briefcase,
   camera,
-  cart,
-  radio,
-  reload,
-  stopwatchOutline,
+  cart, checkmarkCircleSharp, closeCircleSharp, radio
 } from "ionicons/icons";
 import React, { useEffect, useRef, useState } from "react";
+import Lottie from "react-lottie-player";
 import { RouteComponentProps, useParams } from "react-router";
-import {checkmarkCircleSharp, closeCircleSharp } from "ionicons/icons"
-import { message, Statistic } from "antd";
+import { BaseUrl } from "../../AppConfig";
 import GeneralSkeleton from "../../components/Shared/GeneralSkeleton";
 import { connect } from "../../data/connect";
-import { setAuthData } from "../../data/user/user.actions";
-import Lottie from "react-lottie-player";
 import SuccessLottie from "../../lotties/Success.json";
 import "./Result.scss";
-import { BaseUrl } from "../../AppConfig";
 interface OwnProps extends RouteComponentProps {}
 
 interface StateProps {
@@ -210,7 +192,7 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
           </div> */}
           <div className="bg-gray ion-padding">
             <IonText>
-              <h5>discussion</h5>
+              <h5>Discussion</h5>
             </IonText>
             <IonSlides options={{ slidesPerView: 1.2 }}>
               {ResultData.questions.map(
@@ -431,7 +413,7 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
 
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
-    authData: state.user.authData,
+    authData: state.base.authData,
   }),
   component: Result,
 });

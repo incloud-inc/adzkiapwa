@@ -5,7 +5,7 @@ import { IonContent, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonMenu
 import { calendarOutline, hammer, moonOutline, help, informationCircleOutline, logIn, logOut, mapOutline, peopleOutline, person, personAdd } from 'ionicons/icons';
 
 import { connect } from '../data/connect';
-import { setDarkMode } from '../data/user/user.actions';
+import { setDarkMode } from '../data/base/base.actions';
 
 import './Menu.css'
 
@@ -94,8 +94,8 @@ const Menu: React.FC<MenuProps> = ({ darkMode, history, isAuthenticated, setDark
 
 export default connect<{}, StateProps, {}>({
   mapStateToProps: (state) => ({
-    darkMode: state.user.darkMode,
-    isAuthenticated: state.user.isLoggedin,
+    darkMode: state.base.darkMode,
+    isAuthenticated: state.base.isLoggedin,
     menuEnabled: state.data.menuEnabled
   }),
   mapDispatchToProps: ({

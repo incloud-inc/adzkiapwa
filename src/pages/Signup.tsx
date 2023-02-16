@@ -1,45 +1,38 @@
-import React, { useState } from "react";
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonPage,
-  IonButtons,
-  IonMenuButton,
-  IonRow,
-  IonCol,
-  IonButton,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonText,
+  IonButton, IonCol, IonContent, IonInput, IonItem,
+  IonLabel, IonList, IonPage, IonRow, IonText
 } from "@ionic/react";
-import "./Login.scss";
-import { setAuthData } from "../data/user/user.actions";
-import { connect } from "../data/connect";
-import { RouteComponentProps } from "react-router";
+import React, { useEffect, useState } from "react";
 import Lottie from "react-lottie-player";
+import { RouteComponentProps } from "react-router";
+import { setSignUp } from "../data/base/base.actions";
+import { BaseState } from "../data/base/base.state";
+import { connect } from "../data/connect";
 import SecureLogin from "../lotties/SecureLogin.json";
-import { BaseUrl } from "../AppConfig";
+import "./Login.scss";
 
 interface OwnProps extends RouteComponentProps {}
 
-interface StateProps {}
+interface StateProps {
+  base:BaseState
+}
 interface DispatchProps {
-  setAuthData: typeof setAuthData;
+  setSignUp: typeof setSignUp;
 }
 
 interface LoginProps extends OwnProps, StateProps, DispatchProps {}
 
-const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
+const Login: React.FC<LoginProps> = ({ setSignUp,base, history }) => {
   const [Email, setEmail] = useState("");
   const [FirstName, setFirstName] = useState("");
   const [LastName, setLastName] = useState("");
   const [Password, setPassword] = useState("");
   const [Phone, setPhone] = useState("");
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  // const [Email, setEmail] = useState("tes@gmail.com");
+  // const [FirstName, setFirstName] = useState("1");
+  // const [LastName, setLastName] = useState("1");
+  // const [Password, setPassword] = useState("1");
+  // const [Phone, setPhone] = useState("1");
   const [EmailError, setEmailError] = useState(false);
   const [FirstNameError, setFirstNameError] = useState(false);
   const [LastNameError, setLastNameError] = useState(false);
@@ -50,65 +43,58 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
     if (Email === "") {
       status = false;
       setEmailError(true);
+      setTimeout(() => {
+        setEmailError(false);
+      }, 2000);
     }
     if (Password === "") {
       status = false;
       setPasswordError(true);
+      setTimeout(() => {
+        setPasswordError(false);
+      }, 2000);
     }
     if (FirstName === "") {
       status = false;
       setFirstNameError(true);
+      setTimeout(() => {
+        setFirstNameError(false);
+      }, 2000);
     }
     if (LastName === "") {
       status = false;
       setLastNameError(true);
+      setTimeout(() => {
+        setLastNameError(false);
+      }, 2000);
     }
 
     if (Phone === "") {
       status = false;
       setPhoneError(true);
+      setTimeout(() => {
+        setPhoneError(false);
+      }, 2000);
     }
     return status;
   };
+  useEffect(()=>{
+    if(base.authData){
+      history.push('/tabs/portal')
+    }
+  },[base])
   const register = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!RegisterCheck()) {
       return false;
     }
-    setFormSubmitted(true);
-    const BodyData = new FormData();
-    BodyData.append("email", Email);
-    BodyData.append("password", Password);
-    BodyData.append("first_name", FirstName);
-    BodyData.append("last_name", LastName);
-    BodyData.append("phone", Phone);
-    fetch(BaseUrl+"auth/register", {
-      method: "POST",
-      headers: {},
-      body: BodyData,
-    })
-      .then((res) => {
-        setFormSubmitted(false);
-        // if (!res.ok) {
-        //   console.log(res.json());
-
-        //   throw new Error("Server Bermasalah");
-        // }
-        return res.json();
-      })
-      .then((res) => {
-        if (res.token) {
-          res.data.token = res.token;
-          alert(Email + " berhasil terdaftar");
-          setAuthData(res.data);
-          history.replace("/tabs/portal");
-        } else {
-          alert(res.message || "gagal terdaftar");
-        }
-      })
-      .catch((err) => {
-        alert(err);
-      });
+    setSignUp({
+      email:Email,
+      password:Password,
+      first_name:FirstName,
+      last_name:LastName,
+      phone:Phone
+    });
   };
 
   return (
@@ -137,7 +123,7 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
               ></IonInput>
             </IonItem>
 
-            {formSubmitted && EmailError && (
+            {EmailError && (
               <IonText color="danger">
                 <p className="ion-padding-start">Email is required</p>
               </IonText>
@@ -155,7 +141,7 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
                 }}
               ></IonInput>
             </IonItem>
-            {formSubmitted && PasswordError && (
+            {PasswordError && (
               <IonText color="danger">
                 <p className="ion-padding-start">Password is required</p>
               </IonText>
@@ -174,7 +160,7 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
               ></IonInput>
             </IonItem>
 
-            {formSubmitted && FirstNameError && (
+            {FirstNameError && (
               <IonText color="danger">
                 <p className="ion-padding-start">First Name is required</p>
               </IonText>
@@ -192,7 +178,7 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
                 }}
               ></IonInput>
             </IonItem>
-            {formSubmitted && LastNameError && (
+            {LastNameError && (
               <IonText color="danger">
                 <p className="ion-padding-start">Last Name is required</p>
               </IonText>
@@ -210,7 +196,7 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
               ></IonInput>
             </IonItem>
 
-            {formSubmitted && PhoneError && (
+            {PhoneError && (
               <IonText color="danger">
                 <p className="ion-padding-start">Phone is required</p>
               </IonText>
@@ -219,8 +205,8 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
 
           <IonRow>
             <IonCol>
-              <IonButton type="submit" expand="block" disabled={formSubmitted}>
-                {formSubmitted ? "Menunggu..." : "Daftar"}
+              <IonButton type="submit" expand="block" disabled={base.loading.isOpen}>
+                {base.loading.isOpen ? "Menunggu..." : "Daftar"}
               </IonButton>
             </IonCol>
           </IonRow>
@@ -230,7 +216,7 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
                 routerLink="/"
                 color="light"
                 expand="block"
-                disabled={formSubmitted}
+                disabled={base.loading.isOpen}
               >
                 Kembali Ke Beranda
               </IonButton>
@@ -240,7 +226,7 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
                 routerLink="/login"
                 color="light"
                 expand="block"
-                disabled={formSubmitted}
+                disabled={base.loading.isOpen}
               >
                 Login
               </IonButton>
@@ -252,10 +238,12 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
   );
 };
 
-export default connect<OwnProps, {}, DispatchProps>({
-  mapStateToProps: (state) => ({}),
+export default connect<OwnProps, StateProps, DispatchProps>({
+  mapStateToProps: (state) => ({
+    base:state.base
+  }),
   mapDispatchToProps: {
-    setAuthData,
+    setSignUp,
   },
   component: Login,
 });

@@ -1,6 +1,7 @@
 import { combineReducers } from "./combineReducers";
 import { sessionsReducer } from "./sessions/sessions.reducer";
-import { userReducer } from "./user/user.reducer";
+import { baseReducer } from "./base/base.reducer";
+import { quizReducer } from "./quiz/quiz.reducer";
 
 export const initialState: AppState = {
   data: {
@@ -15,11 +16,12 @@ export const initialState: AppState = {
     loading: false,
     menuEnabled: true,
   },
-  user: {
+  base: {
     hasSeenTutorial: false,
     darkMode: false,
-    isLoggedin: false,
-    loading: true,
+    isLoggedin: true,
+    loading: false,
+    authData:undefined,
     alert: {
       isOpen: false,
       header: "",
@@ -27,11 +29,16 @@ export const initialState: AppState = {
       message: "",
     },
   },
+  quiz: {
+    payments:undefined,
+    QuizResultList:undefined
+  },
 };
 
 export const reducers = combineReducers({
   data: sessionsReducer,
-  user: userReducer,
+  base: baseReducer,
+  quiz: quizReducer
 });
 
 export type AppState = ReturnType<typeof reducers>;

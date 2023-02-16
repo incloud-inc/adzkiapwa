@@ -1,6 +1,6 @@
 :root {
   /** primary **/
-  --ion-color-primary: #3880ff;
+  --ion-color-primary: #1B6A38;
   --ion-color-primary-rgb: 56, 128, 255;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
@@ -90,14 +90,14 @@
   padding: 8px;
 }
 .no-shadow {
-  box-shadow: none !important;
+  /* box-shadow: none !important; */
 }
 .no-shadow::after {
   background-image: none;
 }
 .bg-gray {
-  --background: #f3f3f8;
-  background: #f3f3f8;
+  --background: #d3f9d8;
+  background: #d3f9d8;
 }
 .bg-white {
   --background: white;
@@ -139,6 +139,11 @@
 }
 .bb-1 {
   border-bottom: 1px solid var(--ion-color-medium);
+}
+.bg-transparent{
+  background-color: transparent;
+  background: transparent;
+  --background: transparent;
 }
 ion-modal {
   --height: 100% !important;

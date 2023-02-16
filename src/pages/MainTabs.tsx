@@ -1,33 +1,23 @@
-import React from "react";
 import {
-  IonTabs,
-  IonRouterOutlet,
+  IonIcon, IonRouterOutlet,
   IonTabBar,
-  IonTabButton,
-  IonIcon,
-  IonLabel,
+  IonTabButton, IonTabs
 } from "@ionic/react";
-import { Route, Redirect } from "react-router";
 import {
-  calendar,
-  location,
-  informationCircle,
-  people,
-  home,
-  grid,
-  pieChart,
-  settings,
+  grid, home, pieChart,
+  settings
 } from "ionicons/icons";
-import SchedulePage from "./SchedulePage";
-import SpeakerList from "./SpeakerList";
-import SpeakerDetail from "./SpeakerDetail";
-import SessionDetail from "./SessionDetail";
-import Portal from "./Portal";
-import Payments from "./Payments";
-import ExamResults from "./ExamResults";
-import MapView from "./MapView";
+import React from "react";
+import { Redirect, Route } from "react-router";
 import About from "./About";
 import Account from "./Account";
+import ExamResults from "./ExamResults";
+import Payments from "./Payments";
+import Portal from "./Portal";
+import SchedulePage from "./SchedulePage";
+import SessionDetail from "./SessionDetail";
+import SpeakerDetail from "./SpeakerDetail";
+import SpeakerList from "./SpeakerList";
 
 interface MainTabsProps {}
 

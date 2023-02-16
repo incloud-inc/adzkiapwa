@@ -1,41 +1,26 @@
-import React, { useState } from "react";
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonPage,
-  IonButtons,
-  IonMenuButton,
-  IonRow,
-  IonCol,
-  IonButton,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonText,
-  IonRouterLink,
+  IonButton, IonCol, IonContent, IonInput, IonItem,
+  IonLabel, IonList, IonPage, IonRouterLink, IonRow, IonText
 } from "@ionic/react";
-import "./ForgotPassword.scss";
-import { setAuthData } from "../data/user/user.actions";
-import { connect } from "../data/connect";
-import { RouteComponentProps } from "react-router";
+import React, { useState } from "react";
 import Lottie from "react-lottie-player";
-import SecureLogin from "../lotties/SecureLogin.json";
+import { RouteComponentProps } from "react-router";
+import { setForgotPassword } from "../data/base/base.actions";
+import { connect } from "../data/connect";
 import ForgotPasswordL from "../lotties/ForgotPassword.json";
 import WAL from "../lotties/WA.json";
-import { userReducer } from "../data/user/user.reducer";
-import { BaseUrl } from "../AppConfig";
+import "./ForgotPassword.scss";
 
 interface OwnProps extends RouteComponentProps {}
 
 interface StateProps {}
-interface DispatchProps {}
+interface DispatchProps {
+  setForgotPassword: typeof setForgotPassword
+}
 
 interface LoginProps extends OwnProps, DispatchProps, StateProps {}
 
-const ForgotPassword: React.FC<LoginProps> = ({ history }) => {
+const ForgotPassword: React.FC<LoginProps> = ({ setForgotPassword,history }) => {
   const [Phone, setPhone] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [PhoneError, setPhoneError] = useState(false);
@@ -45,39 +30,13 @@ const ForgotPassword: React.FC<LoginProps> = ({ history }) => {
     e.preventDefault();
     if (!Phone) {
       setPhoneError(true);
+      setTimeout(() => {
+        setPhoneError(false)
+      }, 3000);
+      return;
     }
-    if (Phone) {
-      setFormSubmitted(true);
-      const BodyData = new FormData();
-      BodyData.append("phone", Phone);
-      // BodyData.append("token", authToken);
-      fetch(BaseUrl+"auth/forgotpassword", {
-        method: "POST",
-        body: BodyData,
-      })
-        .then((res) => {
-          setFormSubmitted(false);
-          if (!res.ok) {
-            throw new Error("Server Bermasalah");
-          }
-          return res.json();
-        })
-        .then((res) => {
-          if (res.data && res.data.uid) {
-            res.data.token = res.token;
-            alert(
-              res.data.Phone + " Password baru telah terkirim di Phone anda"
-            );
-            setAuthData(res.data);
-            history.replace("/tabs/portal");
-          } else {
-            alert(res.message || "Gagal Submit Phone");
-          }
-        })
-        .catch((err) => {
-          alert(err);
-        });
-    }
+    await setForgotPassword({phone:Phone})
+    
   };
 
   return (
@@ -138,7 +97,7 @@ const ForgotPassword: React.FC<LoginProps> = ({ history }) => {
             </IonCol>
             <IonCol>
               <IonButton
-                type="submit"
+                type="button"
                 expand="block"
                 disabled={formSubmitted}
                 routerLink="/login"
@@ -163,5 +122,8 @@ const ForgotPassword: React.FC<LoginProps> = ({ history }) => {
 
 export default connect<OwnProps, {}, DispatchProps>({
   mapStateToProps: (state) => ({}),
+  mapDispatchToProps:{
+    setForgotPassword
+  },
   component: ForgotPassword,
 });

@@ -12,22 +12,20 @@ import {
   IonRow,
   IonText,
   IonTitle,
-  IonToolbar,
-  useIonViewDidEnter,
+  IonToolbar
 } from "@ionic/react";
 import { star } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
-import { RouteComponentProps, useParams, withRouter } from "react-router";
+import { RouteComponentProps, useParams } from "react-router";
 import { BaseUrl } from "../../AppConfig";
-import LessonList from "../../components/Group/LessonList";
-import QuizList from "../../components/Group/QuizList";
 import GeneralSkeleton from "../../components/Shared/GeneralSkeleton";
 import { connect } from "../../data/connect";
+import { AuthData } from "../../models/Base";
 
 interface OwnProps extends RouteComponentProps {}
 
 interface StateProps {
-  authData: any;
+  authData: AuthData;
 }
 
 interface DispatchProps {}
@@ -177,7 +175,7 @@ const GroupPurchaseComplete: React.FC<GroupPurchaseCompleteProps> = ({
 
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
-    authData: state.user.authData,
+    authData: state.base.authData,
   }),
   // mapDispatchToProps: {
   //   setAuthData,

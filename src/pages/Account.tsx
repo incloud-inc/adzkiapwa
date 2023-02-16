@@ -1,36 +1,21 @@
-import React, { useState } from "react";
-import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonPage,
-  IonButtons,
-  IonMenuButton,
-  IonList,
-  IonItem,
-  IonAlert,
-  IonBackButton,
-  useIonViewDidEnter,
-  IonButton,
-  IonIcon,
-  IonText,
-  IonLabel,
-  IonInput,
-} from "@ionic/react";
-import "./Account.scss";
-import { setAuthData } from "../data/user/user.actions";
-import { connect } from "../data/connect";
-import { RouteComponentProps } from "react-router";
-import { checkmark, logOut, save } from "ionicons/icons";
 import { CameraResultType, Plugins } from "@capacitor/core";
+import {
+  IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, IonText, IonTitle, IonToolbar, useIonViewDidEnter
+} from "@ionic/react";
+import { checkmark } from "ionicons/icons";
+import React, { useState } from "react";
+import { RouteComponentProps } from "react-router";
 import { BaseUrl } from "../AppConfig";
+import { setAuthData } from "../data/base/base.actions";
+import { connect } from "../data/connect";
+import { AuthData } from "../models/Base";
+import "./Account.scss";
 const Camera = Plugins.Camera;
 // const CRT = CameraResultType.Uri;
 interface OwnProps extends RouteComponentProps {}
 
 interface StateProps {
-  authData: any;
+  authData: AuthData;
 }
 
 interface DispatchProps {
@@ -44,41 +29,39 @@ const Account: React.FC<AccountProps> = ({
   authData,
   history,
 }) => {
-  const [showAlert, setShowAlert] = useState(false);
-  const [ProfileData, setProfileData] = useState<any>(undefined);
   const [ava, setAva] = useState(
     (authData && authData.photo) ||
       "https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y"
   );
-  useIonViewDidEnter(() => {
-    if (!authData) {
-      setAuthData(undefined);
-      history.replace("/tabs/portal");
-    } else {
-      const BodyData = new FormData();
-      BodyData.append("token", authData.token || "");
-      fetch(BaseUrl+"page/profile", {
-        method: "POST",
-        body: BodyData,
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Server Bermasalah");
-          }
-          return res.json();
-        })
-        .then((res) => {
-          if (res.result && res.result.gid) {
-            setProfileData(res.result);
-          } else {
-            setProfileData(null);
-          }
-        })
-        .catch((err) => {
-          alert(err);
-        });
-    }
-  });
+  // useIonViewDidEnter(() => {
+  //   if (!authData) {
+  //     // setAuthData(undefined);
+  //     history.replace("/tabs/portal");
+  //   } else {
+  //     const BodyData = new FormData();
+  //     BodyData.append("token", authData.token || "");
+  //     fetch(BaseUrl+"page/profile", {
+  //       method: "POST",
+  //       body: BodyData,
+  //     })
+  //       .then((res) => {
+  //         if (!res.ok) {
+  //           throw new Error("Server Bermasalah");
+  //         }
+  //         return res.json();
+  //       })
+  //       .then((res) => {
+  //         if (res.result && res.result.gid) {
+  //           setProfileData(res.result);
+  //         } else {
+  //           setProfileData(null);
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         alert(err);
+  //       });
+  //   }
+  // });
   const takePicture = async () => {
     const image = await Camera.getPhoto({
       quality: 90,
@@ -87,8 +70,6 @@ const Account: React.FC<AccountProps> = ({
       height: 300,
       resultType: CameraResultType.Base64,
     });
-    console.log(image);
-
     setAva("data:image/png;base64, " + image.base64String);
   };
   return (
@@ -132,14 +113,14 @@ const Account: React.FC<AccountProps> = ({
               </IonItem>
               <IonItem>
                 <IonLabel position="floating">Alamat Lengkap</IonLabel>
-                <IonInput value={authData.username || ""}></IonInput>
+                <IonInput value={authData.alamat_lengkap || ""}></IonInput>
               </IonItem>
               <IonItem>
                 <IonLabel position="floating">Alamat Sekolah</IonLabel>
-                <IonInput value={authData.username || ""}></IonInput>
+                <IonInput value={authData.alamat_sekolah || ""}></IonInput>
               </IonItem>
             </IonList>
-            <IonButton color="primary" size="large" className="ion-margin">
+            <IonButton color="primary" size="large" className="ion-margin" hidden>
               <IonIcon icon={checkmark}></IonIcon>&nbsp; Simpan Perubahan
             </IonButton>
             <br />
@@ -163,7 +144,7 @@ const Account: React.FC<AccountProps> = ({
 
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
-    authData: state.user.authData,
+    authData: state.base.authData,
   }),
   mapDispatchToProps: {
     setAuthData,

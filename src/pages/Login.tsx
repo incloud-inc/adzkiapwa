@@ -1,82 +1,57 @@
-import React, { useState } from "react";
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonPage,
-  IonButtons,
-  IonMenuButton,
-  IonRow,
-  IonCol,
-  IonButton,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonText,
-  IonRouterLink,
+  IonButton, IonCol, IonContent, IonInput, IonItem,
+  IonLabel, IonList, IonPage, IonRouterLink, IonRow, IonText
 } from "@ionic/react";
-import "./Login.scss";
-import { setAuthData } from "../data/user/user.actions";
-import { connect } from "../data/connect";
-import { RouteComponentProps } from "react-router";
+import React, { useEffect, useState } from "react";
 import Lottie from "react-lottie-player";
+import { RouteComponentProps } from "react-router";
+import { setLogin } from "../data/base/base.actions";
+import { BaseState } from "../data/base/base.state";
+import { connect } from "../data/connect";
 import SecureLogin from "../lotties/SecureLogin.json";
-import { BaseUrl } from "../AppConfig";
+import "./Login.scss";
 
 interface OwnProps extends RouteComponentProps {}
 
-interface StateProps {}
+interface StateProps {
+  base:BaseState
+}
 interface DispatchProps {
-  setAuthData: typeof setAuthData;
+  setLogin: typeof setLogin;
 }
 
 interface LoginProps extends OwnProps, DispatchProps, StateProps {}
 
-const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
-  const [Email, setEmail] = useState("");
-  const [Password, setPassword] = useState("");
+const Login: React.FC<LoginProps> = ({ setLogin, base,history }) => {
+  const [Email, setEmail] = useState("wilmasrur@gmail.com");
+  const [Password, setPassword] = useState("1");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [EmailError, setEmailError] = useState(false);
   const [PasswordError, setPasswordError] = useState(false);
-
+  useEffect(()=>{    
+    if(formSubmitted && base.authData){
+      setFormSubmitted(false)
+      history.push('/tabs/portal')
+    }
+  },[base])
   const login = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormSubmitted(true);
     if (!Email) {
       setEmailError(true);
+      setTimeout(() => {
+        setEmailError(false)
+      }, 1000);
+      return;
     }
     if (!Password) {
       setPasswordError(true);
+      setTimeout(() => {
+        setPasswordError(false)
+      }, 1000);
+      return;
     }
-
-    if (Email && Password) {
-      setFormSubmitted(true);
-      const BodyData = new FormData();
-      BodyData.append("email", Email);
-      BodyData.append("password", Password);
-      fetch(BaseUrl+"auth/login", {
-        method: "POST",
-        body: BodyData,
-      })
-        .then((res) => {
-          setFormSubmitted(false);
-          return res.json();
-        })
-        .then((res) => {
-          if (res.data && res.data.uid) {
-            res.data.token = res.token;
-            setAuthData(res.data);
-            history.replace("/tabs/portal");
-          } else {
-            alert(res.message || "Gagal Login");
-          }
-        })
-        .catch((err) => {
-          alert(err);
-        });
-    }
+    setLogin({email:Email,password:Password});
   };
 
   return (
@@ -143,7 +118,7 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
             </IonCol>
             <IonCol size="12" className="ion-text-center">
               <IonRouterLink color="primary" routerLink="/forgotpassword">
-                Lupa Password? Reset Password
+                Lupa Password? <b>Reset Password</b>
               </IonRouterLink>
             </IonCol>
           </IonRow>
@@ -153,10 +128,12 @@ const Login: React.FC<LoginProps> = ({ setAuthData, history }) => {
   );
 };
 
-export default connect<OwnProps, {}, DispatchProps>({
-  mapStateToProps: (state) => ({}),
+export default connect<OwnProps, StateProps, DispatchProps>({
+  mapStateToProps: (state) => ({
+    base:state.base
+  }),
   mapDispatchToProps: {
-    setAuthData,
+    setLogin,
   },
   component: Login,
 });

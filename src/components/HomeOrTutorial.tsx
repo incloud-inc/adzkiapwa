@@ -13,8 +13,8 @@ const HomeOrTutorial: React.FC<StateProps> = ({ hasSeenTutorial }) => {
 };
 
 export default connect<{}, StateProps, {}>({
-  mapStateToProps: (state) => ({
-    hasSeenTutorial: state.user.hasSeenTutorial,
-  }),
+  // mapStateToProps: (state) => ({
+  //   hasSeenTutorial: state.base.hasSeenTutorial,
+  // }),
   component: HomeOrTutorial,
 });

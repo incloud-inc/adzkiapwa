@@ -13,67 +13,46 @@ import {
   IonRow,
   IonText,
   IonTitle,
-  IonToolbar,
-  useIonViewDidEnter,
+  IonToolbar
 } from "@ionic/react";
 import { star } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
-import { RouteComponentProps, useParams, withRouter } from "react-router";
-import { BaseUrl } from "../../AppConfig";
-import LessonList from "../../components/Group/LessonList";
-import QuizList from "../../components/Group/QuizList";
+import { RouteComponentProps, useParams } from "react-router";
 import GeneralSkeleton from "../../components/Shared/GeneralSkeleton";
 import { connect } from "../../data/connect";
+import { PostPurchase } from "../../data/quiz/quiz.actions";
+import { QuizState } from "../../data/quiz/quiz.state";
+import { AuthData } from "../../models/Base";
 
 interface OwnProps extends RouteComponentProps {}
 
 interface StateProps {
-  authData: any;
+  quiz: QuizState;
+  authData:AuthData;
 }
 
-interface DispatchProps {}
+interface DispatchProps {
+  PostPurchase:typeof PostPurchase;
+}
 interface GroupPurchaseProps extends OwnProps, StateProps, DispatchProps {}
-
-const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData }) => {
-  const [GroupPurchase, setGroupPurchase] = useState<any>(undefined);
-  //   const param<any> = useParams();
-  let param: any = useParams();
+interface PurchaseParam{
+  gid?:string
+  pid?:string
+}
+const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData,quiz,PostPurchase }) => {
+  const [Submitted,setSubmitted]= useState(false);
+  let param: PurchaseParam = useParams();
   useEffect(() => {
-    if (authData) {
-      const BodyData = new FormData();
-      BodyData.append("token", authData && authData.token);
-      BodyData.append("gid", param.id || "");
-      BodyData.append(
-        "callbackapp",
-        param.id
-          ? "http://localhost:8100/group/purchase/" + param.id
-          : "http://localhost:8100/"
-      );
-      fetch(BaseUrl+"payment/createtransactiongopay", {
-        method: "POST",
-        body: BodyData,
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Server Bermasalah");
-          }
-          return res.json();
-        })
-        .then((res) => {
-          if (res.status) {
-            setGroupPurchase(res);
-          } else {
-            setGroupPurchase(null);
-            alert(res.message || "Pembaayran belum bisa dilakukan");
-            history.replace("/tabs/portal");
-          }
-        })
-        .catch((err) => {
-          alert(err);
-        });
+    if(authData===null) history.push("/login")
+    if(!Submitted && !quiz.PaymentDetail && !quiz.TrxGopay){
+      setSubmitted(true)
+      PostPurchase(param.gid||"0",param.pid||"0")
     }
-  }, [authData]);
-  if (GroupPurchase) {
+  },[authData]);
+  useEffect(() => {
+    if(quiz.PaymentDetail || quiz.TrxGopay) setSubmitted(false)
+  },[quiz]);
+  if (quiz.PaymentDetail||quiz.TrxGopay) {
     return (
       <IonPage id="session-detail-page ">
         <IonToolbar>
@@ -98,20 +77,20 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData }) => {
             <IonGrid className="ion-no-padding">
               <IonRow
                 className="ion-padding ion-text-center"
-                hidden={!GroupPurchase.group.group_name}
+                hidden={!quiz.PaymentDetail && !quiz.TrxGopay}
               >
                 <IonCol>
-                  <h5>{GroupPurchase.group.group_name || ""}</h5>
+                  <h5>{quiz.PaymentDetail?.group_name||quiz.TrxGopay?.group?.group_name||''}</h5>
                 </IonCol>
               </IonRow>
               <IonRow
                 className="ion-padding ion-text-center"
-                hidden={!GroupPurchase.group.description}
+                hidden={!quiz.PaymentDetail?.group_description&&!quiz.TrxGopay?.group?.description}
               >
                 <IonCol>
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: GroupPurchase.group.description || "",
+                      __html: quiz.PaymentDetail?.group_description||quiz.TrxGopay?.group?.description||'',
                     }}
                   ></div>
                 </IonCol>
@@ -128,7 +107,7 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData }) => {
                     }}
                   />
                   <img
-                    src={GroupPurchase.message.actions[0].url || ""}
+                    src={quiz.PaymentDetail?.qr_code||quiz.TrxGopay?.message?.actions[0]?.url || ""}
                     width="auto"
                     height="240px"
                   />
@@ -145,11 +124,20 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData }) => {
                   </h6>
                 </IonCol>
                 <IonCol size="6" className="ion-text-right">
-                  <h5 className="ion-no-margin color-navy">
+                <h5 className="ion-no-margin color-navy" hidden={!quiz.PaymentDetail}>
                     <b>
-                      {GroupPurchase.group.price !== "0"
-                        ? "Rp " + GroupPurchase.group.price
-                        : "GRATIS"}
+                      {quiz.PaymentDetail?.price!=="0"
+                      ? "Rp " + quiz.PaymentDetail?.price
+                      : "GRATIS"
+                      }
+                    </b>
+                  </h5>
+                  <h5 className="ion-no-margin color-navy" hidden={!quiz.TrxGopay}>
+                    <b>
+                      {quiz.TrxGopay?.group?.price !== "0"
+                      ? "Rp " + quiz.TrxGopay?.group?.price
+                      : "GRATIS"
+                      }
                     </b>
                   </h5>
                 </IonCol>
@@ -164,7 +152,7 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData }) => {
             size="large"
             style={{ "--border-radius": "40px" }}
             onClick={() => {
-              history.push("/group/purchasecomplete/" + GroupPurchase.pid);
+              history.push(`/group/purchasecomplete/${param.pid!=="0"?param.pid: quiz.TrxGopay?.pid ||"0"}`);
             }}
           >
             Cek status pembayaran
@@ -172,7 +160,7 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData }) => {
         </IonFooter>
       </IonPage>
     );
-  } else if (GroupPurchase === null) {
+  } else if (!quiz.PaymentDetail&&!quiz.TrxGopay) {
     return (
       <IonPage>
         <div className="ion-text-center">
@@ -193,10 +181,11 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData }) => {
 
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
-    authData: state.user.authData,
+    authData: state.base.authData,
+    quiz: state.quiz,
   }),
-  // mapDispatchToProps: {
-  //   setAuthData,
-  // },
+  mapDispatchToProps: {
+    PostPurchase,
+  },
   component: GroupPurchase,
 });

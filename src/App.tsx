@@ -1,13 +1,13 @@
-import React, { useEffect } from "react";
-import { Route } from "react-router-dom";
 import {
   IonAlert,
   IonApp,
   IonLoading,
   IonRouterOutlet,
-  IonSplitPane,
+  IonSplitPane
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
+import React, { useEffect } from "react";
+import { Route } from "react-router-dom";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -18,37 +18,35 @@ import "@ionic/react/css/structure.css";
 import "@ionic/react/css/typography.css";
 
 /* Optional CSS utils that can be commented out */
-import "@ionic/react/css/padding.css";
+import "@ionic/react/css/display.css";
+import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/float-elements.css";
+import "@ionic/react/css/padding.css";
 import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
-import "@ionic/react/css/flex-utils.css";
-import "@ionic/react/css/display.css";
 
 /* Theme variables */
-import "./theme/variables.css";
-import "./theme/adzkia.css";
-import MainTabs from "./pages/MainTabs";
-import { connect } from "./data/connect";
+import HomeOrTutorial from "./components/HomeOrTutorial";
 import { AppContextProvider } from "./data/AppContext";
+import { loadUserData, setAlert } from "./data/base/base.actions";
+import { BaseState } from "./data/base/base.state";
+import { connect } from "./data/connect";
 import { loadConfData } from "./data/sessions/sessions.actions";
-import { loadUserData } from "./data/user/user.actions";
-import Package from "./pages/Package";
 import Account from "./pages/Account";
-import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
+import Detail from "./pages/Group/GroupDetail";
+import GroupPurchase from "./pages/Group/GroupPurchase";
+import GroupPurchaseComplete from "./pages/Group/GroupPurchaseComplete";
+import Login from "./pages/Login";
+import MainTabs from "./pages/MainTabs";
+import Package from "./pages/Package";
+import Quiz from "./pages/quiz/Quiz";
+import Result from "./pages/quiz/Result";
 import Signup from "./pages/Signup";
 import Support from "./pages/Support";
 import Tutorial from "./pages/Tutorial";
-import Quiz from "./pages/quiz/Quiz";
-import Result from "./pages/quiz/Result";
-import GroupDetail from "./pages/Group/GroupDetail";
-import GroupPurchase from "./pages/Group/GroupPurchase";
-import GroupPurchaseComplete from "./pages/Group/GroupPurchaseComplete";
-import HomeOrTutorial from "./components/HomeOrTutorial";
-import { Schedule } from "./models/Schedule";
-import RedirectToLogin from "./components/RedirectToLogin";
-
+import "./theme/adzkia.css";
+import "./theme/variables.css";
 const App: React.FC = () => {
   return (
     <AppContextProvider>
@@ -58,40 +56,45 @@ const App: React.FC = () => {
 };
 
 interface StateProps {
-  darkMode: boolean;
-  loading: boolean;
   authData?: any;
-  alert: any;
+  // user:BaseState;
+  base:BaseState
 }
 
 interface DispatchProps {
   loadConfData: typeof loadConfData;
   loadUserData: typeof loadUserData;
+  setAlert: typeof setAlert;
 }
 
 interface IonicAppProps extends StateProps, DispatchProps {}
 
 const IonicApp: React.FC<IonicAppProps> = ({
-  darkMode,
-  loading,
-  alert,
   authData,
-  loadConfData,
+  // user,
+  base,
   loadUserData,
+  setAlert
 }) => {
   useEffect(() => {
-    loadUserData();
+    loadUserData();    
   }, []);
   return (
-    <IonApp className={`${darkMode ? "dark-theme" : ""}`} class="md">
+    
+    <IonApp class="md">
       <IonReactRouter>
         <IonSplitPane contentId="main">
-          <IonLoading isOpen={loading}></IonLoading>
+          <IonLoading
+            {...base.loading}
+          /> 
           <IonAlert
-            isOpen={alert.isOpen}
-            header={alert.header}
-            subHeader={alert.subHeader}
-            message={alert.message}
+            {...base.alert}
+            onDidDismiss={() => setAlert({
+              isOpen:false,
+              header:'',
+              message:'',
+              subHeader:''
+            })}
           ></IonAlert>
           <IonRouterOutlet id="main">
             {/*
@@ -106,8 +109,8 @@ const IonicApp: React.FC<IonicAppProps> = ({
             <Route path="/signup" component={Signup} />
             <Route path="/support" component={Support} />
             <Route path="/tutorial" component={Tutorial} />
-            <Route path="/group/detail/:id" component={GroupDetail} />
-            <Route path="/group/purchase/:id" component={GroupPurchase} />
+            <Route path="/group/detail/:id" component={Detail} />
+            <Route path="/group/purchase/:gid/:pid" component={GroupPurchase} />
             <Route
               path="/group/purchasecomplete/:id"
               component={GroupPurchaseComplete}
@@ -137,14 +140,14 @@ export default App;
 
 const IonicAppConnected = connect<{}, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
-    darkMode: state.user.darkMode,
+    // user: state.base,
+    base: state.base,
     authData: state.data.authData,
-    loading: state.user.loading,
-    alert: state.user.alert,
   }),
   mapDispatchToProps: {
     loadConfData,
     loadUserData,
+    setAlert
   },
   component: IonicApp,
 });

@@ -1,70 +1,50 @@
 import {
-  IonBackButton,
-  IonBadge,
-  IonButtons,
   IonCard,
   IonCardContent,
   IonCol,
-  IonContent,
-  IonGrid,
-  IonIcon,
-  IonPage,
+  IonContent, IonPage,
+  IonRefresher,
+  IonRefresherContent,
   IonRow,
   IonText,
   IonTitle,
   IonToolbar,
-  useIonViewDidEnter,
+  RefresherEventDetail
 } from "@ionic/react";
-import { star } from "ionicons/icons";
-import React, { useEffect, useState } from "react";
-import Lottie from "react-lottie-player";
-import { RouteComponentProps, useParams, withRouter } from "react-router";
-import { BaseUrl } from "../AppConfig";
+import { chevronDownCircleOutline } from "ionicons/icons";
+import React, { useEffect } from "react";
+import { RouteComponentProps } from "react-router";
 import GeneralSkeleton from "../components/Shared/GeneralSkeleton";
 import { connect } from "../data/connect";
-import Student from "../lotties/Student.json";
+import { PostQuizResultList } from "../data/quiz/quiz.actions";
+import { AuthData } from "../models/Base";
+import { QuizResultDetail, QuizResultList } from "../models/Quiz";
 
 interface OwnProps extends RouteComponentProps {}
 
 interface StateProps {
-  authData: any;
+  authData: AuthData;
+  QuizResultList:QuizResultList
 }
 
-interface DispatchProps {}
+interface DispatchProps {
+  PostQuizResultList: typeof PostQuizResultList;
+}
 interface ExamResultsProps extends OwnProps, StateProps, DispatchProps {}
 
-const ExamResults: React.FC<ExamResultsProps> = ({ history, authData }) => {
-  const [ExamResults, setExamResults] = useState<any>(undefined);
-  //   const param<any> = useParams();
-  let param: any = useParams();
-  useEffect(() => {    
-    const BodyData = new FormData();
-    if (authData) {
-      BodyData.append("token", authData && authData.token);
+const ExamResults: React.FC<ExamResultsProps> = ({ history, authData,PostQuizResultList,QuizResultList }) => {
+  useEffect(()=>{    
+    if(authData===null) 
+    {history.replace('/login') ;return;}
+    if(authData && !QuizResultList){
+      PostQuizResultList()
     }
-    BodyData.append("gid", param.id || "");
-    fetch(BaseUrl+"quiz/resultlist", {
-      method: "POST",
-      body: BodyData,
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Server Bermasalah");
-        }
-        return res.json();
-      })
-      .then((res) => {
-        if (res.quizzes && res.quizzes.length > 0) {
-          setExamResults(res.quizzes);
-        } else {
-          setExamResults(null);
-        }
-      })
-      .catch((err) => {
-        alert(err);
-      });
-    }, [authData]);
-  if (ExamResults) {
+  },[authData]);
+  const doRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
+    await PostQuizResultList()
+    event.detail.complete();
+  }
+  if (QuizResultList) {
     return (
       <IonPage id="session-detail-page ">
         <IonToolbar>
@@ -74,7 +54,14 @@ const ExamResults: React.FC<ExamResultsProps> = ({ history, authData }) => {
           <IonTitle>Hasil Ujian</IonTitle>
         </IonToolbar>
         <IonContent className="bg-gray">
-          {ExamResults.map((item: any, index: any) => (
+        <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
+                <IonRefresherContent
+                  pullingIcon={chevronDownCircleOutline}
+                  pullingText="Pull to refresh"
+                  refreshingSpinner="circles"
+                ></IonRefresherContent>
+              </IonRefresher>
+          {QuizResultList.quizzes?.map((item: QuizResultDetail, index: any) => (
             <IonCard             
             onClick={() => {
               history.push("/quiz/result/" + item.rid);
@@ -90,7 +77,7 @@ const ExamResults: React.FC<ExamResultsProps> = ({ history, authData }) => {
         </IonContent>
       </IonPage>
     );
-  } else if (ExamResults === null) {
+  } else if (QuizResultList === null) {
     return (
       <IonPage>
         <IonToolbar>
@@ -119,10 +106,11 @@ const ExamResults: React.FC<ExamResultsProps> = ({ history, authData }) => {
 
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
-    authData: state.user.authData,
+    authData: state.base.authData,
+    QuizResultList: state.quiz.QuizResultList
   }),
-  // mapDispatchToProps: {
-  //   setAuthData,
-  // },
+  mapDispatchToProps: {
+    PostQuizResultList
+  },
   component: ExamResults,
 });

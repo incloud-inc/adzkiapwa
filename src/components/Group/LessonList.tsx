@@ -1,5 +1,4 @@
 import {
-  IonBackButton,
   IonBadge,
   IonButton,
   IonButtons,
@@ -15,78 +14,61 @@ import {
   IonRow,
   IonText,
   IonTitle,
-  IonToolbar,
+  IonToolbar
 } from "@ionic/react";
-import Item from "antd/lib/list/Item";
-import { book, close, download, newspaper, star } from "ionicons/icons";
+import { book, close, newspaper, star } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
-import { RouteComponentProps, withRouter } from "react-router";
+import { RouteComponentProps, useLocation, withRouter } from "react-router";
 import { connect } from "../../data/connect";
+import { PostLessonList } from "../../data/quiz/quiz.actions";
+import { AuthData } from "../../models/Base";
+import { LessonList } from "../../models/Quiz";
 import GeneralSkeleton from "../Shared/GeneralSkeleton";
-import { BaseUrl } from "../../AppConfig";
 interface OwnProps {
   gids: string;
 }
 
 interface StateProps {
-  authData: any;
+  authData: AuthData;
+  LessonList: LessonList[]
 }
 
-interface DispatchProps {}
+interface DispatchProps {
+  PostLessonList:typeof PostLessonList
+}
 
 interface LessonListProps
   extends OwnProps,
     StateProps,
     DispatchProps,
     RouteComponentProps {}
-const LessonList: React.FC<LessonListProps> = ({ history, gids, authData }) => {
-  const [LessonList, setLessonList] = useState<any>(undefined);
-  const [LessonDetail, setLessonDetail] = useState<any>(null);
+const LessonListComponent: React.FC<LessonListProps> = ({ history, gids, authData,LessonList,PostLessonList }) => {
+  const [LessonDetail, setLessonDetail] = useState<LessonList>();
   const [showModal, setShowModal] = useState(false);
-  useEffect(() => {
-    if (LessonList !== undefined) {
-      return;
-    }
-    const BodyData = new FormData();
-    if (authData) {
-      BodyData.append("token", authData && authData.token);
-    }
-    fetch(
-      authData
-        ? BaseUrl+"lesson/list"
-        : BaseUrl+"lessonpublic/list",
-      {
-        method: "POST",
-        body: BodyData,
-      }
-    )
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Server Bermasalah");
-        }
-        return res.json();
-      })
-      .then((res) => {
-        if (
-          res.result &&
-          res.result.filter((item: any) => item.gids === gids).length > 0
-        ) {
-          setLessonList(res.result);
-        } else {
-          setLessonList(null);
-        }
-      })
-      .catch((err) => {
-        alert(err);
-        setLessonList(null);
-      });
-  }, [LessonList]);
+  // const location = useLocation();
+  // useEffect(()=>{
+  //   if(authData===null) history.push("/login")
+  //   let fired = false
+  //   if(authData){
+  //     if(location.pathname.includes("/group/detail")&&authData){
+  //       PostLessonList(gids);
+  //       fired = true;
+  //     }
+  //     if(authData&&!fired){
+  //       PostLessonList(gids);
+  //     }
+  //   }   
+  // },[authData])
+  useEffect(()=>{
+    PostLessonList(gids);
+  },[])
   if (LessonList) {
     return (
       <>
-        <IonList lines="full">
-          {LessonList.map((item: any, index: React.Key | undefined) => (
+        <IonList lines="none" className="bg-transparent">
+          {LessonList.map((item: LessonList, index: React.Key | undefined) => (
             <IonItem
+            className="bg-transparent"
               key={index}
               onClick={() => {
                 setLessonDetail(item);
@@ -133,7 +115,7 @@ const LessonList: React.FC<LessonListProps> = ({ history, gids, authData }) => {
                 <IonCol>
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: LessonDetail && LessonDetail.study_description,
+                      __html: LessonDetail && LessonDetail.study_description||'',
                     }}
                   ></div>
                   <IonButton
@@ -176,8 +158,9 @@ const LessonList: React.FC<LessonListProps> = ({ history, gids, authData }) => {
 
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
-    authData: state.user.authData,
+    authData: state.base.authData,
+    LessonList: state.quiz.LessonList
   }),
-  mapDispatchToProps: {},
-  component: withRouter(LessonList),
+  mapDispatchToProps: {PostLessonList},
+  component: withRouter(LessonListComponent),
 });

@@ -1,8 +1,6 @@
-import { CameraResultType, Plugins } from "@capacitor/core";
+import { Plugins } from "@capacitor/core";
 import {
-  IonBackButton,
-  IonBadge,
-  IonButton,
+  IonBackButton, IonButton,
   IonButtons,
   IonCard,
   IonCardContent,
@@ -12,39 +10,41 @@ import {
   IonGrid,
   IonHeader,
   IonIcon,
-  IonLoading,
-  IonPage,
+  IonLoading, IonPage,
   IonProgressBar,
   IonRow,
   IonSlide,
   IonSlides,
   IonText,
   IonTitle,
-  IonToolbar,
-  useIonViewDidEnter,
+  IonToolbar, useIonViewDidEnter, useIonViewWillLeave
 } from "@ionic/react";
-import { reload, stopwatchOutline } from "ionicons/icons";
+import { Statistic } from "antd";
+import { stopwatchOutline } from "ionicons/icons";
 import React, { useEffect, useRef, useState } from "react";
 import { RouteComponentProps, useParams } from "react-router";
-import { message, Statistic } from "antd";
 
-import QuizAttempt from "../../components/Quiz/QuizAttempt";
 import GeneralSkeleton from "../../components/Shared/GeneralSkeleton";
 import { connect } from "../../data/connect";
-// import "./Account.scss";
-import { setAuthData } from "../../data/user/user.actions";
 import { BaseUrl } from "../../AppConfig";
+import { PostQuizAttempt, setQuizAnswer } from "../../data/quiz/quiz.actions";
+import { AuthData } from "../../models/Base";
+import { QuizAnswer, QuizAttempt, QuizAttemptQuestions } from "../../models/Quiz";
 const { Countdown } = Statistic;
-const Camera = Plugins.Camera;
-// const CRT = CameraResultType.Uri;
 interface OwnProps extends RouteComponentProps {}
 
 interface StateProps {
-  authData: any;
+  authData: AuthData;
+  QuizAttempt:QuizAttempt,
+  QuizAnswer:QuizAnswer[][]
 }
 
-interface DispatchProps {}
-
+interface DispatchProps {
+  setQuizAnswer :typeof setQuizAnswer
+}
+interface Param{
+  quid:string
+}
 interface AccountProps extends OwnProps, StateProps, DispatchProps {}
 const slideQuiz = {
   initialSlide: 0,
@@ -54,16 +54,20 @@ const slideQuiz = {
 };
 var countdownTimer: any;
 let TimeSaver = 0;
-const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
-  const QT = localStorage.getItem("QuizTime")
-    ? JSON.parse(localStorage.getItem("QuizTime") || "")
-    : "";
-  const getQT: any = QT ? QT.find((x: any) => x.QuizId === "6") : undefined;
-  let param: any = useParams();
+interface QuizTime{
+  Countdown:number,
+  QuizId?:string
+}
+const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttempt,setQuizAnswer }) => {
+  let param:Param = useParams();
+
+  const QT = localStorage.getItem("QuizTime");
+  
+  const parsedQT:any = QT?JSON.parse(QT):[];
+  const getQT: any = parsedQT ? parsedQT.find((x: any) => x.QuizId == param.quid) : undefined;
   const [rid, setrid] = useState<number>(0);
   const [RecentQuestionNumber, setRecentQuestionNumber] = useState<number>(0);
-  const [RecentQuestion, setRecentQuestion] = useState<any>(null);
-  const [Answers, setAnswers] = useState<any>(null);
+  const [RecentQuestion, setRecentQuestion] = useState<QuizAttemptQuestions>();
   const [QuizData, setQuizData] = useState<any>(undefined);
   const [AnsweredQuestionTotal, setAnsweredQuestionTotal] = useState<any>(0);
   const [QuizDuration, setQuizDuration] = useState(0);
@@ -72,6 +76,7 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
   );
   const [QuizSubmitable, setQuizSubmitable] = useState(true);
   const [showLoading, setShowLoading] = useState(false);
+  const [ShowModal, setShowModal] = useState(true);
 
   useEffect(() => {
     if (!countdownTimer) {
@@ -158,7 +163,7 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
     var d1 = new Date();
     var d2 = new Date(d1);
 
-    d2.setMinutes(d1.getMinutes() + parseInt(QuizData.quiz.duration));
+    d2.setMinutes(d1.getMinutes() + parseInt(QuizAttempt?.quiz?.duration||"0"));
 
     let difference = +d2 - +new Date();
 
@@ -184,163 +189,139 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
   // });
   const [timeLeft, setTimeLeft] = useState<any>(calculateTimeLeftStart());
   useEffect(() => {
-    if (QuizData && QuizData.quiz && QuizData.quiz.duration) {
-      let timer: any = null;
-      if (timeLeft.minutes !== undefined) {
-        timer = setTimeout(() => {
-          setTimeLeft(calculateTimeLeft());
-        }, 1000);
-      }
-      return () => clearTimeout(timer);
+    if(!QuizAttempt?.quiz?.duration){return;}
+    let timer: any = null;
+    if (timeLeft.minutes !== undefined) {
+      timer = setTimeout(() => {
+        setTimeLeft(calculateTimeLeft());
+      }, 1000);
     }
-  }, [QuizData]);
+    return () => clearTimeout(timer);
+  }, [QuizAttempt]);
   const [showAlert, setShowAlert] = useState(false);
   const [ava, setAva] = useState(
     (authData && authData.photo) ||
       "https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y"
   );
-  useIonViewDidEnter(() => {
-    const BodyData = new FormData();
-    BodyData.append("token", (authData && authData.token) || "");
-    if (localStorage.getItem("quidSelected")) {
-      BodyData.append("quid", localStorage.getItem("quidSelected") || "");
-    } else {
-      history.goBack();
-    }
-    fetch(
-      authData
-        ? BaseUrl+"quiz/validatequiz"
-        : BaseUrl+"quizpublic/validatequiz",
-      {
-        method: "POST",
-        body: BodyData,
-      }
-    )
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Server Bermasalah");
-        }
-        return res.json();
-      })
-      .then((res) => {
-        if (res && res.rid) {
-          const BodyData2 = new FormData();
-          if (authData) {
-            BodyData2.append("token", authData && authData.token);
-          }
-          setrid(res.rid);
-          BodyData2.append("rid", res.rid || "");
-          fetch(
-            authData
-              ? BaseUrl+"quiz/attempt"
-              : BaseUrl+"quizpublic/attempt",
-            {
-              method: "POST",
-              body: BodyData2,
-            }
-          )
-            .then((res) => {
-              if (!res.ok) {
-                throw new Error("Server Bermasalah");
+  const RunDuration = ()=>{
+    setQuizDuration(parseInt(QuizAttempt.quiz?.duration||"0")* 60);
+    TimeSaver = getQT?getQT.Countdown:parseInt(QuizAttempt.quiz?.duration||"0") * 60
+    if (TimeSaver > 0) {
+      countdownTimer = setInterval(() => {
+        TimeSaver = TimeSaver - 1;
+        const NewQuizTime:QuizTime = { QuizId: param.quid, Countdown: TimeSaver }
+        const QuizTempStorage:string = localStorage.getItem('QuizTime')||'';
+        if(!QuizTempStorage) {
+          localStorage.setItem("QuizTime",JSON.stringify([NewQuizTime]));
+        }else{
+          const TempQuizTime:QuizTime[] = JSON.parse(QuizTempStorage);
+          if(!TempQuizTime.find(x=>x.QuizId==param.quid)){            
+            localStorage.setItem("QuizTime",JSON.stringify([...TempQuizTime,NewQuizTime]));
+          }else{
+            TempQuizTime.forEach((qt:QuizTime)=>{           
+              if(qt.QuizId == param.quid && history.location.pathname.includes("/quiz/start")){                
+                qt.Countdown = qt.Countdown-1 
               }
-              return res.json();
             })
-            .then((res) => {
-              if (res && !res.message) {
-                setQuizData(res);
-                const GetAD = localStorage.getItem("AnswerData") || "";
-                let AD = GetAD ? JSON.parse(GetAD || "") : "";
-                AD = AD[res.quiz.quid];
-                if (AD) {
-                  const AI = AD.filter((a: any) => a.Answer === "")[0]
-                    ? AD.filter((a: any) => a.Answer === "")[0].AnswerIndex
-                    : null;
-                  const AL = AD.filter(
-                    (a: any) => a.AnswerStatus === "answered"
-                  ).length;
-                  if (AI) {
-                    setRecentQuestionNumber(AI);
-                    setRecentQuestion(res.questions[AI]);
-                    slideQuizRef.current?.slideTo(AI);
-                  } else {
-                    setRecentQuestionNumber(AL - 1);
-                    setRecentQuestion(res.questions[AL - 1]);
-                    slideQuizRef.current?.slideTo(AL - 1);
-                  }
-                  setAnsweredQuestionTotal(AL);
-
-                  setAnswers(AD);
-                } else {
-                  setRecentQuestion(res.questions[0]);
-                  let AnswersArray = new Array();
-                  res.questions.forEach((q: any, index: any) => {
-                    AnswersArray.push({
-                      AnswerIndex: index,
-                      qid: q.qid,
-                      Answer: "",
-                      AnswerStatus: index === 0 ? "notvisited" : "notvisited",
-                    });
-                  });
-                  setAnswers(AnswersArray);
-                }
-                setQuizDuration(res.quiz.duration * 60);
-
-                if (getQT) {
-                  TimeSaver = getQT.Countdown;
-                } else {
-                  TimeSaver = res.quiz.duration * 60;
-                }
-                if (TimeSaver > 0 && !countdownTimer) {
-                  countdownTimer = setInterval(() => {
-                    TimeSaver = TimeSaver - 1;
-
-                    localStorage.setItem(
-                      "QuizTime",
-                      JSON.stringify([
-                        { QuizId: res.quiz.quid, Countdown: TimeSaver },
-                      ])
-                    );
-                    if (TimeSaver === 0) {
-                      clearInterval(countdownTimer);
-                    }
-                  }, 1000);
-                }
-                let cd = new Date();
-
-                if (getQT) {
-                  cd.setSeconds(cd.getSeconds() + getQT.Countdown);
-                } else {
-                  cd.setSeconds(cd.getSeconds() + res.quiz.duration * 60);
-                }
-                setQuizDurationCountdown(cd);
-              } else {
-                setQuizData(null);
-                history.push("/");
-                throw new Error((res && res.message) || "Server Bermasalah");
-              }
-            });
-        } else {
-          setQuizData(null);
-          history.goBack();
-          throw new Error((res && res.message) || "Server Bermasalah");
+            localStorage.setItem("QuizTime",JSON.stringify(TempQuizTime));
+          }
         }
-      })
-      .catch((err) => {
-        alert(err);
-        // setQuizList(null);
+        
+        if (TimeSaver === 0) {
+          clearInterval(countdownTimer);
+        }
+      }, 1000);
+    }
+    let cd:Date = new Date();
+    if (getQT) {
+      cd.setSeconds(cd.getSeconds() + getQT.Countdown);
+    } else {
+      cd.setSeconds(cd.getSeconds() + parseInt(QuizAttempt.quiz?.duration||"0") * 60);
+    }
+    setQuizDurationCountdown(cd);
+  }
+  const QuizInit = () =>{   
+    console.log(QuizAnswer);    
+    if(!QuizAnswer?.[parseInt(param.quid)]){
+      setRecentQuestion(QuizAttempt?.questions?.[0]);
+      let AnswersArray:QuizAnswer[] = new Array();
+      QuizAttempt?.questions?.forEach((q: QuizAttemptQuestions, index: number) => {
+        AnswersArray.push({
+          AnswerIndex: index,
+          qid: q.qid||"",
+          Answer: "",
+          AnswerStatus: index === 0 ? "notvisited" : "notvisited",
+        });
       });
+      const temp:QuizAnswer[][] = QuizAnswer;
+      temp[parseInt(param.quid)] = AnswersArray;
+      setQuizAnswer(temp);
+      return
+    }
+    const AI:number = QuizAnswer[parseInt(param.quid)].filter((a: QuizAnswer) => a.Answer === "")[0]
+      ? QuizAnswer[parseInt(param.quid)].filter((b: QuizAnswer) => b.Answer === "")[0].AnswerIndex
+      : 0;
+    const AL = QuizAnswer[parseInt(param.quid)].filter(
+      (a: QuizAnswer) => a.AnswerStatus === "answered"
+    ).length;
+    if (AI) {
+      setRecentQuestionNumber(AI);
+      setRecentQuestion(QuizAttempt?.questions?.[AI]);
+      slideQuizRef.current?.slideTo(AI);
+    } else {
+      const IndexItem = AL===0?AL:AL - 1
+      setRecentQuestionNumber(IndexItem);
+      setRecentQuestion(QuizAttempt?.questions?.[IndexItem]);
+      slideQuizRef.current?.slideTo(IndexItem);
+    }
+    setAnsweredQuestionTotal(AL);
+    setQuizAnswer(QuizAnswer);
+  }
+  useEffect(()=>{
+    if(!QuizAttempt){return;}
+    RunDuration();
+  },[QuizAttempt,QuizAnswer]);
+  useIonViewWillLeave(()=>{
+    clearInterval(countdownTimer);
+  })
+  useIonViewDidEnter(() => {
+    if(!QuizAttempt)    {
+      history.replace('/tabs/portal')
+      return
+    }
+    QuizInit();
+    // PostQuizAttempt(quid);
+    return;
+    
+                
+      //         } else {
+      //           setQuizData(null);
+      //           history.push("/");
+      //           throw new Error((res && res.message) || "Server Bermasalah");
+      //         }
+      //       });
+      //   } else {
+      //     setQuizData(null);
+      //     history.goBack();
+      //     throw new Error((res && res.message) || "Server Bermasalah");
+      //   }
+      // })
+      // .catch((err) => {
+      //   alert(err);
+      //   // setQuizList(null);
+      // });
   });
   const submitQuiz = () => {
     setShowLoading(true);
     const BodyData = new FormData();
     BodyData.append("token", (authData && authData.token) || "");
-    BodyData.append("rid", QuizData.quiz.rid || "");
+    BodyData.append("rid", QuizAttempt?.quiz?.rid || "");
     BodyData.append(
       "individual_time",
       "[1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5]"
     );
-    BodyData.append("answers", JSON.stringify(Answers));
-    BodyData.append("question_total", Answers.length);
+    BodyData.append("answers", JSON.stringify(QuizAnswer[parseInt(param.quid)]));
+    BodyData.append("question_total", QuizAnswer[parseInt(param.quid)].length.toString());
     fetch(
       authData
         ? BaseUrl+"quiz/submitquiz"
@@ -359,8 +340,7 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
         return res.json();
       })
       .then((res) => {
-        console.log(res);
-
+        history.replace("/quiz/result/" + QuizAttempt.quiz?.rid);
         // if (res.message && res.message === "Submit answer successfully") {
         //   let DataArray = JSON.parse(localStorage.getItem("AnswerData") || "");
         //   delete DataArray[QuizData.quiz.quid || 0];
@@ -377,23 +357,23 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
   };
   const NextPage = () => {
     slideQuizRef.current?.slideNext();
-    if (RecentQuestionNumber !== Answers.length - 1) {
+    if (RecentQuestionNumber !== QuizAnswer[parseInt(param.quid)].length - 1) {
       setRecentQuestionNumber(RecentQuestionNumber + 1);
-      setRecentQuestion(QuizData.questions[RecentQuestionNumber + 1]);
+      setRecentQuestion(QuizAttempt.questions?.[RecentQuestionNumber + 1]);
     } else {
-      setRecentQuestionNumber(Answers.length - 1);
-      setRecentQuestion(null);
+      setRecentQuestionNumber(QuizAnswer[parseInt(param.quid)].length - 1);
+      setRecentQuestion(undefined);
       setTimeout(() => {
         // setRecentQuestionNumber(Answers.length - 1);
-        setRecentQuestion(QuizData.questions[Answers.length - 1]);
+        setRecentQuestion(QuizData.questions[QuizAnswer[parseInt(param.quid)].length - 1]);
       }, 1000);
     }
   };
   const setAnswer = (AIndex: number, AID: string) => {
-    const AnswersArray = Answers;
+    const AnswersArray:QuizAnswer[] = QuizAnswer[parseInt(param.quid)];
     AnswersArray[AIndex].Answer = AID;
     AnswersArray[AIndex].AnswerStatus = "answered";
-    setAnswers(AnswersArray);
+    setQuizAnswer([...QuizAnswer,QuizAnswer[parseInt(param.quid)]]);
     SaveLocalAnswer(AnswersArray);
     setAnsweredQuestionTotal(
       AnswersArray.filter((a: any) => a.AnswerStatus === "answered").length
@@ -403,32 +383,35 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
     }, 500);
   };
   const setReviewLater = () => {
-    const AnswersArray = Answers;
+    const AnswersArray = QuizAnswer[parseInt(param.quid)];
     AnswersArray[RecentQuestionNumber].AnswerStatus = "reviewlater";
     NextPage();
-    setAnswers(AnswersArray);
+    setQuizAnswer([...QuizAnswer,QuizAnswer[parseInt(param.quid)]]);
     SaveLocalAnswer(AnswersArray);
   };
   const setSkipped = () => {
-    const AnswersArray = Answers;
+    const AnswersArray = QuizAnswer[parseInt(param.quid)];
     AnswersArray[RecentQuestionNumber].AnswerStatus = "skipped";
     NextPage();
-    setAnswers(AnswersArray);
+    setQuizAnswer([...QuizAnswer,QuizAnswer[parseInt(param.quid)]]);
     SaveLocalAnswer(AnswersArray);
   };
-  const SaveLocalAnswer = (data: any) => {
+  const SaveLocalAnswer = (data: QuizAnswer[]) => {
     const GetAD = localStorage.getItem("AnswerData");
     if (GetAD) {
-      let AD = JSON.parse(GetAD);
-      AD[QuizData.quiz.quid] = data;
-      localStorage.setItem("AnswerData", JSON.stringify(AD));
+      let AD:QuizAnswer[][] = JSON.parse(GetAD);
+      AD[parseInt(param.quid)] = data;
+      setQuizAnswer(AD);
     } else {
-      let AD: any = {};
-      AD[QuizData.quiz.quid] = data;
-      localStorage.setItem("AnswerData", JSON.stringify(AD));
+      let AD: QuizAnswer[][] = [];
+      AD[parseInt(param.quid)] = data;
+      setQuizAnswer(AD);
     }
   };
-  if (QuizData) {
+  useEffect(()=>{
+
+  },[QuizAnswer])
+  if (QuizAttempt) {
     return (
       <IonPage>
         <IonHeader>
@@ -470,7 +453,7 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
         </IonHeader>
         <IonContent className="bg-gray ion-padding">
           <IonProgressBar
-            value={Answers ? (1 / Answers.length) * AnsweredQuestionTotal : 0}
+            value={QuizAnswer[parseInt(param.quid)] ? (1 / QuizAnswer[parseInt(param.quid)].length) * AnsweredQuestionTotal : 0}
             color="dark"
           ></IonProgressBar>
 
@@ -485,15 +468,15 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
               __html: (RecentQuestion && RecentQuestion.question) || "",
             }}
           ></div>
-          {QuizData && QuizData.options && RecentQuestion
-            ? QuizData.options
+          {QuizAttempt?.options && RecentQuestion
+            ? QuizAttempt.options
                 .filter((o: any) => o.qid === RecentQuestion.qid)
                 .map((oItem: any, oIndex: any) => (
                   <IonCard
                     key={oIndex}
                     className={
-                      Answers
-                        ? oItem.oid === Answers[RecentQuestionNumber].Answer
+                      QuizAnswer[parseInt(param.quid)]
+                        ? oItem.oid === QuizAnswer[parseInt(param.quid)][RecentQuestionNumber].Answer
                           ? "quizanswer-active"
                           : ""
                         : ""
@@ -530,7 +513,7 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
                   </IonCard>
                 ))
             : ""}
-          <QuizAttempt QuizData={QuizData}></QuizAttempt>
+            {/* <QuizAttemptComponent></QuizAttemptComponent> */}
           <IonLoading isOpen={showLoading} message={"Proses..."} />
         </IonContent>
         <IonFooter className="ion-padding quizanswer">
@@ -574,9 +557,9 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
                 <IonButton
                   color="warning"
                   disabled={
-                    Answers &&
-                    Answers[RecentQuestionNumber] &&
-                    Answers[RecentQuestionNumber].AnswerStatus !== "notvisited"
+                    QuizAnswer[parseInt(param.quid)] &&
+                    QuizAnswer[parseInt(param.quid)][RecentQuestionNumber] &&
+                    QuizAnswer[parseInt(param.quid)][RecentQuestionNumber].AnswerStatus !== "notvisited"
                   }
                   size="small"
                   expand="full"
@@ -590,9 +573,9 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
               <IonCol>
                 <IonButton
                   disabled={
-                    Answers &&
-                    Answers[RecentQuestionNumber] &&
-                    Answers[RecentQuestionNumber].AnswerStatus !== "notvisited"
+                    QuizAnswer[parseInt(param.quid)] &&
+                    QuizAnswer[parseInt(param.quid)][RecentQuestionNumber] &&
+                    QuizAnswer[parseInt(param.quid)][RecentQuestionNumber].AnswerStatus !== "notvisited"
                   }
                   color="medium"
                   size="small"
@@ -607,8 +590,8 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
             </IonRow>
           </IonGrid>
           <IonSlides options={slideQuiz} ref={slideQuizRef}>
-            {QuizData && QuizData.questions
-              ? QuizData.questions.map((item: any, index: any) => (
+            {QuizAttempt.questions
+              ? QuizAttempt.questions.map((item: any, index: any) => (
                   <IonSlide key={index}>
                     <IonButton
                       className="quizNumberButton"
@@ -616,17 +599,17 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
                       color={
                         index === RecentQuestionNumber
                           ? "light"
-                          : Answers &&
-                            Answers[index] &&
-                            Answers[index].AnswerStatus === "answered"
+                          : QuizAnswer[parseInt(param.quid)] &&
+                          QuizAnswer[parseInt(param.quid)][index] &&
+                          QuizAnswer[parseInt(param.quid)][index].AnswerStatus === "answered"
                           ? "success"
-                          : Answers &&
-                            Answers[index] &&
-                            Answers[index].AnswerStatus === "skipped"
+                          : QuizAnswer[parseInt(param.quid)] &&
+                          QuizAnswer[parseInt(param.quid)][index] &&
+                          QuizAnswer[parseInt(param.quid)][index].AnswerStatus === "skipped"
                           ? "medium"
-                          : Answers &&
-                            Answers[index] &&
-                            Answers[index].AnswerStatus === "reviewlater"
+                          : QuizAnswer[parseInt(param.quid)] &&
+                          QuizAnswer[parseInt(param.quid)][index] &&
+                            QuizAnswer[parseInt(param.quid)][index].AnswerStatus === "reviewlater"
                           ? "warning"
                           : "dark"
                       }
@@ -644,7 +627,7 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
         </IonFooter>
       </IonPage>
     );
-  } else if (QuizData === null) {
+  } else if (QuizAttempt === null) {
     return (
       <IonPage>
         <IonContent>
@@ -665,7 +648,12 @@ const Quiz: React.FC<AccountProps> = ({ authData, history }) => {
 
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
-    authData: state.user.authData,
+    authData: state.base.authData,
+    QuizAttempt:state.quiz.QuizAttempt,
+    QuizAnswer:state.quiz.QuizAnswer
   }),
+  mapDispatchToProps: {
+    setQuizAnswer
+  },
   component: Quiz,
 });

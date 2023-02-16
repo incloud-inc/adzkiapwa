@@ -11,68 +11,54 @@ import {
   IonRow,
   IonText,
   IonTitle,
-  IonToolbar,
-  useIonViewDidEnter,
+  IonToolbar
 } from "@ionic/react";
 import { star } from "ionicons/icons";
-import React, { useEffect, useState } from "react";
-import { RouteComponentProps, useParams, withRouter } from "react-router";
-import { BaseUrl } from "../../AppConfig";
+import React, { useEffect } from "react";
+import { RouteComponentProps, useLocation, useParams, withRouter } from "react-router";
 import LessonList from "../../components/Group/LessonList";
 import QuizList from "../../components/Group/QuizList";
 import GeneralSkeleton from "../../components/Shared/GeneralSkeleton";
 import { connect } from "../../data/connect";
+import { PostGroupDetail } from "../../data/quiz/quiz.actions";
+import { AuthData } from "../../models/Base";
+import { GroupDetail } from "../../models/Quiz";
 
 interface OwnProps extends RouteComponentProps {}
 
 interface StateProps {
-  authData: any;
+  authData: AuthData;
+  GroupDetail:GroupDetail
 }
 
-interface DispatchProps {}
+interface DispatchProps {
+  PostGroupDetail:typeof PostGroupDetail;
+}
 interface GroupDetailProps extends OwnProps, StateProps, DispatchProps {}
 
-const GroupDetail: React.FC<GroupDetailProps> = ({ history, authData }) => {
-  const [GroupDetail, setGroupDetail] = useState<any>(undefined);
-  //   const param<any> = useParams();
+const Detail: React.FC<GroupDetailProps> = ({ history, authData,GroupDetail,PostGroupDetail }) => {
+  const location = useLocation();
   let param: any = useParams();
+  useEffect(()=>{
+    PostGroupDetail(param.id||"0");
+
+    // if(authData===null) history.push("/login")
+    // let fired = false
+    // if(authData){
+      // if(location.pathname.includes("/group/detail")){
+      //   fired = true;
+
+      //   PostGroupDetail(param.id||"0");
+      // }
+      // if(!fired){
+      //   PostGroupDetail(param.id||"0");
+      // }
+    // }   
+  },[])
   useEffect(() => {
-    if (authData !== undefined) {
-      const BodyData = new FormData();
-      if (authData) {
-        BodyData.append("token", authData && authData.token);
-      }
-      BodyData.append("gid", param.id || "");
-      fetch(
-        authData
-          ? BaseUrl+"group/detail"
-          : BaseUrl+"grouppublic/detail",
-        {
-          method: "POST",
-          body: BodyData,
-        }
-      )
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Server Bermasalah");
-          }
-          return res.json();
-        })
-        .then((res) => {
-          if (res.result && res.result.gid) {
-            setGroupDetail(res.result);
-            if (res.result.price !== "0") {
-              history.replace("/group/purchase/" + res.result.gid);
-            }
-          } else {
-            setGroupDetail(null);
-          }
-        })
-        .catch((err) => {
-          alert(err);
-        });
-    }
-  }, [authData]);
+    if(GroupDetail) 
+    if(GroupDetail?.price!=="0") history.replace("/group/purchase/" + GroupDetail?.gid + "/0");
+  },[GroupDetail]);
   if (GroupDetail) {
     return (
       <IonPage id="session-detail-page ">
@@ -136,7 +122,8 @@ const GroupDetail: React.FC<GroupDetailProps> = ({ history, authData }) => {
         </IonContent>
       </IonPage>
     );
-  } else if (GroupDetail === null) {
+  } 
+  if (GroupDetail === null) {
     return (
       <IonPage>
         <div className="ion-text-center">
@@ -144,23 +131,23 @@ const GroupDetail: React.FC<GroupDetailProps> = ({ history, authData }) => {
         </div>
       </IonPage>
     );
-  } else {
-    return (
-      <>
-        <IonPage>
-          <GeneralSkeleton></GeneralSkeleton>
-        </IonPage>
-      </>
-    );
   }
+  return (
+    <>
+      <IonPage>
+        <GeneralSkeleton></GeneralSkeleton>
+      </IonPage>
+    </>
+  );
 };
 
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
-    authData: state.user.authData,
+    authData: state.base.authData,
+    GroupDetail: state.quiz.GroupDetail
   }),
-  // mapDispatchToProps: {
-  //   setAuthData,
-  // },
-  component: GroupDetail,
+  mapDispatchToProps: {
+    PostGroupDetail,
+  },
+  component: withRouter(Detail),
 });

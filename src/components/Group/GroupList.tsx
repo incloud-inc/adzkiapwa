@@ -6,89 +6,57 @@ import {
   IonGrid,
   IonIcon,
   IonRow,
-  IonText,
-  useIonViewDidEnter,
+  IonText
 } from "@ionic/react";
 import { star } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
+import { connect } from "../../data/connect";
+import { PostGroupList } from "../../data/quiz/quiz.actions";
+import { AuthData } from "../../models/Base";
+import { GroupList } from "../../models/Quiz";
 import GeneralSkeleton from "../Shared/GeneralSkeleton";
-import { BaseUrl } from "../../AppConfig";
+
 interface OwnProps {
-  authData: any;
+  authData?: AuthData;
 }
-let timers = 0;
-console.log(timers);
 
-setInterval(() => {
-  timers++;
-}, 1);
+interface StateProps {
+  GroupList: GroupList[];
+}
+
+interface DispatchProps {
+  PostGroupList:typeof PostGroupList
+}
+
+interface GroupListProps
+  extends OwnProps,
+    StateProps,
+    DispatchProps,
+    RouteComponentProps {}
 interface GroupListProps extends RouteComponentProps, OwnProps {}
-const GroupList: React.FC<GroupListProps> = ({ history, authData }) => {
-  const [GroupList, setGroupList] = useState<any>(undefined);
+const GroupListComponent: React.FC<GroupListProps> = ({ history, authData,GroupList,PostGroupList }) => {
   const [showAlert, setShowAlert] = useState(false);
-  const [gid, setGid] = useState(null);
-  // useIonViewDidEnter(() => {
-  //   setTimeout(() => {
-  //     fetchGroup();
-  //   }, 5000);
-  // });
+  const [Group, setGroup] = useState<GroupList>();
   useEffect(() => {
-    if (authData !== undefined) {
-      fetchGroup();
+    PostGroupList()
+  }, []);
+  const SelectGroup = (Group: GroupList) => {
+    if(!Group.gid) {alert("Paket Tidak Tersedia"); return;}
+    if(!authData) {history.push("/group/detail/" + Group.gid);return;}
+    if (Group.price && Group.price !== "0") {
+      history.push("/group/purchase/" + Group.gid +'/0');
+      return;
     }
-  }, [authData]);
-  const fetchGroup = () => {
-    const BodyData = new FormData();
-    setGroupList(undefined);
-
-    if (authData) {
-      BodyData.append("token", authData && authData.token);
-    }
-    fetch(
-      authData
-        ? BaseUrl + "group/list"
-        : BaseUrl + "grouppublic/list",
-      {
-        method: "POST",
-        body: BodyData,
-      }
-    )
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Server Bermasalah");
-        }
-        return res.json();
-      })
-      .then((res) => {
-        if (res.result && res.result.length > 0) {
-          setGroupList(res.result);
-        } else {
-          setGroupList(null);
-        }
-      })
-      .catch((err) => {
-        alert(err);
-        setGroupList(null);
-      });
+    setGroup(Group);
+    setShowAlert(true);
   };
-  const SelectGroup = (item: any) => {
-    if (item.gid) {
-      if (authData) {
-        history.push("/group/detail/" + item.gid);
-      } else {
-        if (item.price && item.price === "0") {
-          setGid(item.gid);
-          setShowAlert(true);
-        } else {
-          alert("Paket Tidak Gratis");
-        }
-      }
-    } else {
-      alert("Paket Tidak Tersedia");
-    }
-  };
-  if (GroupList) {
+  if(GroupList && GroupList.length == 0) return (
+    <div className="ion-text-center">
+      <IonText>Data Quiz ditemukan</IonText>
+    </div>
+  );
+  if (GroupList)
     return (
       <div>
         <IonAlert
@@ -102,20 +70,16 @@ const GroupList: React.FC<GroupListProps> = ({ history, authData }) => {
             {
               text: "Batal",
               role: "cancel",
-              cssClass: "secondary",
-              // handler: () => {
-              //   console.log('Confirm Cancel');
-              // }
             },
             {
               text: "Ok",
               handler: () => {
-                history.push("/group/detail/" + gid);
+                history.push("/group/detail/" + Group?.gid);
               },
             },
           ]}
         />
-        {GroupList.map((item: any, index: React.Key | undefined) => (
+        {GroupList.map((item: GroupList, index: React.Key | undefined) => (
           <IonCard
             onClick={() => {
               SelectGroup(item);
@@ -160,15 +124,15 @@ const GroupList: React.FC<GroupListProps> = ({ history, authData }) => {
         ))}
       </div>
     );
-  } else if (GroupList === null) {
-    return (
-      <div className="ion-text-center">
-        <IonText>Data Tidak ditemukan</IonText>
-      </div>
-    );
-  } else {
-    return <GeneralSkeleton></GeneralSkeleton>;
-  }
+  return <GeneralSkeleton></GeneralSkeleton>;
 };
 
-export default withRouter(GroupList);
+export default connect<OwnProps, StateProps, DispatchProps>({
+  mapStateToProps: (state) => ({
+    GroupList: state.quiz.GroupList,
+  }),
+  mapDispatchToProps: {
+    PostGroupList
+  },
+  component: withRouter(GroupListComponent),
+});

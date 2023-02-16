@@ -1,41 +1,19 @@
-import React, { useState } from "react";
 import {
-  IonHeader,
-  IonToolbar,
-  IonContent,
-  IonPage,
-  IonButtons,
-  IonBackButton,
-  IonButton,
-  IonIcon,
-  IonText,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonCard,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonAvatar,
-  IonSearchbar,
-  IonBadge,
+  IonAvatar, IonButton, IonCard, IonCol, IonContent, IonGrid, IonHeader, IonPage, IonRow, IonSearchbar, IonText
 } from "@ionic/react";
-import { connect } from "../data/connect";
-import { withRouter, RouteComponentProps } from "react-router";
-import * as selectors from "../data/selectors";
-import { starOutline, star, share, cloudDownload } from "ionicons/icons";
-import "./SessionDetail.scss";
-import { addFavorite, removeFavorite } from "../data/sessions/sessions.actions";
-import { Session } from "../models/Schedule";
+import React, { useState } from "react";
 import Lottie from "react-lottie-player";
+import { RouteComponentProps, withRouter } from "react-router";
+import GroupListComponent from "../components/Group/GroupList";
+import { BaseState } from "../data/base/base.state";
+import { connect } from "../data/connect";
 import Welcome from "../lotties/sma.json";
-import GroupList from "../components/Group/GroupList";
+import "./SessionDetail.scss";
 
 interface OwnProps extends RouteComponentProps {}
 
 interface StateProps {
-  authData: any;
-  hasSeenTutorial: boolean;
+  base: BaseState;
 }
 
 interface DispatchProps {}
@@ -44,15 +22,15 @@ type PortalProps = OwnProps & StateProps & DispatchProps;
 
 const Portal: React.FC<PortalProps> = ({
   history,
-  authData,
-  hasSeenTutorial,
+  base,
 }) => {
   const [searchText, setSearchText] = useState("");
+  
   return (
     <IonPage id="session-detail-page ">
       <IonHeader className="bg-gray no-shadow ion-padding-start ion-padding-end ion-padding-top">
         <IonCard
-          hidden={authData}
+          hidden={base?.authData?true:false}
           className="br-16 no-shadow ion-p-8"
           style={{ position: "sticky" }}
         >
@@ -74,7 +52,7 @@ const Portal: React.FC<PortalProps> = ({
           </IonGrid>
         </IonCard>
         <IonCard
-          hidden={!authData}
+          hidden={!base?.authData}
           className="br-16 no-shadow ion-p-8"
           style={{ position: "sticky" }}
           onClick={() => {
@@ -87,7 +65,7 @@ const Portal: React.FC<PortalProps> = ({
                 <IonAvatar style={{ width: "100%", height: "auto" }}>
                   <img
                     src={
-                      (authData && authData.photo) ||
+                      base?.authData?.photo ||
                       "https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y"
                     }
                   />
@@ -96,26 +74,21 @@ const Portal: React.FC<PortalProps> = ({
               <IonCol className="ion-p-8" size="6">
                 <IonText>
                   <h5 className="ion-no-margin">
-                    {(authData &&
-                      authData.first_name &&
-                      authData.first_name.substring(0, 10)) ||
-                      ""}
-                    {authData &&
-                    authData.first_name &&
-                    authData.first_name.length > 10
+                    {(base?.authData?.first_name.substring(0, 10)) || ""}
+                    {base?.authData?.first_name && base?.authData?.first_name.length > 10
                       ? "..."
                       : ""}
                   </h5>
                 </IonText>
                 <IonText color="medium">
                   <h6 className="ion-no-margin">
-                    {(authData && authData.contact_no) || "-"}
+                    {(base?.authData?.contact_no) || "-"}
                   </h6>
                 </IonText>
               </IonCol>
               <IonCol className="ion-text-right">
                 <IonText color="success" style={{ fontSize: "36px" }}>
-                  {(authData && authData.uid) || ""}
+                  {(base?.authData?.uid) || ""}
                 </IonText>
               </IonCol>
             </IonRow>
@@ -132,16 +105,15 @@ const Portal: React.FC<PortalProps> = ({
       </IonHeader>
       <IonContent className="bg-gray ion-padding-start ion-padding-end">
         <Lottie animationData={Welcome} play={true}></Lottie>
-        <GroupList authData={authData}></GroupList>
+        <GroupListComponent authData={base?.authData}></GroupListComponent>
       </IonContent>
     </IonPage>
   );
 };
 
 export default connect<OwnProps, StateProps, DispatchProps>({
-  mapStateToProps: (state, OwnProps) => ({
-    authData: state.user.authData,
-    hasSeenTutorial: state.user.hasSeenTutorial,
+  mapStateToProps: (state) => ({
+    base: state.base,
   }),
   mapDispatchToProps: {},
   component: withRouter(Portal),
