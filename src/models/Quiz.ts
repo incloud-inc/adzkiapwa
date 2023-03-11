@@ -10,12 +10,8 @@ export interface PaymentsHistory {
     gid:string,
 }
 export interface PaymentDetail{
-    status: boolean,
-    message?: string,
-    price?: string,
-    group_name?: string,
-    group_description?: string,
-    qr_code?: string,
+    group:any,
+    payment_detail:any,
 }
 export interface TrxGopay{
     pid?: number,

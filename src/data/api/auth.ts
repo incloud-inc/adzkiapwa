@@ -18,7 +18,7 @@ export const ApiLogin = async (form:AuthLogin)=>{
       method: "POST",
       body: BodyData,
     })
-    .then((res) => {
+    .then((res) => {      
       if (!res.ok) {
         throw new Error("Server Bermasalah");
       }
@@ -43,6 +43,8 @@ export const ApiSignUp = async (form:AuthSignUp)=>{
   BodyData.append("first_name", form.first_name);
   BodyData.append("last_name", form.last_name);
   BodyData.append("phone", form.phone);
+  BodyData.append("alamat_lengkap", form.alamat_lengkap);
+  BodyData.append("alamat_sekolah", form.alamat_sekolah);
   const Response:ApiResponse<AuthData> = await fetch(BaseUrl+"auth/register", {
       method: "POST",
       body: BodyData,
@@ -67,7 +69,7 @@ export const ApiSignUp = async (form:AuthSignUp)=>{
 }
 export const ApiForgotPassword = async (form:AuthForgotPassword)=>{
   const BodyData = new FormData();
-  BodyData.append("phone", form.phone);
+  BodyData.append("email", form.email);
   const Response:ApiResponse<string> = await fetch(BaseUrl+"auth/forgotpassword", {
       method: "POST",
       body: BodyData,

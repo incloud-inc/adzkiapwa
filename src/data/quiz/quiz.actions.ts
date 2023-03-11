@@ -22,12 +22,15 @@ export const PostPayments = () => async (dispatch: React.Dispatch<any>) => {
 export const PostPurchase = (gid:string,pid:string) => async (dispatch: React.Dispatch<any>) => {
   dispatch(setLoading('Memuat Detail Pembayaran'));  
   const Response:ApiResponse<PaymentDetail> = await ApiCheckPayment(pid);
-  if(Response.data){
+  console.log(Response.data?.payment_detail);
+
+  if(Response.data?.payment_detail){
     dispatch(setPaymentDetail(Response.data));
     dispatch(setTrxGopay(undefined));
     dispatch(setLoading(''));
     return
   }
+
   dispatch(setPaymentDetail(undefined));
   const ResponseTrxGopay:ApiResponse<TrxGopay> = await ApiCreateTrxGopay(gid);
   dispatch(setLoading(''));

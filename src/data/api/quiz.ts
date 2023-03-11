@@ -50,9 +50,9 @@ export const ApiCheckPayment = (pid:string)=>{
         return res.json();
       })
       .then((res) => {
-        const PaymentsHistory:PaymentDetail = res
-        if (!PaymentsHistory || !PaymentsHistory.qr_code) throw new Error("Payment Detail Tidak Ditemukan")
-        return{data:PaymentsHistory,m:''}
+        const PaymentDetail:PaymentDetail = res
+        if (!PaymentDetail || !PaymentDetail.payment_detail) throw new Error("Payment Detail Tidak Ditemukan")
+        return{data:PaymentDetail,m:''}
       })
       .catch((err) => {
         return{data:undefined,m:err}

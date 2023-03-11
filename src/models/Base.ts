@@ -42,9 +42,11 @@ export interface AuthSignUp{
     first_name:string,
     last_name:string,
     phone:string,
+    alamat_lengkap:string,
+    alamat_sekolah:string,
 }
 export interface AuthForgotPassword{
-    phone:string,
+    email:string,
 }
 export interface ApiResponse<T>{
     m?:string

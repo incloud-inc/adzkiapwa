@@ -48,6 +48,14 @@ const ExamResults: React.FC<ExamResultsProps> = ({ history, authData,PostQuizRes
     return (
       <IonPage id="session-detail-page ">
         <IonToolbar>
+        <div slot="start"><img
+          src="/assets/img/brand/icon adzkia black.jpg"
+          width="36px"
+          style={{
+            marginTop:"8px",
+            marginLeft:"8px"
+          }}
+        /></div>
           {/* <IonButtons slot="start">
             <IonBackButton defaultHref="/tabs/portal"></IonBackButton>
           </IonButtons> */}
@@ -68,8 +76,14 @@ const ExamResults: React.FC<ExamResultsProps> = ({ history, authData,PostQuizRes
             }}>
               <IonCardContent>
                 <IonRow>
-                  <IonCol> Paket Tryout {index + 1}</IonCol>
-                  <IonCol size="3"> Nilai : 9{index}</IonCol>
+                  <IonCol> 
+                    <h6 className="ion-no-margin"><b>{item.name}</b></h6>
+                    <h6 className="ion-no-margin">ID : {item.rid}</h6>
+                  </IonCol>
+                  <IonCol size="5"> 
+                    <h6 className="ion-no-margin">Nilai {item.score}</h6>
+                    <h6 className="ion-no-margin">Durasi {item.total_time} menit</h6>
+                  </IonCol>
                 </IonRow>
               </IonCardContent>
             </IonCard>
@@ -80,6 +94,14 @@ const ExamResults: React.FC<ExamResultsProps> = ({ history, authData,PostQuizRes
   } else if (QuizResultList === null) {
     return (
       <IonPage>
+        <div slot="start"><img
+          src="/assets/img/brand/icon adzkia black.jpg"
+          width="36px"
+          style={{
+            marginTop:"8px",
+            marginLeft:"8px"
+          }}
+        /></div>
         <IonToolbar>
           {/* <IonButtons slot="start">
             <IonBackButton defaultHref="/tabs/portal"></IonBackButton>

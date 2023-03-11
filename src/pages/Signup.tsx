@@ -28,6 +28,8 @@ const Login: React.FC<LoginProps> = ({ setSignUp,base, history }) => {
   const [LastName, setLastName] = useState("");
   const [Password, setPassword] = useState("");
   const [Phone, setPhone] = useState("");
+  const [AlamatLengkap, setAlamatLengkap] = useState("");
+  const [AlamatSekolah, setAlamatSekolah] = useState("");
   // const [Email, setEmail] = useState("tes@gmail.com");
   // const [FirstName, setFirstName] = useState("1");
   // const [LastName, setLastName] = useState("1");
@@ -38,6 +40,8 @@ const Login: React.FC<LoginProps> = ({ setSignUp,base, history }) => {
   const [LastNameError, setLastNameError] = useState(false);
   const [PasswordError, setPasswordError] = useState(false);
   const [PhoneError, setPhoneError] = useState(false);
+  const [AlamatLengkapError, setAlamatLengkapError] = useState(false);
+  const [AlamatSekolahError, setAlamatSekolahError] = useState(false);
   const RegisterCheck = () => {
     let status = true;
     if (Email === "") {
@@ -76,6 +80,20 @@ const Login: React.FC<LoginProps> = ({ setSignUp,base, history }) => {
         setPhoneError(false);
       }, 2000);
     }
+    if (AlamatLengkap === "") {
+      status = false;
+      setAlamatLengkapError(true);
+      setTimeout(() => {
+        setAlamatLengkapError(false);
+      }, 2000);
+    }
+    if (AlamatSekolah === "") {
+      status = false;
+      setAlamatSekolahError(true);
+      setTimeout(() => {
+        setAlamatSekolahError(false);
+      }, 2000);
+    }
     return status;
   };
   useEffect(()=>{
@@ -93,7 +111,9 @@ const Login: React.FC<LoginProps> = ({ setSignUp,base, history }) => {
       password:Password,
       first_name:FirstName,
       last_name:LastName,
-      phone:Phone
+      phone:Phone,
+      alamat_lengkap:AlamatLengkap,
+      alamat_sekolah:AlamatSekolah,
     });
   };
 
@@ -199,6 +219,42 @@ const Login: React.FC<LoginProps> = ({ setSignUp,base, history }) => {
             {PhoneError && (
               <IonText color="danger">
                 <p className="ion-padding-start">Phone is required</p>
+              </IonText>
+            )}
+            <IonItem>
+              <IonLabel position="stacked" color="primary">
+                Alamat Lengkap
+              </IonLabel>
+              <IonInput
+                type="text"
+                value={AlamatLengkap}
+                onIonChange={(e) => {
+                  setAlamatLengkap(e.detail.value!);
+                }}
+              ></IonInput>
+            </IonItem>
+
+            {AlamatLengkapError && (
+              <IonText color="danger">
+                <p className="ion-padding-start">Alamat Lengkap is required</p>
+              </IonText>
+            )}
+            <IonItem>
+              <IonLabel position="stacked" color="primary">
+                Alamat Sekolah
+              </IonLabel>
+              <IonInput
+                type="text"
+                value={AlamatSekolah}
+                onIonChange={(e) => {
+                  setAlamatSekolah(e.detail.value!);
+                }}
+              ></IonInput>
+            </IonItem>
+
+            {AlamatSekolahError && (
+              <IonText color="danger">
+                <p className="ion-padding-start">Alamat Sekolah is required</p>
               </IonText>
             )}
           </IonList>

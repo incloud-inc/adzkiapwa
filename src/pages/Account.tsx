@@ -98,26 +98,30 @@ const Account: React.FC<AccountProps> = ({
             <h2>
               {authData.first_name || ""} {authData.last_name || ""}
             </h2>
-            <IonList lines="none">
-              <IonItem>
+            <IonList lines="none" class="bg-gray">
+              <IonItem class="bg-gray">
                 <IonLabel position="stacked">E-Mail</IonLabel>
-                <IonInput disabled value={authData.email || ""}></IonInput>
+                <IonInput disabled value={authData.email || "-"}></IonInput>
               </IonItem>
-              <IonItem>
-                <IonLabel position="floating">First Name</IonLabel>
-                <IonInput value={authData.first_name || ""}></IonInput>
+              <IonItem class="bg-gray">
+                <IonLabel position="stacked">First Name</IonLabel>
+                <IonInput disabled value={authData.first_name || "-"}></IonInput>
               </IonItem>
-              <IonItem>
-                <IonLabel position="floating">Kontak</IonLabel>
-                <IonInput value={authData.contact_no || ""}></IonInput>
+              <IonItem class="bg-gray">
+                <IonLabel position="stacked">Last Name</IonLabel>
+                <IonInput disabled value={authData.last_name || "-"}></IonInput>
               </IonItem>
-              <IonItem>
-                <IonLabel position="floating">Alamat Lengkap</IonLabel>
-                <IonInput value={authData.alamat_lengkap || ""}></IonInput>
+              <IonItem class="bg-gray">
+                <IonLabel position="stacked">Kontak</IonLabel>
+                <IonInput  disabled value={authData.contact_no || "-"}></IonInput>
               </IonItem>
-              <IonItem>
-                <IonLabel position="floating">Alamat Sekolah</IonLabel>
-                <IonInput value={authData.alamat_sekolah || ""}></IonInput>
+              <IonItem class="bg-gray">
+                <IonLabel position="stacked">Alamat Lengkap</IonLabel>
+                <IonInput disabled value={authData.alamat_lengkap || "-"}></IonInput>
+              </IonItem>
+              <IonItem class="bg-gray">
+                <IonLabel position="stacked">Alamat Sekolah</IonLabel>
+                <IonInput disabled value={authData.alamat_sekolah || "-"}></IonInput>
               </IonItem>
             </IonList>
             <IonButton color="primary" size="large" className="ion-margin" hidden>
@@ -127,7 +131,9 @@ const Account: React.FC<AccountProps> = ({
             <IonText
               onClick={() => {
                 setAuthData(undefined);
-                history.replace("/");
+                setTimeout(() => {
+                  window.location.href="/";
+                }, 500);
               }}
               color="danger"
             >

@@ -28,6 +28,7 @@ import { PostPayments } from "../data/quiz/quiz.actions";
 import PaymentsAnimation from "../lotties/payments.json";
 import { AuthData } from "../models/Base";
 import { PaymentsHistory } from "../models/Quiz";
+import { Rupiah } from "../util/helper";
 
 interface OwnProps extends RouteComponentProps {}
 
@@ -70,9 +71,18 @@ const Payments: React.FC<PaymentsProps> = ({ history, authData,PostPayments,paym
   if (payments && payments.length<1)return (
     <IonPage>
       <IonToolbar>
+        <div slot="start"><img
+          src="/assets/img/brand/icon adzkia black.jpg"
+          width="36px"
+          style={{
+            marginTop:"8px",
+            marginLeft:"8px"
+          }}
+        /></div>
         {/* <IonButtons slot="start">
           <IonBackButton defaultHref="/tabs/portal"></IonBackButton>
         </IonButtons> */}
+        
         <IonTitle>Histori Pembayaran</IonTitle>
       </IonToolbar>
       <IonContent className="bg-gray">
@@ -88,6 +98,14 @@ const Payments: React.FC<PaymentsProps> = ({ history, authData,PostPayments,paym
   return (
     <IonPage id="session-detail-page ">
       <IonToolbar>
+        <div slot="start"><img
+          src="/assets/img/brand/icon adzkia black.jpg"
+          width="36px"
+          style={{
+            marginTop:"8px",
+            marginLeft:"8px"
+          }}
+        /></div>
         <IonTitle>Histori Pembayaran</IonTitle>
       </IonToolbar>
       <IonContent className="bg-gray">
@@ -95,9 +113,11 @@ const Payments: React.FC<PaymentsProps> = ({ history, authData,PostPayments,paym
           <IonCard key={index}>
             <IonCardContent>
               <IonRow onClick={() => DetailPayment(item)}>
-                <IonCol> {item.trxdate}</IonCol>
-                <IonCol> {item.paket.group_name}</IonCol>
-                <IonCol> {item.paket.price}</IonCol>
+                <IonCol> 
+                <h6 className="ion-no-margin"><b>Nama Group : {item.paket.group_name}</b></h6>
+                <h6 className="ion-no-margin">{item.trxdate}</h6>
+                <h6 className="ion-no-margin">Rp {item.paket.price}</h6>
+                  </IonCol>
               </IonRow>
               <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
                 <IonRefresherContent

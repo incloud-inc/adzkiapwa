@@ -13,10 +13,14 @@ export const setLogin = (form:AuthLogin) => async (dispatch: React.Dispatch<any>
       message:Response.m||"Tidak Berhasil Login",
       subHeader:''
     }))
+    return;
   }
   ApiAuthData(Response.data);
   const UserData = await getUserData();
   dispatch(setData(UserData));
+  setTimeout(() => {
+    window.location.href="/";
+  }, 500);
 }
 export const setSignUp = (form:AuthSignUp) => async (dispatch: React.Dispatch<any>) => {
   dispatch(setLoading('Mencoba Mendaftar'));
@@ -29,6 +33,7 @@ export const setSignUp = (form:AuthSignUp) => async (dispatch: React.Dispatch<an
       message:Response.m||"Tidak Berhasil Register",
       subHeader:''
     }))
+    return;
   }
   dispatch(setAlert({
     isOpen:true,
@@ -39,6 +44,9 @@ export const setSignUp = (form:AuthSignUp) => async (dispatch: React.Dispatch<an
   ApiAuthData(Response.data);
   const UserData = await getUserData();
   dispatch(setData(UserData));
+  setTimeout(() => {
+    window.location.href="/";
+  }, 500);
 }
 export const setForgotPassword = (form:AuthForgotPassword) => async (dispatch: React.Dispatch<any>) => {
   dispatch(setLoading('Mencoba Reset Password'));
@@ -51,6 +59,7 @@ export const setForgotPassword = (form:AuthForgotPassword) => async (dispatch: R
       message:Response.m||"Tidak Berhasil Reset Password",
       subHeader:''
     }))
+    return;
   }
   dispatch(setAlert({
     isOpen:true,

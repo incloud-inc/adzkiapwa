@@ -21,21 +21,21 @@ interface DispatchProps {
 interface LoginProps extends OwnProps, DispatchProps, StateProps {}
 
 const ForgotPassword: React.FC<LoginProps> = ({ setForgotPassword,history }) => {
-  const [Phone, setPhone] = useState("");
+  const [Email, setEmail] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [PhoneError, setPhoneError] = useState(false);
+  const [EmailError, setEmailError] = useState(false);
   const [ForgotPasswordSuccess, setForgotPasswordSuccess] = useState(false);
 
   const ForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!Phone) {
-      setPhoneError(true);
+    if (!Email) {
+      setEmailError(true);
       setTimeout(() => {
-        setPhoneError(false)
+        setEmailError(false)
       }, 3000);
       return;
     }
-    await setForgotPassword({phone:Phone})
+    await setForgotPassword({email:Email})
     
   };
 
@@ -61,28 +61,28 @@ const ForgotPassword: React.FC<LoginProps> = ({ setForgotPassword,history }) => 
           <IonList>
             <IonItem>
               <IonLabel position="stacked" color="primary">
-                Nomor WA
+                E-mail
               </IonLabel>
               <IonInput
-                placeholder="Contoh : 0812 3456 7890"
-                name="Phone"
+                placeholder="Contoh : emailanda@gmail.com"
+                name="Email"
                 type="text"
-                value={Phone}
+                value={Email}
                 spellCheck={false}
                 autocapitalize="off"
-                onIonChange={(e) => setPhone(e.detail.value!)}
+                onIonChange={(e) => setEmail(e.detail.value!)}
                 required
               ></IonInput>
             </IonItem>
 
-            {PhoneError && (
+            {EmailError && (
               <IonText color="danger">
-                <p className="ion-padding-start">Phone is required</p>
+                <p className="ion-padding-start">Email is required</p>
               </IonText>
             )}
           </IonList>
           <IonText className="ion-margin" color="medium">
-            <small>Password Baru akan dikrimkan ke nomor WA anda</small>
+            <small>Password Baru akan dikirim ke Email anda</small>
           </IonText>
           <IonRow>
             <IonCol>

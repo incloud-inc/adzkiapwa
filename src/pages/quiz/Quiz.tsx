@@ -551,7 +551,7 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
                   </IonCard>
                 ))
             : ""} */}
-          <IonGrid>
+          {/* <IonGrid>
             <IonRow>
               <IonCol>
                 <IonButton
@@ -588,7 +588,7 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
                 </IonButton>
               </IonCol>
             </IonRow>
-          </IonGrid>
+          </IonGrid> */}
           <IonSlides options={slideQuiz} ref={slideQuizRef}>
             {QuizAttempt.questions
               ? QuizAttempt.questions.map((item: any, index: any) => (

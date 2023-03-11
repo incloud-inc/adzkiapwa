@@ -93,7 +93,7 @@ const LessonListComponent: React.FC<LessonListProps> = ({ history, gids, authDat
               <IonTitle>Materi</IonTitle>
             </IonToolbar>
           </IonHeader>
-          <IonContent>
+          <IonContent class="bg-gray">
             <IonGrid className="ion-padding">
               <IonRow>
                 <IonCol size="2">

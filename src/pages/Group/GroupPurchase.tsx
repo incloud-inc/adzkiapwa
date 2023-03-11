@@ -13,7 +13,9 @@ import {
   IonRow,
   IonText,
   IonTitle,
-  IonToolbar
+  IonToolbar,
+  useIonViewDidEnter,
+  useIonViewWillLeave
 } from "@ionic/react";
 import { star } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
@@ -44,11 +46,20 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData,quiz,Po
   let param: PurchaseParam = useParams();
   useEffect(() => {
     if(authData===null) history.push("/login")
-    if(!Submitted && !quiz.PaymentDetail && !quiz.TrxGopay){
+    // if(!Submitted && !quiz.PaymentDetail && !quiz.TrxGopay){
+    //   setSubmitted(true)
+    //   PostPurchase(param.gid||"0",param.pid||"0")
+    // }
+  },[authData]);
+  useIonViewDidEnter(()=>{
+    if(!Submitted){
       setSubmitted(true)
       PostPurchase(param.gid||"0",param.pid||"0")
     }
-  },[authData]);
+  })
+  useIonViewWillLeave(()=>{
+    setSubmitted(false)
+  })
   useEffect(() => {
     if(quiz.PaymentDetail || quiz.TrxGopay) setSubmitted(false)
   },[quiz]);
@@ -80,17 +91,17 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData,quiz,Po
                 hidden={!quiz.PaymentDetail && !quiz.TrxGopay}
               >
                 <IonCol>
-                  <h5>{quiz.PaymentDetail?.group_name||quiz.TrxGopay?.group?.group_name||''}</h5>
+                  <h5>{quiz.PaymentDetail?.group?.group_name||quiz.TrxGopay?.group?.group_name||''}</h5>
                 </IonCol>
               </IonRow>
               <IonRow
                 className="ion-padding ion-text-center"
-                hidden={!quiz.PaymentDetail?.group_description&&!quiz.TrxGopay?.group?.description}
+                hidden={!quiz.PaymentDetail?.group?.group_description&&!quiz.TrxGopay?.group?.description}
               >
                 <IonCol>
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: quiz.PaymentDetail?.group_description||quiz.TrxGopay?.group?.description||'',
+                      __html: quiz.PaymentDetail?.group?.group_description||quiz.TrxGopay?.group?.description||'',
                     }}
                   ></div>
                 </IonCol>
@@ -107,10 +118,13 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData,quiz,Po
                     }}
                   />
                   <img
-                    src={quiz.PaymentDetail?.qr_code||quiz.TrxGopay?.message?.actions[0]?.url || ""}
+                    src={quiz.PaymentDetail?.group?.qr_code||quiz.TrxGopay?.message?.actions[0]?.url || ""}
                     width="auto"
                     height="240px"
                   />
+                  <IonButton class="ion-margin-top" href={quiz.PaymentDetail?.group?.qr_code||quiz.TrxGopay?.message?.actions[0]?.url || ""} download="qris">
+                    Download QRIS
+                  </IonButton>
                 </IonCol>
               </IonRow>
               <IonRow
@@ -126,8 +140,8 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData,quiz,Po
                 <IonCol size="6" className="ion-text-right">
                 <h5 className="ion-no-margin color-navy" hidden={!quiz.PaymentDetail}>
                     <b>
-                      {quiz.PaymentDetail?.price!=="0"
-                      ? "Rp " + quiz.PaymentDetail?.price
+                      {quiz.PaymentDetail?.group?.price!=="0"
+                      ? "Rp " + quiz.PaymentDetail?.group?.price
                       : "GRATIS"
                       }
                     </b>
@@ -155,7 +169,7 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData,quiz,Po
               history.push(`/group/purchasecomplete/${param.pid!=="0"?param.pid: quiz.TrxGopay?.pid ||"0"}`);
             }}
           >
-            Cek status pembayaran
+            SAYA SUDAH BAYAR
           </IonButton>
         </IonFooter>
       </IonPage>
