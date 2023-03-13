@@ -31,21 +31,21 @@ import { PostQuizAttempt, setQuizAnswer } from "../../data/quiz/quiz.actions";
 import { AuthData } from "../../models/Base";
 import { QuizAnswer, QuizAttempt, QuizAttemptQuestions } from "../../models/Quiz";
 const { Countdown } = Statistic;
-interface OwnProps extends RouteComponentProps {}
+interface OwnProps extends RouteComponentProps { }
 
 interface StateProps {
   authData: AuthData;
-  QuizAttempt:QuizAttempt,
-  QuizAnswer:QuizAnswer[][]
+  QuizAttempt: QuizAttempt,
+  QuizAnswer: QuizAnswer[][]
 }
 
 interface DispatchProps {
-  setQuizAnswer :typeof setQuizAnswer
+  setQuizAnswer: typeof setQuizAnswer
 }
-interface Param{
-  quid:string
+interface Param {
+  quid: string
 }
-interface AccountProps extends OwnProps, StateProps, DispatchProps {}
+interface AccountProps extends OwnProps, StateProps, DispatchProps { }
 const slideQuiz = {
   initialSlide: 0,
   slidesPerView: 10,
@@ -54,16 +54,16 @@ const slideQuiz = {
 };
 var countdownTimer: any;
 let TimeSaver = 0;
-interface QuizTime{
-  Countdown:number,
-  QuizId?:string
+interface QuizTime {
+  Countdown: number,
+  QuizId?: string
 }
-const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttempt,setQuizAnswer }) => {
-  let param:Param = useParams();
+const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer, QuizAttempt, setQuizAnswer }) => {
+  let param: Param = useParams();
 
   const QT = localStorage.getItem("QuizTime");
-  
-  const parsedQT:any = QT?JSON.parse(QT):[];
+
+  const parsedQT: any = QT ? JSON.parse(QT) : [];
   const getQT: any = parsedQT ? parsedQT.find((x: any) => x.QuizId == param.quid) : undefined;
   const [rid, setrid] = useState<number>(0);
   const [RecentQuestionNumber, setRecentQuestionNumber] = useState<number>(0);
@@ -82,11 +82,12 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
     if (!countdownTimer) {
     }
   }, [QuizDuration]);
-
   const slideQuizRef = useRef<HTMLIonSlidesElement>(null);
   const onFinish = () => {
     submitQuiz();
   };
+
+
   // const setQuizTimer = (expiryTimestamp: Date) => {
   //   const { seconds, minutes, hours } = useTimer({
   //     expiryTimestamp,
@@ -163,7 +164,7 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
     var d1 = new Date();
     var d2 = new Date(d1);
 
-    d2.setMinutes(d1.getMinutes() + parseInt(QuizAttempt?.quiz?.duration||"0"));
+    d2.setMinutes(d1.getMinutes() + parseInt(QuizAttempt?.quiz?.duration || "0"));
 
     let difference = +d2 - +new Date();
 
@@ -189,7 +190,7 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
   // });
   const [timeLeft, setTimeLeft] = useState<any>(calculateTimeLeftStart());
   useEffect(() => {
-    if(!QuizAttempt?.quiz?.duration){return;}
+    if (!QuizAttempt?.quiz?.duration) { return; }
     let timer: any = null;
     if (timeLeft.minutes !== undefined) {
       timer = setTimeout(() => {
@@ -201,64 +202,63 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
   const [showAlert, setShowAlert] = useState(false);
   const [ava, setAva] = useState(
     (authData && authData.photo) ||
-      "https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y"
+    "https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y"
   );
-  const RunDuration = ()=>{
-    setQuizDuration(parseInt(QuizAttempt.quiz?.duration||"0")* 60);
-    TimeSaver = getQT?getQT.Countdown:parseInt(QuizAttempt.quiz?.duration||"0") * 60
+  const RunDuration = () => {
+    setQuizDuration(parseInt(QuizAttempt.quiz?.duration || "0") * 60);
+    TimeSaver = getQT ? getQT.Countdown : parseInt(QuizAttempt.quiz?.duration || "0") * 60
     if (TimeSaver > 0) {
       countdownTimer = setInterval(() => {
         TimeSaver = TimeSaver - 1;
-        const NewQuizTime:QuizTime = { QuizId: param.quid, Countdown: TimeSaver }
-        const QuizTempStorage:string = localStorage.getItem('QuizTime')||'';
-        if(!QuizTempStorage) {
-          localStorage.setItem("QuizTime",JSON.stringify([NewQuizTime]));
-        }else{
-          const TempQuizTime:QuizTime[] = JSON.parse(QuizTempStorage);
-          if(!TempQuizTime.find(x=>x.QuizId==param.quid)){            
-            localStorage.setItem("QuizTime",JSON.stringify([...TempQuizTime,NewQuizTime]));
-          }else{
-            TempQuizTime.forEach((qt:QuizTime)=>{           
-              if(qt.QuizId == param.quid && history.location.pathname.includes("/quiz/start")){                
-                qt.Countdown = qt.Countdown-1 
+        const NewQuizTime: QuizTime = { QuizId: param.quid, Countdown: TimeSaver }
+        const QuizTempStorage: string = localStorage.getItem('QuizTime') || '';
+        if (!QuizTempStorage) {
+          localStorage.setItem("QuizTime", JSON.stringify([NewQuizTime]));
+        } else {
+          const TempQuizTime: QuizTime[] = JSON.parse(QuizTempStorage);
+          if (!TempQuizTime.find(x => x.QuizId == param.quid)) {
+            localStorage.setItem("QuizTime", JSON.stringify([...TempQuizTime, NewQuizTime]));
+          } else {
+            TempQuizTime.forEach((qt: QuizTime) => {
+              if (qt.QuizId == param.quid && history.location.pathname.includes("/quiz/start")) {
+                qt.Countdown = qt.Countdown - 1
               }
             })
-            localStorage.setItem("QuizTime",JSON.stringify(TempQuizTime));
+            localStorage.setItem("QuizTime", JSON.stringify(TempQuizTime));
           }
         }
-        
+
         if (TimeSaver === 0) {
           clearInterval(countdownTimer);
         }
       }, 1000);
     }
-    let cd:Date = new Date();
+    let cd: Date = new Date();
     if (getQT) {
       cd.setSeconds(cd.getSeconds() + getQT.Countdown);
     } else {
-      cd.setSeconds(cd.getSeconds() + parseInt(QuizAttempt.quiz?.duration||"0") * 60);
+      cd.setSeconds(cd.getSeconds() + parseInt(QuizAttempt.quiz?.duration || "0") * 60);
     }
     setQuizDurationCountdown(cd);
   }
-  const QuizInit = () =>{   
-    console.log(QuizAnswer);    
-    if(!QuizAnswer?.[parseInt(param.quid)]){
+  const QuizInit = () => {
+    if (!QuizAnswer?.[parseInt(param.quid)]) {
       setRecentQuestion(QuizAttempt?.questions?.[0]);
-      let AnswersArray:QuizAnswer[] = new Array();
+      let AnswersArray: QuizAnswer[] = new Array();
       QuizAttempt?.questions?.forEach((q: QuizAttemptQuestions, index: number) => {
         AnswersArray.push({
           AnswerIndex: index,
-          qid: q.qid||"",
+          qid: q.qid || "",
           Answer: "",
           AnswerStatus: index === 0 ? "notvisited" : "notvisited",
         });
       });
-      const temp:QuizAnswer[][] = QuizAnswer;
+      const temp: QuizAnswer[][] = QuizAnswer;
       temp[parseInt(param.quid)] = AnswersArray;
       setQuizAnswer(temp);
       return
     }
-    const AI:number = QuizAnswer[parseInt(param.quid)].filter((a: QuizAnswer) => a.Answer === "")[0]
+    const AI: number = QuizAnswer[parseInt(param.quid)].filter((a: QuizAnswer) => a.Answer === "")[0]
       ? QuizAnswer[parseInt(param.quid)].filter((b: QuizAnswer) => b.Answer === "")[0].AnswerIndex
       : 0;
     const AL = QuizAnswer[parseInt(param.quid)].filter(
@@ -269,7 +269,7 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
       setRecentQuestion(QuizAttempt?.questions?.[AI]);
       slideQuizRef.current?.slideTo(AI);
     } else {
-      const IndexItem = AL===0?AL:AL - 1
+      const IndexItem = AL === 0 ? AL : AL - 1
       setRecentQuestionNumber(IndexItem);
       setRecentQuestion(QuizAttempt?.questions?.[IndexItem]);
       slideQuizRef.current?.slideTo(IndexItem);
@@ -277,39 +277,39 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
     setAnsweredQuestionTotal(AL);
     setQuizAnswer(QuizAnswer);
   }
-  useEffect(()=>{
-    if(!QuizAttempt){return;}
+  useEffect(() => {
+    if (!QuizAttempt) { return; }
     RunDuration();
-  },[QuizAttempt,QuizAnswer]);
-  useIonViewWillLeave(()=>{
+  }, [QuizAttempt]);
+  useIonViewWillLeave(() => {
     clearInterval(countdownTimer);
   })
   useIonViewDidEnter(() => {
-    if(!QuizAttempt)    {
+    if (!QuizAttempt) {
       history.replace('/tabs/portal')
       return
     }
     QuizInit();
     // PostQuizAttempt(quid);
     return;
-    
-                
-      //         } else {
-      //           setQuizData(null);
-      //           history.push("/");
-      //           throw new Error((res && res.message) || "Server Bermasalah");
-      //         }
-      //       });
-      //   } else {
-      //     setQuizData(null);
-      //     history.goBack();
-      //     throw new Error((res && res.message) || "Server Bermasalah");
-      //   }
-      // })
-      // .catch((err) => {
-      //   alert(err);
-      //   // setQuizList(null);
-      // });
+
+
+    //         } else {
+    //           setQuizData(null);
+    //           history.push("/");
+    //           throw new Error((res && res.message) || "Server Bermasalah");
+    //         }
+    //       });
+    //   } else {
+    //     setQuizData(null);
+    //     history.goBack();
+    //     throw new Error((res && res.message) || "Server Bermasalah");
+    //   }
+    // })
+    // .catch((err) => {
+    //   alert(err);
+    //   // setQuizList(null);
+    // });
   });
   const submitQuiz = () => {
     setShowLoading(true);
@@ -324,8 +324,8 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
     BodyData.append("question_total", QuizAnswer[parseInt(param.quid)].length.toString());
     fetch(
       authData
-        ? BaseUrl+"quiz/submitquiz"
-        : BaseUrl+"quizpublic/submitquiz",
+        ? BaseUrl + "quiz/submitquiz"
+        : BaseUrl + "quizpublic/submitquiz",
       {
         method: "POST",
         body: BodyData,
@@ -340,14 +340,11 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
         return res.json();
       })
       .then((res) => {
-        history.replace("/quiz/result/" + QuizAttempt.quiz?.rid);
-        // if (res.message && res.message === "Submit answer successfully") {
-        //   let DataArray = JSON.parse(localStorage.getItem("AnswerData") || "");
-        //   delete DataArray[QuizData.quiz.quid || 0];
-        //   localStorage.setItem("AnswerData", JSON.stringify(DataArray));
+        let DataArray = JSON.parse(localStorage.getItem("_cap_AnswerData") || "");
+        delete DataArray[param.quid];
+        localStorage.setItem("_cap_AnswerData", JSON.stringify(DataArray));
 
-        //   history.replace("/quiz/result/" + rid);
-        // }
+        history.replace("/quiz/result/" + QuizAttempt.quiz?.rid);
       })
       .catch((err) => {
         history.push("/");
@@ -365,15 +362,15 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
       setRecentQuestion(undefined);
       setTimeout(() => {
         // setRecentQuestionNumber(Answers.length - 1);
-        setRecentQuestion(QuizData.questions[QuizAnswer[parseInt(param.quid)].length - 1]);
+        setRecentQuestion(QuizAttempt.questions?.[QuizAnswer[parseInt(param.quid)].length - 1]);
       }, 1000);
     }
   };
   const setAnswer = (AIndex: number, AID: string) => {
-    const AnswersArray:QuizAnswer[] = QuizAnswer[parseInt(param.quid)];
+
+    const AnswersArray: QuizAnswer[] = QuizAnswer[parseInt(param.quid)];
     AnswersArray[AIndex].Answer = AID;
     AnswersArray[AIndex].AnswerStatus = "answered";
-    setQuizAnswer([...QuizAnswer,QuizAnswer[parseInt(param.quid)]]);
     SaveLocalAnswer(AnswersArray);
     setAnsweredQuestionTotal(
       AnswersArray.filter((a: any) => a.AnswerStatus === "answered").length
@@ -386,31 +383,27 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
     const AnswersArray = QuizAnswer[parseInt(param.quid)];
     AnswersArray[RecentQuestionNumber].AnswerStatus = "reviewlater";
     NextPage();
-    setQuizAnswer([...QuizAnswer,QuizAnswer[parseInt(param.quid)]]);
+    setQuizAnswer([...QuizAnswer, QuizAnswer[parseInt(param.quid)]]);
     SaveLocalAnswer(AnswersArray);
   };
   const setSkipped = () => {
     const AnswersArray = QuizAnswer[parseInt(param.quid)];
     AnswersArray[RecentQuestionNumber].AnswerStatus = "skipped";
     NextPage();
-    setQuizAnswer([...QuizAnswer,QuizAnswer[parseInt(param.quid)]]);
+    setQuizAnswer([...QuizAnswer, QuizAnswer[parseInt(param.quid)]]);
     SaveLocalAnswer(AnswersArray);
   };
   const SaveLocalAnswer = (data: QuizAnswer[]) => {
-    const GetAD = localStorage.getItem("AnswerData");
+    const GetAD = localStorage.getItem("_cap_AnswerData");
     if (GetAD) {
-      let AD:QuizAnswer[][] = JSON.parse(GetAD);
-      AD[parseInt(param.quid)] = data;
-      setQuizAnswer(AD);
-    } else {
-      let AD: QuizAnswer[][] = [];
+      let AD: QuizAnswer[][] = JSON.parse(GetAD);
       AD[parseInt(param.quid)] = data;
       setQuizAnswer(AD);
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
 
-  },[QuizAnswer])
+  }, [QuizAnswer])
   if (QuizAttempt) {
     return (
       <IonPage>
@@ -470,50 +463,50 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
           ></div>
           {QuizAttempt?.options && RecentQuestion
             ? QuizAttempt.options
-                .filter((o: any) => o.qid === RecentQuestion.qid)
-                .map((oItem: any, oIndex: any) => (
-                  <IonCard
-                    key={oIndex}
-                    className={
-                      QuizAnswer[parseInt(param.quid)]
-                        ? oItem.oid === QuizAnswer[parseInt(param.quid)][RecentQuestionNumber].Answer
-                          ? "quizanswer-active"
-                          : ""
+              .filter((o: any) => o.qid === RecentQuestion.qid)
+              .map((oItem: any, oIndex: any) => (
+                <IonCard
+                  key={oIndex}
+                  className={
+                    QuizAnswer[parseInt(param.quid)]
+                      ? oItem.oid === QuizAnswer[parseInt(param.quid)][RecentQuestionNumber].Answer
+                        ? "quizanswer-active"
                         : ""
-                    }
-                    hidden={oIndex > 4}
-                    onClick={() => {
-                      setAnswer(RecentQuestionNumber, oItem.oid);
-                    }}
-                  >
-                    <IonCardContent>
-                      <IonGrid>
-                        <IonRow>
-                          <IonCol size="2">
-                            {oIndex === 0
-                              ? "A"
-                              : oIndex === 1
+                      : ""
+                  }
+                  hidden={oIndex > 4}
+                  onClick={() => {
+                    setAnswer(RecentQuestionNumber, oItem.oid);
+                  }}
+                >
+                  <IonCardContent>
+                    <IonGrid>
+                      <IonRow>
+                        <IonCol size="2">
+                          {oIndex === 0
+                            ? "A"
+                            : oIndex === 1
                               ? "B"
                               : oIndex === 2
-                              ? "C"
-                              : oIndex === 3
-                              ? "D"
-                              : "E"}
-                          </IonCol>
-                          <IonCol size="10">
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: oItem.q_option || "",
-                              }}
-                            ></div>
-                          </IonCol>
-                        </IonRow>
-                      </IonGrid>
-                    </IonCardContent>
-                  </IonCard>
-                ))
+                                ? "C"
+                                : oIndex === 3
+                                  ? "D"
+                                  : "E"}
+                        </IonCol>
+                        <IonCol size="10">
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: oItem.q_option || "",
+                            }}
+                          ></div>
+                        </IonCol>
+                      </IonRow>
+                    </IonGrid>
+                  </IonCardContent>
+                </IonCard>
+              ))
             : ""}
-            {/* <QuizAttemptComponent></QuizAttemptComponent> */}
+          {/* <QuizAttemptComponent></QuizAttemptComponent> */}
           <IonLoading isOpen={showLoading} message={"Proses..."} />
         </IonContent>
         <IonFooter className="ion-padding quizanswer">
@@ -592,36 +585,36 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
           <IonSlides options={slideQuiz} ref={slideQuizRef}>
             {QuizAttempt.questions
               ? QuizAttempt.questions.map((item: any, index: any) => (
-                  <IonSlide key={index}>
-                    <IonButton
-                      className="quizNumberButton"
-                      size="small"
-                      color={
-                        index === RecentQuestionNumber
-                          ? "light"
-                          : QuizAnswer[parseInt(param.quid)] &&
+                <IonSlide key={index}>
+                  <IonButton
+                    className="quizNumberButton"
+                    size="small"
+                    color={
+                      index === RecentQuestionNumber
+                        ? "light"
+                        : QuizAnswer[parseInt(param.quid)] &&
                           QuizAnswer[parseInt(param.quid)][index] &&
                           QuizAnswer[parseInt(param.quid)][index].AnswerStatus === "answered"
                           ? "success"
                           : QuizAnswer[parseInt(param.quid)] &&
-                          QuizAnswer[parseInt(param.quid)][index] &&
-                          QuizAnswer[parseInt(param.quid)][index].AnswerStatus === "skipped"
-                          ? "medium"
-                          : QuizAnswer[parseInt(param.quid)] &&
-                          QuizAnswer[parseInt(param.quid)][index] &&
-                            QuizAnswer[parseInt(param.quid)][index].AnswerStatus === "reviewlater"
-                          ? "warning"
-                          : "dark"
-                      }
-                      onClick={() => {
-                        setRecentQuestionNumber(index);
-                        setRecentQuestion(item);
-                      }}
-                    >
-                      {index + 1}
-                    </IonButton>
-                  </IonSlide>
-                ))
+                            QuizAnswer[parseInt(param.quid)][index] &&
+                            QuizAnswer[parseInt(param.quid)][index].AnswerStatus === "skipped"
+                            ? "medium"
+                            : QuizAnswer[parseInt(param.quid)] &&
+                              QuizAnswer[parseInt(param.quid)][index] &&
+                              QuizAnswer[parseInt(param.quid)][index].AnswerStatus === "reviewlater"
+                              ? "warning"
+                              : "dark"
+                    }
+                    onClick={() => {
+                      setRecentQuestionNumber(index);
+                      setRecentQuestion(item);
+                    }}
+                  >
+                    {index + 1}
+                  </IonButton>
+                </IonSlide>
+              ))
               : ""}
           </IonSlides>
         </IonFooter>
@@ -649,8 +642,8 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer,QuizAttemp
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
     authData: state.base.authData,
-    QuizAttempt:state.quiz.QuizAttempt,
-    QuizAnswer:state.quiz.QuizAnswer
+    QuizAttempt: state.quiz.QuizAttempt,
+    QuizAnswer: state.quiz.QuizAnswer
   }),
   mapDispatchToProps: {
     setQuizAnswer
