@@ -51,19 +51,25 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData,quiz,Po
     //   PostPurchase(param.gid||"0",param.pid||"0")
     // }
   },[authData]);
+  useEffect(()=>{
+    PostPurchase(param.gid||"0",param.pid||"0")
+  },[])
+
   useIonViewDidEnter(()=>{
     if(!Submitted){
       setSubmitted(true)
-      PostPurchase(param.gid||"0",param.pid||"0")
     }
   })
   useIonViewWillLeave(()=>{
     setSubmitted(false)
   })
+
   useEffect(() => {
     if(quiz.PaymentDetail || quiz.TrxGopay) setSubmitted(false)
+
   },[quiz]);
   if (quiz.PaymentDetail||quiz.TrxGopay) {
+
     return (
       <IonPage id="session-detail-page ">
         <IonToolbar>
@@ -96,12 +102,12 @@ const GroupPurchase: React.FC<GroupPurchaseProps> = ({ history, authData,quiz,Po
               </IonRow>
               <IonRow
                 className="ion-padding ion-text-center"
-                hidden={!quiz.PaymentDetail?.group?.group_description&&!quiz.TrxGopay?.group?.description}
+                hidden={!quiz.PaymentDetail?.group?.description&&!quiz.TrxGopay?.group?.description}
               >
                 <IonCol>
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: quiz.PaymentDetail?.group?.group_description||quiz.TrxGopay?.group?.description||'',
+                      __html: quiz.PaymentDetail?.group?.description||quiz.TrxGopay?.group?.description||'',
                     }}
                   ></div>
                 </IonCol>

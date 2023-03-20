@@ -337,11 +337,17 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer, QuizAttem
         if (!res.ok) {
           throw new Error("Server Bermasalah");
         }
+        if (BodyData.get("token") == ""){
+          throw new Error("Anda Belum Login");
+        }
         return res.json();
       })
       .then((res) => {
         let DataArray = JSON.parse(localStorage.getItem("_cap_AnswerData") || "");
+        let timeArray:QuizTime[] = JSON.parse(localStorage.getItem("QuizTime") || "");
         delete DataArray[param.quid];
+        timeArray = timeArray.filter((element) => element.QuizId != param.quid);
+        localStorage.setItem("QuizTime", JSON.stringify(timeArray));
         localStorage.setItem("_cap_AnswerData", JSON.stringify(DataArray));
 
         history.replace("/quiz/result/" + QuizAttempt.quiz?.rid);

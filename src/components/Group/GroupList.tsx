@@ -43,7 +43,11 @@ const GroupListComponent: React.FC<GroupListProps> = ({ history, authData,GroupL
   }, []);
   const SelectGroup = (Group: GroupList) => {
     if(!Group.gid) {alert("Paket Tidak Tersedia"); return;}
-    if(!authData) {history.push("/group/detail/" + Group.gid);return;}
+    if(authData) {history.push("/group/detail/" + Group.gid);return;}
+     // if (Group.price && Group.price !== "0") {
+     //   history.push("/group/purchase/" + Group.gid +'/0');
+     //   return;
+     // }
     if (Group.price && Group.price !== "0") {
       history.push("/group/purchase/" + Group.gid +'/0');
       return;

@@ -58,7 +58,7 @@ const GroupPurchaseComplete: React.FC<GroupPurchaseCompleteProps> = ({
           return res.json();
         })
         .then((res) => {
-          if (res.message) {
+          if (res.status) {
             setGroupPurchaseComplete(res);
           } else {
             setGroupPurchaseComplete(null);
@@ -102,10 +102,9 @@ const GroupPurchaseComplete: React.FC<GroupPurchaseCompleteProps> = ({
                 <IonCol size="6" className="ion-text-right">
                   <h5 className="ion-no-margin color-navy">
                     <b>
-                      {GroupPurchaseComplete.price !== "0"
-                        ? "Rp " + GroupPurchaseComplete.price
-                        : "GRATIS"}
-                    </b>
+                    {GroupPurchaseComplete.group.price !== "0"
+                        ? "Rp " + GroupPurchaseComplete.payment.amount : "GRATIS"}
+                        </b>
                   </h5>
                 </IonCol>
                 <IonCol size="6">
@@ -115,7 +114,7 @@ const GroupPurchaseComplete: React.FC<GroupPurchaseCompleteProps> = ({
                 </IonCol>
                 <IonCol size="6" className="ion-text-right">
                   <h5 className="ion-no-margin color-navy">
-                    <b>{GroupPurchaseComplete.message}</b>
+                  <b>{GroupPurchaseComplete.payment.payment_status}</b>
                   </h5>
                 </IonCol>
               </IonRow>

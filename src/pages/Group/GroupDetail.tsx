@@ -56,8 +56,22 @@ const Detail: React.FC<GroupDetailProps> = ({ history, authData,GroupDetail,Post
     // }   
   },[])
   useEffect(() => {
-    if(GroupDetail) 
-    if(GroupDetail?.price!=="0") history.replace("/group/purchase/" + GroupDetail?.gid + "/0");
+    // console.log(GroupDetail?.price == "0")
+    console.log(GroupDetail)
+    if (history.location.pathname.includes("/group/detail")) {
+      setTimeout(() => {
+        if(GroupDetail?.price!="0"){
+          history.replace("/group/purchase/" + GroupDetail?.gid + "/" + GroupDetail?.payment_id)
+        }
+      }, 3000);
+    }
+
+    // else if(GroupDetail?.price!=="0" && GroupDetail?.payment_id == null){
+    //   history.replace("/group/purchase/" + GroupDetail?.gid + "/0")
+    // }
+    // if(){
+    //   
+    // }
   },[GroupDetail]);
   if (GroupDetail) {
     return (

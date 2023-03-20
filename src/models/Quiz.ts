@@ -12,6 +12,7 @@ export interface PaymentsHistory {
 export interface PaymentDetail{
     group:any,
     payment_detail:any,
+    payment_data:any,
 }
 export interface TrxGopay{
     pid?: number,
@@ -37,7 +38,8 @@ export interface GroupDetail{
     price?: string,
     valid_for_days?: string,
     description?: string,
-    result?:any
+    result?:any,
+    payment_id?: string
 }
 export interface LessonList{
     stid: string,

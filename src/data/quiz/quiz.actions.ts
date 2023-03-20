@@ -25,9 +25,9 @@ export const PostPurchase = (gid:string,pid:string) => async (dispatch: React.Di
   console.log(Response.data?.payment_detail);
 
   if(Response.data?.payment_detail){
+    dispatch(setLoading(''))
     dispatch(setPaymentDetail(Response.data));
     dispatch(setTrxGopay(undefined));
-    dispatch(setLoading(''));
     return
   }
 
@@ -123,11 +123,11 @@ export const PostQuizAttempt = (quid:string) => async (dispatch: React.Dispatch<
   dispatch(setLoading('Mengambil data quiz'));
   const ResponseAttempt:ApiResponse<QuizAttempt> = await ApiQuizAttempt(Response.data);
   dispatch(setLoading(''));
-  if(!Response.data){
+  if(!ResponseAttempt.data){
     dispatch(setAlert({
       isOpen:true,
       header:'Gagal',
-      message:Response.m||"Tidak bisa melanjutkan quiz",
+      message:ResponseAttempt.m||"Tidak bisa melanjutkan quiz",
       subHeader:''
     }))
     return false;
