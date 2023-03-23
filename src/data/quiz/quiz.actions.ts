@@ -60,8 +60,9 @@ export const PostGroupList = () => async (dispatch: React.Dispatch<any>) => {
   }
   dispatch(setGroupList(Response.data));
 }
-export const PostGroupDetail = (id:string) => async (dispatch: React.Dispatch<any>) => {
-  dispatch(setLoading('Memuat group list'))
+export const PostGroupDetail = (id?:string) => async (dispatch: React.Dispatch<any>) => {
+  if(id===undefined){dispatch(setGroupDetail(undefined));return;}
+  dispatch(setLoading('Memuat group detail'))
   const Response:ApiResponse<GroupDetail> = await ApiGroupDetail(id);
   dispatch(setLoading(''));
   if(!Response.data){
@@ -177,7 +178,7 @@ export const setGroupList = (GroupList: GroupList[]) =>
   type: "set-group-list",
   GroupList,
 } as const);
-export const setGroupDetail = (GroupDetail: GroupDetail) =>
+export const setGroupDetail = (GroupDetail?: GroupDetail) =>
 ({
   type: "set-group-detail",
   GroupDetail,

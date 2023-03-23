@@ -11,7 +11,10 @@ import {
   IonRow,
   IonText,
   IonTitle,
-  IonToolbar
+  IonToolbar,
+  useIonViewDidEnter,
+  useIonViewWillEnter,
+  useIonViewWillLeave
 } from "@ionic/react";
 import { star } from "ionicons/icons";
 import React, { useEffect } from "react";
@@ -55,16 +58,23 @@ const Detail: React.FC<GroupDetailProps> = ({ history, authData,GroupDetail,Post
       // }
     // }   
   },[])
+  useIonViewWillLeave(()=>{
+    PostGroupDetail(undefined);
+  })
   useEffect(() => {
     // console.log(GroupDetail?.price == "0")
-    console.log(GroupDetail)
-    if (history.location.pathname.includes("/group/detail")) {
-      setTimeout(() => {
-        if(GroupDetail?.price!="0"){
-          history.replace("/group/purchase/" + GroupDetail?.gid + "/" + GroupDetail?.payment_id)
-        }
-      }, 3000);
+    if(GroupDetail){
+      if(GroupDetail?.price!="0"){
+        history.replace("/group/purchase/" + GroupDetail?.gid + "/" + GroupDetail?.payment_id)
+      }
     }
+    // if (history.location.pathname.includes("/group/detail")) {
+    //   setTimeout(() => {
+    //     if(GroupDetail?.price!="0"){
+    //       history.replace("/group/purchase/" + GroupDetail?.gid + "/" + GroupDetail?.payment_id)
+    //     }
+    //   }, 3000);
+    // }
 
     // else if(GroupDetail?.price!=="0" && GroupDetail?.payment_id == null){
     //   history.replace("/group/purchase/" + GroupDetail?.gid + "/0")
