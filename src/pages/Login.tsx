@@ -109,15 +109,6 @@ const Login: React.FC<LoginProps> = ({ setLogin, base,history }) => {
 
           <IonRow>
             <IonCol>
-              <IonButton expand="block" onClick={() =>
-            present({
-              cssClass: 'my-css',
-              header: 'Alert',
-              message: 'alert from hook',
-              buttons: ['Cancel', { text: 'Ok', handler: (d) => console.log('ok pressed') }],
-              onDidDismiss: (e) => console.log('did dismiss'),
-            })
-          }>tes</IonButton>
               <IonButton type="submit" expand="block">
                 Masuk
               </IonButton>
