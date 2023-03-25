@@ -89,13 +89,12 @@ const IonicApp: React.FC<IonicAppProps> = ({
           /> 
           <IonAlert
             {...base.alert}
-            
-            // onDidDismiss={() => setAlert({
-            //   isOpen:false,
-            //   header:'',
-            //   message:'',
-            //   subHeader:''
-            // })}
+            onDidDismiss={() => setAlert({
+              isOpen:false,
+              header:'',
+              message:'',
+              subHeader:''
+            })}
           ></IonAlert>
           <IonRouterOutlet id="main">
             {/*

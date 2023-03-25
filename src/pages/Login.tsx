@@ -1,6 +1,6 @@
 import {
   IonButton, IonCol, IonContent, IonInput, IonItem,
-  IonLabel, IonList, IonPage, IonRouterLink, IonRow, IonText
+  IonLabel, IonList, IonPage, IonRouterLink, IonRow, IonText, useIonAlert
 } from "@ionic/react";
 import React, { useEffect, useState } from "react";
 import Lottie from "react-lottie-player";
@@ -28,6 +28,8 @@ const Login: React.FC<LoginProps> = ({ setLogin, base,history }) => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [EmailError, setEmailError] = useState(false);
   const [PasswordError, setPasswordError] = useState(false);
+  const [present] = useIonAlert();
+
   useEffect(()=>{    
     if(formSubmitted && base.authData){
       setFormSubmitted(false)
@@ -107,6 +109,15 @@ const Login: React.FC<LoginProps> = ({ setLogin, base,history }) => {
 
           <IonRow>
             <IonCol>
+              <IonButton expand="block" onClick={() =>
+            present({
+              cssClass: 'my-css',
+              header: 'Alert',
+              message: 'alert from hook',
+              buttons: ['Cancel', { text: 'Ok', handler: (d) => console.log('ok pressed') }],
+              onDidDismiss: (e) => console.log('did dismiss'),
+            })
+          }>tes</IonButton>
               <IonButton type="submit" expand="block">
                 Masuk
               </IonButton>
