@@ -89,6 +89,7 @@ const IonicApp: React.FC<IonicAppProps> = ({
           /> 
           <IonAlert
             {...base.alert}
+            backdropDismiss={true}
             onDidDismiss={() => setAlert({
               isOpen:false,
               header:'',
