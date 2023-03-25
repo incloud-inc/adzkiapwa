@@ -55,7 +55,7 @@ const QuizListComponent: React.FC<QuizListProps> = ({ history, gids, authData,Po
   useEffect(()=>{
     if(!QuizAttempt || Moved)    {return}
     setMoved(true);
-    history.push("/quiz/start/" + QuizAttempt?.quiz?.quid);
+    history.replace("/quiz/start/" + QuizAttempt?.quiz?.quid);
   },[QuizAttempt])
   useEffect(()=>{
     PostQuizList(gids);

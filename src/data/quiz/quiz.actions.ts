@@ -109,6 +109,9 @@ export const PostLessonList = (gids:string) => async (dispatch: React.Dispatch<a
 
 export const PostQuizAttempt = (quid:string) => async (dispatch: React.Dispatch<any>) => {
   dispatch(setQuizAttempt(undefined))
+  if (quid == "") {
+    return;
+  }
   dispatch(setLoading('Proses validasi quiz'))
   const Response:ApiResponse<string> = await ApiValidateQuiz(quid);
   dispatch(setLoading(''));

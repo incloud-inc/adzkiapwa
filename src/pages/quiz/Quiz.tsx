@@ -41,6 +41,7 @@ interface StateProps {
 
 interface DispatchProps {
   setQuizAnswer: typeof setQuizAnswer
+  PostQuizAttempt: typeof PostQuizAttempt
 }
 interface Param {
   quid: string
@@ -58,7 +59,7 @@ interface QuizTime {
   Countdown: number,
   QuizId?: string
 }
-const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer, QuizAttempt, setQuizAnswer }) => {
+const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer, QuizAttempt, setQuizAnswer, PostQuizAttempt }) => {
   let param: Param = useParams();
 
   const QT = localStorage.getItem("QuizTime");
@@ -139,6 +140,9 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer, QuizAttem
   //       alert(err);
   //     });
   // };
+  useIonViewWillLeave(()=>{
+    PostQuizAttempt("")
+  })
   const calculateTimeLeftStart = () => {
     var d1 = new Date();
     let difference = +new Date("31 Desemnber 2021") - +new Date();
@@ -652,7 +656,9 @@ export default connect<OwnProps, StateProps, DispatchProps>({
     QuizAnswer: state.quiz.QuizAnswer
   }),
   mapDispatchToProps: {
-    setQuizAnswer
+    setQuizAnswer,
+     PostQuizAttempt,
+    
   },
   component: Quiz,
 });
