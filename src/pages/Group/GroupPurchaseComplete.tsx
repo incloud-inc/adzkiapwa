@@ -136,7 +136,7 @@ const GroupPurchaseComplete: React.FC<GroupPurchaseCompleteProps> = ({
             expand="block"
             className="ion-margin"
             size="large"
-            hidden={GroupPurchaseComplete.payment.payment_status!='pending'}
+            hidden={GroupPurchaseComplete.payment.payment_status!=='pending'}
             onClick={() => history.goBack()}
           >
             Bayar
@@ -147,7 +147,7 @@ const GroupPurchaseComplete: React.FC<GroupPurchaseCompleteProps> = ({
             size="large"
             color="success"
             onClick={() => history.replace("/group/detail/"+GroupPurchaseComplete.group.gid)}
-            hidden={GroupPurchaseComplete.payment.payment_status!='settlement'}
+            hidden={GroupPurchaseComplete.payment.payment_status!=='settlement'}
           >
             Kerjakan Quiz
           </IonButton>

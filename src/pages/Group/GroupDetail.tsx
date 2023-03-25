@@ -64,7 +64,7 @@ const Detail: React.FC<GroupDetailProps> = ({ history, authData,GroupDetail,Post
   useEffect(() => {
     // console.log(GroupDetail?.price == "0")
     if(GroupDetail){
-      if(GroupDetail?.price!="0"){
+      if(GroupDetail?.price!=="0" && GroupDetail.payment_id!=="settlement"){
         history.replace("/group/purchase/" + GroupDetail?.gid + "/" + GroupDetail?.payment_id)
       }
     }

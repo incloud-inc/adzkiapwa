@@ -18,14 +18,14 @@ export const ApiLogin = async (form:AuthLogin)=>{
       method: "POST",
       body: BodyData,
     })
-    .then((res) => {      
-      if (!res.ok) {
-        throw new Error("Server Bermasalah");
-      }
+    .then((res) => {  
+      // if (!res.ok) {
+      //   throw new Error("Server Bermasalah");
+      // }
       return res.json();
     })
-    .then((res) => {
-      if(!res.token || !res.data){throw new Error("Login Tidak Berhasil")}
+    .then((res) => {      
+      if(!res.token || !res.data){throw new Error(res.message||"Login Tidak Berhasil")}
       res.data.token = res.token;
       const AuthData:AuthData = res.data;
       if(!AuthData){throw new Error(res.message||'Login tidak berhasil')}

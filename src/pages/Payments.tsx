@@ -1,4 +1,5 @@
 import {
+  IonBadge,
   IonButton,
   IonButtons,
   IonCard,
@@ -113,11 +114,18 @@ const Payments: React.FC<PaymentsProps> = ({ history, authData,PostPayments,paym
           <IonCard key={index}>
             <IonCardContent>
               <IonRow onClick={() => DetailPayment(item)}>
-                <IonCol> 
+                <IonCol size="12">
                 <h6 className="ion-no-margin"><b>Nama Group : {item.paket.group_name}</b></h6>
+
+                </IonCol>
+                <IonCol> 
                 <h6 className="ion-no-margin">{item.trxdate}</h6>
                 <h6 className="ion-no-margin">Rp {item.paket.price}</h6>
-                  </IonCol>
+                </IonCol>
+                <IonCol class="ion-text-right">
+                <IonBadge color={item.payment_status==='settlement'?'success':item.payment_status==='expire'?'danger':'warning'}>{item.payment_status}</IonBadge>
+
+                </IonCol>
               </IonRow>
               <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
                 <IonRefresherContent
@@ -180,15 +188,17 @@ const Payments: React.FC<PaymentsProps> = ({ history, authData,PostPayments,paym
                       </IonCol>
                       <IonCol size="6">Status Pembayaran</IonCol>
                       <IonCol size="6" className="ion-text-right">
+                        <IonBadge color={SelectedPayment?.payment_status==='settlement'?'success':SelectedPayment?.payment_status==='expire'?'danger':'warning'}>
                         {SelectedPayment
                           ? SelectedPayment.payment_status ||
                             "tidak diketahui "
                           : ""}
+                          </IonBadge>
                       </IonCol>
                     </IonRow>
                   </IonGrid>
                   <IonButton
-                    hidden={SelectedPayment && SelectedPayment.paid_date?true:false}
+                    hidden={SelectedPayment && SelectedPayment.payment_status!=="pending"}
                     expand="block"
                     onClick={() => {
                       if (SelectedPayment) setShowModal(false);

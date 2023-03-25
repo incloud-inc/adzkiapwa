@@ -22,7 +22,8 @@ interface LoginProps extends OwnProps, DispatchProps, StateProps {}
 
 const ForgotPassword: React.FC<LoginProps> = ({ setForgotPassword,history }) => {
   const [Email, setEmail] = useState("");
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const formSubmitted = false;
+  // const [formSubmitted, setFormSubmitted] = useState(false);
   const [EmailError, setEmailError] = useState(false);
   const [ForgotPasswordSuccess, setForgotPasswordSuccess] = useState(false);
 

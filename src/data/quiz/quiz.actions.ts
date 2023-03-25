@@ -24,7 +24,7 @@ export const PostPurchase = (gid:string,pid:string) => async (dispatch: React.Di
   const Response:ApiResponse<PaymentDetail> = await ApiCheckPayment(pid);
   console.log(Response.data?.payment_detail);
 
-  if(Response.data?.payment_detail){
+  if(Response.data?.payment_detail && Response.data?.payment_detail.transaction_status==="pending"){
     dispatch(setLoading(''))
     dispatch(setPaymentDetail(Response.data));
     dispatch(setTrxGopay(undefined));

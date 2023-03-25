@@ -55,7 +55,7 @@ const GroupListComponent: React.FC<GroupListProps> = ({ history, authData,GroupL
     setGroup(Group);
     setShowAlert(true);
   };
-  if(GroupList && GroupList.length == 0) return (
+  if(GroupList && GroupList.length === 0) return (
     <div className="ion-text-center">
       <IonText>Data Quiz ditemukan</IonText>
     </div>
