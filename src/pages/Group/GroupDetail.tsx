@@ -19,19 +19,20 @@ import {
 import { star } from "ionicons/icons";
 import React, { useEffect } from "react";
 import { RouteComponentProps, useLocation, useParams, withRouter } from "react-router";
-import LessonList from "../../components/Group/LessonList";
+import LessonListComponent from "../../components/Group/LessonList";
 import QuizList from "../../components/Group/QuizList";
 import GeneralSkeleton from "../../components/Shared/GeneralSkeleton";
 import { connect } from "../../data/connect";
 import { PostGroupDetail } from "../../data/quiz/quiz.actions";
 import { AuthData } from "../../models/Base";
-import { GroupDetail } from "../../models/Quiz";
+import { GroupDetail, LessonList } from "../../models/Quiz";
 
 interface OwnProps extends RouteComponentProps {}
 
 interface StateProps {
   authData: AuthData;
-  GroupDetail:GroupDetail
+  GroupDetail:GroupDetail;
+  LessonList:LessonList[];
 }
 
 interface DispatchProps {
@@ -39,7 +40,7 @@ interface DispatchProps {
 }
 interface GroupDetailProps extends OwnProps, StateProps, DispatchProps {}
 
-const Detail: React.FC<GroupDetailProps> = ({ history, authData,GroupDetail,PostGroupDetail }) => {
+const Detail: React.FC<GroupDetailProps> = ({ history,LessonList, authData,GroupDetail,PostGroupDetail }) => {
   const location = useLocation();
   let param: any = useParams();
   useEffect(()=>{
@@ -131,12 +132,12 @@ const Detail: React.FC<GroupDetailProps> = ({ history, authData,GroupDetail,Post
               </IonRow>
             </IonGrid>
           </IonCard>
-          <div className="ion-margin">
+          <div className="ion-margin" hidden={LessonList?.length==0}>
             <IonText color="medium">
               <b>Materi Pembelajaran</b>
             </IonText>
           </div>
-          <LessonList gids={param.id}></LessonList>
+          <LessonListComponent gids={param.id}></LessonListComponent>
           <div className="ion-margin">
             <IonText color="medium">
               <b>Quiz</b>
@@ -168,7 +169,8 @@ const Detail: React.FC<GroupDetailProps> = ({ history, authData,GroupDetail,Post
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
     authData: state.base.authData,
-    GroupDetail: state.quiz.GroupDetail
+    GroupDetail: state.quiz.GroupDetail,
+    LessonList: state.quiz.LessonList
   }),
   mapDispatchToProps: {
     PostGroupDetail,

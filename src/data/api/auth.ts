@@ -50,13 +50,10 @@ export const ApiSignUp = async (form:AuthSignUp)=>{
       body: BodyData,
     })
     .then((res) => {
-      if (!res.ok) {
-        throw new Error("Server Bermasalah");
-      }
       return res.json();
     })
     .then((res) => {
-      if(!res.token || !res.data){throw new Error("Daftar Tidak Berhasil")}
+      if(!res.token || !res.data){throw new Error(res.message||"Daftar Tidak Berhasil")}
       res.data.token = res.token;
       const AuthData:AuthData = res.data;
       if(!AuthData){throw new Error(res.message||'Daftar tidak berhasil')}

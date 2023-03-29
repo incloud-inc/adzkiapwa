@@ -82,7 +82,7 @@ const Portal: React.FC<PortalProps> = ({
                 </IonText>
                 <IonText color="medium">
                   <h6 className="ion-no-margin">
-                    {(base?.authData?.contact_no) || "-"}
+                    {(base?.authData?.email) || "-"}
                   </h6>
                 </IonText>
               </IonCol>

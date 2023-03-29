@@ -94,10 +94,15 @@ export const setLoading = (m?: string) =>{
 }
   
 export const setAlert = (alert: Alert) =>
-  ({
+{
+  if(alert.message){
+    alert.message = alert.message.toString().replace('Error: ','');
+  }
+  return{
     type: "set-alert",
     alert,
-  } as const);
+  } as const;
+}
 
 export const setData = (data: Partial<BaseState>) =>
   ({
