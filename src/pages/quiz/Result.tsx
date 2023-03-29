@@ -10,7 +10,9 @@ import {
   IonSlides,
   IonText,
   IonTitle,
-  IonToolbar
+  IonToolbar,
+  useIonViewDidEnter,
+  useIonViewWillEnter
 } from "@ionic/react";
 import {
   briefcase,
@@ -62,12 +64,16 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
 // const listItems = numbers.map((number) =>
 //   <li>{number}</li>
 // );
-  const fetchResult = () => {
+
+  const fetchResult = () => {    
     const BodyData = new FormData();
+    
     if (authData) {
       BodyData.append("token", authData && authData.token);
     }
     BodyData.append("rid", param.rid || "");
+    console.log(authData);
+
     fetch(
       authData
         ? BaseUrl+"quiz/resultdetail"
@@ -78,12 +84,14 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
       }
     )
       .then((res) => {
+
         if (!res.ok) {
           throw new Error("Server Bermasalah");
         }
         return res.json();
       })
       .then((res) => {
+        
         if (res.status === "Open") {
           history.replace("/tabs/portal");
           setResultData(null);
@@ -95,10 +103,10 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
         alert(err);
       });
   };
-  // useIonViewWillEnter(() => {
-  //   // fetchResult();
-  //   console.log(param.rid)
-  // });
+  useIonViewWillEnter(() => {
+      fetchResult();
+    // console.log(param.rid)
+  });
   useEffect(()=>{
     if (authData && authData.token) {
       fetchResult();
@@ -190,12 +198,12 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
               </IonRow>
             </IonGrid>
           </div> */}
-          <div className="bg-gray ion-padding">
+          <div className="bg-gray ion-padding" hidden={ResultData.questions?false:true}>
             <IonText>
               <h5>Discussion</h5>
             </IonText>
             <IonSlides options={{ slidesPerView: 1.2 }}>
-              {ResultData.questions.map(
+              {ResultData.questions?.map(
                 
                 (Category: any, CategoryIndex: any) => {
                   return Category.status_answer === "Incorrect" ? (
@@ -267,7 +275,7 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
               )}
             </IonSlides>
           </div>
-          <div className="bg-gray resultDetailCard">
+          <div className="bg-gray resultDetailCard" hidden={!authData}>
             <IonGrid className="bg-white ion-padding">
               <IonRow>
                 <IonCol size="12">

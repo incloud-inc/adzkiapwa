@@ -341,9 +341,6 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer, QuizAttem
         if (!res.ok) {
           throw new Error("Server Bermasalah");
         }
-        if (BodyData.get("token") == ""){
-          throw new Error("Anda Belum Login");
-        }
         return res.json();
       })
       .then((res) => {
