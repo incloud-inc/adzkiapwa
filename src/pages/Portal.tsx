@@ -71,7 +71,7 @@ const Portal: React.FC<PortalProps> = ({
                   />
                 </IonAvatar>
               </IonCol>
-              <IonCol className="ion-p-8" size="6">
+              <IonCol className="ion-p-8">
                 <IonText>
                   <h5 className="ion-no-margin">
                     {(base?.authData?.first_name.substring(0, 10)) || ""}
@@ -84,11 +84,6 @@ const Portal: React.FC<PortalProps> = ({
                   <h6 className="ion-no-margin">
                     {(base?.authData?.email) || "-"}
                   </h6>
-                </IonText>
-              </IonCol>
-              <IonCol className="ion-text-right">
-                <IonText color="success" style={{ fontSize: "36px" }}>
-                  {(base?.authData?.uid) || ""}
                 </IonText>
               </IonCol>
             </IonRow>
