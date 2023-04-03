@@ -19,7 +19,7 @@ import {
   IonToolbar,
   RefresherEventDetail
 } from "@ionic/react";
-import { chevronDownCircleOutline, close } from "ionicons/icons";
+import { chevronDownCircleOutline, close, reload, reloadCircle } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import Lottie from "react-lottie-player";
 import { RouteComponentProps, useParams,useLocation } from "react-router";
@@ -84,7 +84,8 @@ const Payments: React.FC<PaymentsProps> = ({ history, authData,PostPayments,paym
           <IonBackButton defaultHref="/tabs/portal"></IonBackButton>
         </IonButtons> */}
         
-        <IonTitle>Histori Pembayaran</IonTitle>
+        <IonTitle slot="start">Histori Pembayaran</IonTitle>
+        <IonIcon icon={reloadCircle} size="large" slot="end" className="icon-reload" color="success" onClick={()=>{PostPayments()}}/>
       </IonToolbar>
       <IonContent className="bg-gray">
         <div className="ion-text-center">
@@ -108,6 +109,7 @@ const Payments: React.FC<PaymentsProps> = ({ history, authData,PostPayments,paym
           }}
         /></div>
         <IonTitle>Histori Pembayaran</IonTitle>
+        <IonIcon icon={reloadCircle} size="large" slot="end" className="icon-reload" color="success" onClick={()=>{PostPayments()}}/>
       </IonToolbar>
       <IonContent className="bg-gray">
         {payments.map((item: PaymentsHistory, index: number) => (

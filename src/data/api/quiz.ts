@@ -158,7 +158,10 @@ export const ApiQuizList = async (gids:string)=>{
         return res.json();
       })
       .then((res) => {
-        const QuizList:QuizList[] = res.result?.filter((item:QuizList)=> item.gids===gids);
+        const QuizList:QuizList[] = res.result?.filter((item:QuizList)=> {
+          const GidsArray = item.gids.split(',');
+          if(GidsArray.includes(gids)){return(item)};
+        });
         if (QuizList.length<1) throw new Error(res.message||"Data List Tidak Ditemukan")
         return{data:QuizList,m:''}
       })

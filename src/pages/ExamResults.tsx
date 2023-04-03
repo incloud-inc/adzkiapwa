@@ -2,7 +2,7 @@ import {
   IonCard,
   IonCardContent,
   IonCol,
-  IonContent, IonPage,
+  IonContent, IonIcon, IonPage,
   IonRefresher,
   IonRefresherContent,
   IonRow,
@@ -11,7 +11,7 @@ import {
   IonToolbar,
   RefresherEventDetail
 } from "@ionic/react";
-import { chevronDownCircleOutline } from "ionicons/icons";
+import { chevronDownCircleOutline, reloadCircle } from "ionicons/icons";
 import React, { useEffect } from "react";
 import { RouteComponentProps } from "react-router";
 import GeneralSkeleton from "../components/Shared/GeneralSkeleton";
@@ -60,6 +60,7 @@ const ExamResults: React.FC<ExamResultsProps> = ({ history, authData,PostQuizRes
             <IonBackButton defaultHref="/tabs/portal"></IonBackButton>
           </IonButtons> */}
           <IonTitle>Hasil Ujian</IonTitle>
+          <IonIcon icon={reloadCircle} size="large" slot="end" className="icon-reload" color="success" onClick={()=>{PostQuizResultList()}}/>
         </IonToolbar>
         <IonContent className="bg-gray">
         <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
@@ -107,6 +108,7 @@ const ExamResults: React.FC<ExamResultsProps> = ({ history, authData,PostQuizRes
             <IonBackButton defaultHref="/tabs/portal"></IonBackButton>
           </IonButtons> */}
           <IonTitle>Hasil Ujian</IonTitle>
+          <IonIcon icon={reloadCircle} size="large" slot="end" className="icon-reload" color="success" onClick={()=>{PostQuizResultList()}}/>
         </IonToolbar>
         <IonContent className="bg-gray">
           <div className="ion-text-center ion-padding">
