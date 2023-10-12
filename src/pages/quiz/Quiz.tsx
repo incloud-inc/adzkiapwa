@@ -465,6 +465,11 @@ const Quiz: React.FC<AccountProps> = ({ authData, history, QuizAnswer, QuizAttem
           </IonText>
           <div
             dangerouslySetInnerHTML={{
+              __html: (RecentQuestion && RecentQuestion.paragraph) || "",
+            }}
+          ></div>
+          <div
+            dangerouslySetInnerHTML={{
               __html: (RecentQuestion && RecentQuestion.question) || "",
             }}
           ></div>

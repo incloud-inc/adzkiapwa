@@ -240,7 +240,7 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
                         <IonText>
                           <p className="textkui mb-16">Pembahasan</p>
                         </IonText>
-                        <IonText dangerouslySetInnerHTML={{__html: Category.discussion}}/>
+                        <div dangerouslySetInnerHTML={{__html: Category.discussion}}/>
                       </div>
                     </IonCard>
                   </IonSlide>
@@ -266,7 +266,7 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
                         <IonText>
                           <p className="textkui mb-16">Pembahasan</p>
                         </IonText>
-                        <IonText dangerouslySetInnerHTML={{__html: Category.discussion}}/>
+                        <div dangerouslySetInnerHTML={{__html: Category.discussion}}/>
                       </div>
                     </IonCard>
                   </IonSlide>
