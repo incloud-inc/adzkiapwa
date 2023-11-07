@@ -11,7 +11,7 @@ import {
   IonToolbar,
   RefresherEventDetail
 } from "@ionic/react";
-import { chevronDownCircleOutline, reloadCircle } from "ionicons/icons";
+import { chevronDownCircleOutline, reloadCircle, closeCircle, checkmarkCircle } from "ionicons/icons";
 import React, { useEffect } from "react";
 import { RouteComponentProps } from "react-router";
 import GeneralSkeleton from "../components/Shared/GeneralSkeleton";
@@ -19,7 +19,6 @@ import { connect } from "../data/connect";
 import { PostQuizResultList } from "../data/quiz/quiz.actions";
 import { AuthData } from "../models/Base";
 import { QuizResultDetail, QuizResultList } from "../models/Quiz";
-
 interface OwnProps extends RouteComponentProps {}
 
 interface StateProps {
@@ -77,14 +76,18 @@ const ExamResults: React.FC<ExamResultsProps> = ({ history, authData,PostQuizRes
             }}>
               <IonCardContent>
                 <IonRow>
+                  <IonCol size="2">
+                  <IonIcon icon={closeCircle}></IonIcon>
+                  <IonIcon icon={checkmarkCircle}></IonIcon>
+                  </IonCol>
                   <IonCol> 
                     <h6 className="ion-no-margin"><b>{item.name}</b></h6>
                     <h6 className="ion-no-margin">ID : {item.rid}</h6>
                   </IonCol>
-                  <IonCol size="5"> 
+                  {/* <IonCol size="5"> 
                     <h6 className="ion-no-margin">Nilai {item.score}</h6>
                     <h6 className="ion-no-margin">Durasi {item.total_time} menit</h6>
-                  </IonCol>
+                  </IonCol> */}
                 </IonRow>
               </IonCardContent>
             </IonCard>
