@@ -69,7 +69,7 @@ const Login: React.FC<LoginProps> = ({ setLogin, base,history }) => {
           <IonList>
             <IonItem>
               <IonLabel position="stacked" color="primary">
-                Email
+                Email Saya
               </IonLabel>
               <IonInput
                 name="Email"
