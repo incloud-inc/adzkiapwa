@@ -137,11 +137,11 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
             </IonRow>
             <IonRow>
               <IonCol size="6">Correct</IonCol>
-              <IonCol size="6">: {ResultData.score || 0}</IonCol>
+              <IonCol size="6">: {ResultData.categories && ResultData.categories.length > 0 ? ResultData.categories.reduce(function (acc:any, obj:any) { return acc + obj.correct; }, 0) : 0}</IonCol>
               <IonCol size="6">Incorrect</IonCol>
-              <IonCol size="6">: {ResultData.right_percentage || 0} %</IonCol>
+              <IonCol size="6">: {ResultData.categories && ResultData.categories.length > 0 ? ResultData.categories.reduce(function (acc:any, obj:any) { return acc + obj.incorrect; }, 0) : 0}</IonCol>
               <IonCol size="6">Not Attempted</IonCol>
-              <IonCol size="6">: {ResultData.total_time || 0}</IonCol>
+              <IonCol size="6">: {ResultData.categories && ResultData.categories.length > 0 ? ResultData.categories.reduce(function (acc:any, obj:any) { return acc + obj.not_attempted; }, 0) : 0}</IonCol>
             </IonRow>
           </IonGrid>
           <div className="bg-gray ion-padding">
