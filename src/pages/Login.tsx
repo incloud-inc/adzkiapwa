@@ -23,8 +23,8 @@ interface DispatchProps {
 interface LoginProps extends OwnProps, DispatchProps, StateProps {}
 
 const Login: React.FC<LoginProps> = ({ setLogin, base,history }) => {
-  const [Email, setEmail] = useState("wilmasrur@gmail.com");
-  const [Password, setPassword] = useState("1");
+  const [Email, setEmail] = useState("");
+  const [Password, setPassword] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [EmailError, setEmailError] = useState(false);
   const [PasswordError, setPasswordError] = useState(false);
@@ -75,6 +75,7 @@ const Login: React.FC<LoginProps> = ({ setLogin, base,history }) => {
                 name="Email"
                 type="text"
                 value={Email}
+                placeholder="your email"
                 spellCheck={false}
                 autocapitalize="off"
                 onIonChange={(e) => setEmail(e.detail.value!)}
@@ -94,6 +95,7 @@ const Login: React.FC<LoginProps> = ({ setLogin, base,history }) => {
               </IonLabel>
               <IonInput
                 name="Password"
+                placeholder="your password"
                 type="password"
                 value={Password}
                 onIonChange={(e) => setPassword(e.detail.value!)}
