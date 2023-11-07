@@ -136,11 +136,11 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
               </IonCol>
             </IonRow>
             <IonRow>
-              <IonCol size="6">Score</IonCol>
+              <IonCol size="6">Correct</IonCol>
               <IonCol size="6">: {ResultData.score || 0}</IonCol>
-              <IonCol size="6">Right Percentage</IonCol>
+              <IonCol size="6">Incorrect</IonCol>
               <IonCol size="6">: {ResultData.right_percentage || 0} %</IonCol>
-              <IonCol size="6">Total Time</IonCol>
+              <IonCol size="6">Not Attempted</IonCol>
               <IonCol size="6">: {ResultData.total_time || 0}</IonCol>
             </IonRow>
           </IonGrid>
@@ -158,12 +158,12 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
                       </IonText>
                       <IonGrid>
                         <IonRow>
-                          <IonCol size="6">Score</IonCol>
+                          {/* <IonCol size="6">Score</IonCol>
                           <IonCol size="6">: {Category.score || 0}</IonCol>
                           <IonCol size="6">Time Spent</IonCol>
                           <IonCol size="6">
                             : {Category.time_spent || 0} %
-                          </IonCol>
+                          </IonCol> */}
                           <IonCol size="6">Correct</IonCol>
                           <IonCol size="6">: {Category.correct || 0}</IonCol>
                           <IonCol size="6">Incorrect</IonCol>
