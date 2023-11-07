@@ -77,8 +77,8 @@ const ExamResults: React.FC<ExamResultsProps> = ({ history, authData,PostQuizRes
               <IonCardContent>
                 <IonRow>
                   <IonCol size="2">
-                  <IonIcon icon={closeCircle}></IonIcon>
-                  <IonIcon icon={checkmarkCircle}></IonIcon>
+                  <IonIcon icon={closeCircle} size="large" hidden={item.result_status==='Pass'}></IonIcon>
+                  <IonIcon icon={checkmarkCircle} size="large" hidden={item.result_status!=='Pass'}></IonIcon>
                   </IonCol>
                   <IonCol> 
                     <h6 className="ion-no-margin"><b>{item.name}</b></h6>
