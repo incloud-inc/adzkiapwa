@@ -3,6 +3,7 @@ export interface Loading {
     message?: string,
 }
 export interface Alert {
+    cssClass?:string,
     isOpen: boolean,
     header: string,
     subHeader?: string,

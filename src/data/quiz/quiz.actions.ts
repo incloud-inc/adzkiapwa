@@ -1,7 +1,8 @@
 import { ApiResponse } from "../../models/Base";
 import { GroupDetail, GroupList, LessonList, PaymentDetail, PaymentsHistory, QuizAnswer, QuizAttempt, QuizList, QuizResultDetail, QuizResultList, TrxGopay } from "../../models/Quiz";
+import { formatPHPTimeStamp } from "../../util/helper";
 import { ActionType } from "../../util/types";
-import { ApiCheckPayment, ApiCreateTrxGopay, ApiGroupDetail, ApiGroupList, ApiLessonList, ApiPayments, ApiQuizAttempt, ApiQuizList, ApiQuizResultList, ApiValidateQuiz, getAnswerData, setAnswerDataData } from "../api/quiz";
+import { ApiCheckPayment, ApiCreateTrxGopay, ApiGroupDetail, ApiGroupList, ApiLessonList, ApiPayments, ApiQuizAttempt, ApiQuizList, ApiQuizResultList, ApiValidateQuiz, getAnswerData, getSavedQuizData, setAnswerDataData, setSavedQuizDataData } from "../api/quiz";
 import { setAlert, setLoading } from "../base/base.actions";
 import { QuizState } from "./quiz.state";
 export const PostPayments = () => async (dispatch: React.Dispatch<any>) => {
@@ -10,6 +11,7 @@ export const PostPayments = () => async (dispatch: React.Dispatch<any>) => {
   dispatch(setLoading(''));
   if(!Response.data){
     dispatch(setAlert({
+      cssClass:'tesaja',
       isOpen:true,
       header:'Gagal',
       message:Response.m||"Gagal memuat histori pembayaran",
@@ -106,26 +108,69 @@ export const PostLessonList = (gids:string) => async (dispatch: React.Dispatch<a
   }
   dispatch(setLessonList(Response.data));
 }
-
-export const PostQuizAttempt = (quid:string) => async (dispatch: React.Dispatch<any>) => {
-  dispatch(setQuizAttempt(undefined))
-  if (quid == "") {
+export const PostQuizValidate = (SelectedQuiz:QuizList) => async (dispatch: React.Dispatch<any>) =>{
+    if (!SelectedQuiz) {
     return;
   }
   dispatch(setLoading('Proses validasi quiz'))
-  const Response:ApiResponse<string> = await ApiValidateQuiz(quid);
-  dispatch(setLoading(''));
+  const Response:ApiResponse<string> = await ApiValidateQuiz(SelectedQuiz.quid);
+  dispatch(setLoading(''));  
   if(!Response.data){
+    dispatch(setQuizRid(''))
+    if(Response.m=='expired'){
+      dispatch(setAlert({
+        isOpen: true,
+        cssClass:'alertexpired',
+        header:'EXPIRED',
+        message:"TryOut ini telah berakhir pada "+formatPHPTimeStamp(SelectedQuiz.end_date)+". Coba kerjakan TryOut lain yang tersedia Trimakasih...",
+        subHeader:''
+      }));
+      return false
+    }
+    if(Response.m==='coming soon'){
+      dispatch(setAlert({
+        isOpen: true,
+        header:'COMING SOON',
+        cssClass:'alertcomingsoon',
+        message:"STAY TUNED. TryOut ini bisa kamu kerjakan besok pada " + formatPHPTimeStamp(SelectedQuiz.start_date),
+        subHeader:''
+      }));
+      return false
+    }
     dispatch(setAlert({
-      isOpen:true,
-      header:'Gagal',
+      isOpen: true,
+      header:'Expired',
       message:Response.m||"Tidak bisa melanjutkan quiz",
       subHeader:''
-    }))
+    }));
     return false;
   }
+  dispatch(setQuizRid(Response.data))
+}
+export const getQuizAttempt = (quiz?:QuizList,rid?:string) => async (dispatch: React.Dispatch<any>) => {
+  dispatch(setQuizAttempt(undefined));
+  
+  if (!rid || !quiz || !quiz.quid) {
+    return;
+  }
   dispatch(setLoading('Mengambil data quiz'));
-  const ResponseAttempt:ApiResponse<QuizAttempt> = await ApiQuizAttempt(Response.data);
+  let sqd:QuizAttempt[]= await getSavedQuizData();
+  let getQuizById:QuizAttempt = sqd[parseInt(quiz.quid)];
+  if(getQuizById){
+    dispatch(setLoading(''));
+
+    dispatch(setQuizAttempt(getQuizById));
+
+    const QuizAnswer:QuizAnswer[][] = await getAnswerData();
+    
+    dispatch(setQuizAnswer(QuizAnswer));  
+    return;
+  }
+  const ResponseAttempt:ApiResponse<QuizAttempt> = await ApiQuizAttempt(quiz,rid);
+  const quid:string =ResponseAttempt.data?.quiz?.quid || '';
+  const QuizDetail:QuizAttempt = ResponseAttempt.data||{};
+  sqd[parseInt(quid)]=QuizDetail;
+  dispatch(setSavedQuiz(sqd));
   dispatch(setLoading(''));
   if(!ResponseAttempt.data){
     dispatch(setAlert({
@@ -209,6 +254,14 @@ export const setQuizAnswer = (QuizAnswer: QuizAnswer[][]) =>
     QuizAnswer,
   } as const);
 }
+export const setSavedQuiz = (QuizAnswer: QuizAttempt[]) =>
+{
+  setSavedQuizDataData(QuizAnswer);
+  return ({
+    type: "set-quiz-answer",
+    QuizAnswer,
+  } as const);
+}
 export const setQuizResultList = (QuizResultList?: QuizResultList) =>
 ({
   type: "set-quiz-result-list",
@@ -218,6 +271,16 @@ export const setQuizResultDetail = (QuizResultDetail?: QuizResultDetail[]) =>
 ({
   type: "set-quiz-result-detail",
   QuizResultDetail,
+} as const);
+export const setSelectedQuiz = (SelectedQuiz?: QuizList) =>
+({
+  type: "set-selected-quiz",
+  SelectedQuiz,
+} as const);
+export const setQuizRid = (QuizRid?: string) =>
+({
+  type: "set-quiz-rid",
+  QuizRid,
 } as const);
 
 
@@ -233,4 +296,6 @@ export type QuizAction =
 | ActionType<typeof setQuizAnswer>
 | ActionType<typeof setQuizResultList>
 | ActionType<typeof setQuizResultDetail>
+| ActionType<typeof setSelectedQuiz>
+| ActionType<typeof setQuizRid>
 | ActionType<typeof setData>

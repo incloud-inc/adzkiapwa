@@ -8,7 +8,7 @@ import {
   IonRow,
   IonText
 } from "@ionic/react";
-import { star } from "ionicons/icons";
+import { documentOutline, star } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
 import { connect } from "../../data/connect";
@@ -85,9 +85,7 @@ const GroupListComponent: React.FC<GroupListProps> = ({ history, authData,GroupL
         />
         {GroupList.map((item: GroupList, index: React.Key | undefined) => (
           <IonCard
-            onClick={() => {
-              SelectGroup(item);
-            }}
+            routerLink={"/group/detail/"+item.gid}
             key={index}
             className={` ${
               item.description ? "card-light " : ""
@@ -97,8 +95,8 @@ const GroupListComponent: React.FC<GroupListProps> = ({ history, authData,GroupL
               <IonRow class="ion-align-items-center">
                 {" "}
                 <IonCol size="2">
-                  <IonBadge color="primary" className="ion-p-8 br-8">
-                    <IonIcon icon={star} color="light"></IonIcon>
+                  <IonBadge color="primary" className="br-8">
+                    <IonIcon icon={documentOutline} size="large" color="light"></IonIcon>
                   </IonBadge>
                 </IonCol>
                 <IonCol size="6">

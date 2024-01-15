@@ -38,6 +38,12 @@ export function quizReducer(state: QuizState, action: QuizAction): QuizState {
     case "set-quiz-result-detail": {
       return { ...state, QuizResultDetail: action.QuizResultDetail };
     }
+    case "set-selected-quiz": {
+      return { ...state, SelectedQuiz: action.SelectedQuiz };
+    }
+    case "set-quiz-rid": {
+      return { ...state, QuizRid: action.QuizRid };
+    }
     
   }
 }

@@ -16,7 +16,7 @@ import {
   IonTitle,
   IonToolbar
 } from "@ionic/react";
-import { book, close, newspaper, star } from "ionicons/icons";
+import { book, close, documentTextOutline, newspaper, star } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps, useLocation, withRouter } from "react-router";
 import { connect } from "../../data/connect";
@@ -75,10 +75,10 @@ const LessonListComponent: React.FC<LessonListProps> = ({ history, gids, authDat
                 setShowModal(true);
               }}
             >
-              <IonBadge color="primary" className="ion-p-8 br-8" slot="start">
-                <IonIcon icon={star} color="light"></IonIcon>
+              <IonBadge color="primary" className="br-8" slot="start">
+                <IonIcon icon={documentTextOutline} size="large" color="light"></IonIcon>
               </IonBadge>
-              <IonLabel>{item.title}</IonLabel>
+              <IonText class="ion-padding-bottom ion-padding-top">{item.title || ""}</IonText>
             </IonItem>
           ))}
         </IonList>

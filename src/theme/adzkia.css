@@ -157,3 +157,20 @@ ion-modal {
     margin: 0 auto;
   }
 }
+
+.alertexpired h2{
+  color:var(--ion-color-danger) !important;
+}
+.alertexpired .alert-message{
+  color:var(--ion-color-danger) !important;
+}
+.alertcomingsoon h2{
+  color:var(--ion-color-warning) !important;
+}
+.alertcomingsoon .alert-message{
+  color:var(--ion-color-warning) !important;
+}
+ion-alert h2{
+  font-weight: bold !important;
+
+}

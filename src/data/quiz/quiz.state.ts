@@ -13,4 +13,6 @@ export interface QuizState {
   QuizAnswer?:QuizAnswer[][],
   QuizResultList?:QuizResultList,
   QuizResultDetail?:QuizResultDetail[],
+  SelectedQuiz?:QuizList
+  QuizRid?:string
 }

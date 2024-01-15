@@ -117,12 +117,12 @@ const Payments: React.FC<PaymentsProps> = ({ history, authData,PostPayments,paym
             <IonCardContent>
               <IonRow onClick={() => DetailPayment(item)}>
                 <IonCol size="12">
-                <h6 className="ion-no-margin"><b>Nama Group : {item.paket.group_name}</b></h6>
+                <h6 className="ion-no-margin"><b>Nama Group : {item.paket?.group_name}</b></h6>
 
                 </IonCol>
                 <IonCol> 
                 <h6 className="ion-no-margin">{item.trxdate}</h6>
-                <h6 className="ion-no-margin">Rp {item.paket.price}</h6>
+                <h6 className="ion-no-margin">Rp {item.paket?.price}</h6>
                 </IonCol>
                 <IonCol class="ion-text-right">
                 <IonBadge color={item.payment_status==='settlement'?'success':item.payment_status==='expire'?'danger':'warning'}>{item.payment_status}</IonBadge>

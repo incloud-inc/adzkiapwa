@@ -8,15 +8,15 @@ import {
   IonGrid,
   IonIcon,
   IonPage,
+  IonRouterLink,
   IonRow,
   IonText,
   IonTitle,
   IonToolbar,
-  useIonViewDidEnter,
   useIonViewWillEnter,
   useIonViewWillLeave
 } from "@ionic/react";
-import { star } from "ionicons/icons";
+import { documentOutline } from "ionicons/icons";
 import React, { useEffect } from "react";
 import { RouteComponentProps, useLocation, useParams, withRouter } from "react-router";
 import LessonListComponent from "../../components/Group/LessonList";
@@ -43,46 +43,18 @@ interface GroupDetailProps extends OwnProps, StateProps, DispatchProps {}
 const Detail: React.FC<GroupDetailProps> = ({ history,LessonList, authData,GroupDetail,PostGroupDetail }) => {
   const location = useLocation();
   let param: any = useParams();
-  useEffect(()=>{
-    PostGroupDetail(param.id||"0");
-
-    // if(authData===null) history.push("/login")
-    // let fired = false
-    // if(authData){
-      // if(location.pathname.includes("/group/detail")){
-      //   fired = true;
-
-      //   PostGroupDetail(param.id||"0");
-      // }
-      // if(!fired){
-      //   PostGroupDetail(param.id||"0");
-      // }
-    // }   
-  },[])
+  useIonViewWillEnter(()=>{    
+      PostGroupDetail(param.id);
+  })
   useIonViewWillLeave(()=>{
     PostGroupDetail(undefined);
   })
-  useEffect(() => {
-    // console.log(GroupDetail?.price == "0")
+  useEffect(() => {    
     if(GroupDetail){
       if(GroupDetail?.price!=="0" && GroupDetail.payment_id!=="settlement"){
         history.replace("/group/purchase/" + GroupDetail?.gid + "/" + GroupDetail?.payment_id)
       }
     }
-    // if (history.location.pathname.includes("/group/detail")) {
-    //   setTimeout(() => {
-    //     if(GroupDetail?.price!="0"){
-    //       history.replace("/group/purchase/" + GroupDetail?.gid + "/" + GroupDetail?.payment_id)
-    //     }
-    //   }, 3000);
-    // }
-
-    // else if(GroupDetail?.price!=="0" && GroupDetail?.payment_id == null){
-    //   history.replace("/group/purchase/" + GroupDetail?.gid + "/0")
-    // }
-    // if(){
-    //   
-    // }
   },[GroupDetail]);
   if (GroupDetail) {
     return (
@@ -99,8 +71,8 @@ const Detail: React.FC<GroupDetailProps> = ({ history,LessonList, authData,Group
               <IonRow class="ion-align-items-center">
                 {" "}
                 <IonCol size="2">
-                  <IonBadge color="primary" className="ion-p-8 br-8">
-                    <IonIcon icon={star} color="light"></IonIcon>
+                  <IonBadge color="primary" className="br-8">
+                  <IonIcon icon={documentOutline} size="large" color="light"></IonIcon>
                   </IonBadge>
                 </IonCol>
                 <IonCol size="6">
@@ -143,7 +115,10 @@ const Detail: React.FC<GroupDetailProps> = ({ history,LessonList, authData,Group
               <b>Quiz</b>
             </IonText>
           </div>
+          <IonRouterLink routerLink="/quiz/attempt">
           <QuizList gids={param.id}></QuizList>
+          </IonRouterLink>
+         
         </IonContent>
       </IonPage>
     );

@@ -42,6 +42,7 @@ import MainTabs from "./pages/MainTabs";
 import Package from "./pages/Package";
 import Quiz from "./pages/quiz/Quiz";
 import Result from "./pages/quiz/Result";
+import Attempt from "./pages/quiz/Attempt";
 import Signup from "./pages/Signup";
 import Support from "./pages/Support";
 import Tutorial from "./pages/Tutorial";
@@ -91,6 +92,7 @@ const IonicApp: React.FC<IonicAppProps> = ({
             {...base.alert}
             buttons={['OK']}
             onDidDismiss={() => setAlert({
+              cssClass:'',
               isOpen:false,
               header:'',
               message:'',
@@ -116,6 +118,7 @@ const IonicApp: React.FC<IonicAppProps> = ({
               path="/group/purchasecomplete/:id"
               component={GroupPurchaseComplete}
             />
+            <Route path="/quiz/attempt" component={Attempt} />
             <Route path="/quiz/start/:quid" exact component={Quiz} />
             <Route path="/quiz/result/:rid" component={Result} />
             {/* <Route

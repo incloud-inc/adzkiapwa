@@ -5,6 +5,7 @@ import { GroupDetail, GroupList, LessonList, PaymentDetail, PaymentsHistory, Qui
 import {GetToken} from "./auth"
 const { Storage } = Plugins;
 const ANSWER_DATA = "AnswerData";
+const SAVED_QUIZ = "SavedQuiz";
 export const ApiPayments = ()=>{
   return GetToken().then(async token=>{
     const BodyData = new FormData();
@@ -216,16 +217,16 @@ export const ApiValidateQuiz = async (quid:string)=>{
       })
       .then((res) => {
         const rid:string = res && res.rid||null;
-        if(!rid) throw new Error(res.message||"Data Detail Tidak Ditemukan");
+        if(!rid || !res.status && res.status!=='available') throw new Error(res.status||"");
         return{data:rid,m:''}
       })
       .catch((err) => {
-        return{data:undefined,m:err||"Server Error"}
+        return{data:undefined,m:err.message||"Server Error"}
     });  
     return Response
   })
 }
-export const ApiQuizAttempt = async (rid:string)=>{
+export const ApiQuizAttempt = async (quiz?:QuizList,rid?:string)=>{
   return GetToken().then(async token=>{
     const BodyData = new FormData();
     BodyData.append("token", token);
@@ -255,7 +256,7 @@ export const ApiQuizAttempt = async (rid:string)=>{
 }
 
 export const getAnswerData = async () => {
-  const data:any = await Storage.get({ key: ANSWER_DATA });
+  const data:any = await Storage.get({ key: ANSWER_DATA });  
   const AnswerDataList:QuizAnswer[][] = JSON.parse(data.value)||[];
   return AnswerDataList||[];
 };
@@ -264,6 +265,18 @@ export const setAnswerDataData = async (AnswerData?: QuizAnswer[][]) => {
     await Storage.remove({ key: ANSWER_DATA });
   } else {
     await Storage.set({ key: ANSWER_DATA, value: JSON.stringify(AnswerData) });
+  }
+};
+export const getSavedQuizData = async () => {
+  const data:any = await Storage.get({ key: SAVED_QUIZ });
+  const SavedQuizList:QuizAttempt[] = JSON.parse(data.value)||[];
+  return SavedQuizList||[];
+};
+export const setSavedQuizDataData = async (SavedQuiz:QuizAttempt[]) => {
+  if (!SavedQuiz) {
+    await Storage.remove({ key: SAVED_QUIZ });
+  } else {
+    await Storage.set({ key: SAVED_QUIZ, value: JSON.stringify(SavedQuiz) });
   }
 };
 export const ApiQuizResultList = async ()=>{
