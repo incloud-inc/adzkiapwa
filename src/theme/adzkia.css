@@ -151,6 +151,9 @@ ion-modal {
 .icon-reload{
   margin-right: 16px;
 }
+table td{
+  padding: 8px;
+}
 @media only screen and (min-width: 480px) {
   ion-app {
     max-width: 420px;

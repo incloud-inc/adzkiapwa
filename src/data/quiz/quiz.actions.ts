@@ -24,7 +24,6 @@ export const PostPayments = () => async (dispatch: React.Dispatch<any>) => {
 export const PostPurchase = (gid:string,pid:string) => async (dispatch: React.Dispatch<any>) => {
   dispatch(setLoading('Memuat Detail Pembayaran'));  
   const Response:ApiResponse<PaymentDetail> = await ApiCheckPayment(pid);
-  console.log(Response.data?.payment_detail);
 
   if(Response.data?.payment_detail && Response.data?.payment_detail.transaction_status==="pending"){
     dispatch(setLoading(''))
@@ -127,6 +126,16 @@ export const PostQuizValidate = (SelectedQuiz:QuizList) => async (dispatch: Reac
       }));
       return false
     }
+    if(Response.m==='limit'){
+      dispatch(setAlert({
+        isOpen: true,
+        header:'LIMIT',
+        cssClass:'alertcomingsoon',
+        message: "Kesempatan kamu mencoba TryOut ini sudah habis.",
+        subHeader:''
+      }));
+      return false
+    }
     if(Response.m==='coming soon'){
       dispatch(setAlert({
         isOpen: true,
@@ -148,14 +157,16 @@ export const PostQuizValidate = (SelectedQuiz:QuizList) => async (dispatch: Reac
   dispatch(setQuizRid(Response.data))
 }
 export const getQuizAttempt = (quiz?:QuizList,rid?:string) => async (dispatch: React.Dispatch<any>) => {
-  dispatch(setQuizAttempt(undefined));
-  
+
+  dispatch(setQuizAttempt(undefined));  
   if (!rid || !quiz || !quiz.quid) {
     return;
   }
+
   dispatch(setLoading('Mengambil data quiz'));
   let sqd:QuizAttempt[]= await getSavedQuizData();
-  let getQuizById:QuizAttempt = sqd[parseInt(quiz.quid)];
+  let getQuizById:QuizAttempt = sqd[parseInt(quiz.quid)];  
+  //Apabila quiz tersimpan
   if(getQuizById){
     dispatch(setLoading(''));
 
@@ -166,6 +177,7 @@ export const getQuizAttempt = (quiz?:QuizList,rid?:string) => async (dispatch: R
     dispatch(setQuizAnswer(QuizAnswer));  
     return;
   }
+  //Apabila Quiz belum tersimpan / masih baru
   const ResponseAttempt:ApiResponse<QuizAttempt> = await ApiQuizAttempt(quiz,rid);
   const quid:string =ResponseAttempt.data?.quiz?.quid || '';
   const QuizDetail:QuizAttempt = ResponseAttempt.data||{};
@@ -183,7 +195,7 @@ export const getQuizAttempt = (quiz?:QuizList,rid?:string) => async (dispatch: R
   }
   dispatch(setQuizAttempt(ResponseAttempt.data||undefined))
   
-  const QuizAnswer:QuizAnswer[][] = await getAnswerData();
+  let QuizAnswer:QuizAnswer[][] = await getAnswerData();  
   dispatch(setQuizAnswer(QuizAnswer));
 }
 export const PostQuizResultList = () => async (dispatch: React.Dispatch<any>) => {
@@ -254,12 +266,12 @@ export const setQuizAnswer = (QuizAnswer: QuizAnswer[][]) =>
     QuizAnswer,
   } as const);
 }
-export const setSavedQuiz = (QuizAnswer: QuizAttempt[]) =>
+export const setSavedQuiz = (SavedQuiz: QuizAttempt[]) =>
 {
-  setSavedQuizDataData(QuizAnswer);
+  setSavedQuizDataData(SavedQuiz);
   return ({
-    type: "set-quiz-answer",
-    QuizAnswer,
+    type: "set-saved-quiz",
+    SavedQuiz,
   } as const);
 }
 export const setQuizResultList = (QuizResultList?: QuizResultList) =>
@@ -294,6 +306,7 @@ export type QuizAction =
 | ActionType<typeof setQuizList>
 | ActionType<typeof setQuizAttempt>
 | ActionType<typeof setQuizAnswer>
+| ActionType<typeof setSavedQuiz>
 | ActionType<typeof setQuizResultList>
 | ActionType<typeof setQuizResultDetail>
 | ActionType<typeof setSelectedQuiz>

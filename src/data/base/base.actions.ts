@@ -115,9 +115,7 @@ export const logoutUser = () => async (dispatch: React.Dispatch<any>) => {
 };
 export const setAuthData = (authData?: AuthData) => async (dispatch: React.Dispatch<any>) => { 
     await ApiAuthData(authData);
-    const data = await getUserData();
-    console.log(data);
-    
+    const data = await getUserData();    
     dispatch(setData(data));
     return {
       type: "set-auth-data",

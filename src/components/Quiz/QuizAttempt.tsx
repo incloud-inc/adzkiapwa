@@ -66,10 +66,7 @@ const QuizAttemptComponent: React.FC<QuizAttemptProps> = ({ history }) => {
               </IonCol>
             </IonRow>
             <IonRow>
-              <IonCol size="4">
-                <IonText>Deskripsi</IonText>
-              </IonCol>
-              <IonCol size="8">
+              <IonCol size="12">
                 <IonText>: </IonText>
                 <div
                   dangerouslySetInnerHTML={{

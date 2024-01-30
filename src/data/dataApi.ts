@@ -50,7 +50,6 @@ export const getUserData = async () => {
     Storage.get({ key: HAS_SEEN_TUTORIAL }),
     Storage.get({ key: AUTH_DATA }),
   ]);
-  console.log(response);
   
   const hasSeenTutorial = (await response[0].value) === "true";
   const authDataTemp = (await response[1].value) || "";

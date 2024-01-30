@@ -103,7 +103,6 @@ import { QuizAnswer, QuizAttempt } from "../../models/Quiz";
       BodyData.append("question_total", QuizAnswer[parseInt(param.quid)].length.toString());
       new Response(BodyData).text().then(console.log);
       setShowLoading(false)
-      return;
       
       fetch(
         authData

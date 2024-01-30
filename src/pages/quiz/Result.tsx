@@ -72,7 +72,6 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
       BodyData.append("token", authData && authData.token);
     }
     BodyData.append("rid", param.rid || "");
-    console.log(authData);
 
     fetch(
       authData
@@ -105,7 +104,6 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
   };
   useIonViewWillEnter(() => {
       fetchResult();
-    // console.log(param.rid)
   });
   useEffect(()=>{
     if (authData && authData.token) {

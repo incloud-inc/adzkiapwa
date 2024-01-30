@@ -32,6 +32,9 @@ export function quizReducer(state: QuizState, action: QuizAction): QuizState {
     case "set-quiz-answer": {
       return { ...state, QuizAnswer: action.QuizAnswer };
     }
+    case "set-saved-quiz": {
+      return { ...state, SavedQuiz: action.SavedQuiz };
+    }
     case "set-quiz-result-list": {
       return { ...state, QuizResultList: action.QuizResultList };
     }

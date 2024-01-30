@@ -56,11 +56,9 @@ const QuizListComponent: React.FC<QuizListProps> = ({ history, gids,PostQuizList
   //   // history.replace("/quiz/start/" + QuizAttempt?.quiz?.quid);
   // },[QuizAttempt])
   // useEffect(()=>{
-  //   // console.log(SelectedQuiz);
     
   //   if(!SelectedQuiz || Moved)    {return}
   //   setMoved(true);
-  //   console.log('moved');
 
   //   history.goBack();
   // },[SelectedQuiz])

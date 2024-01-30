@@ -260,7 +260,7 @@ export const getAnswerData = async () => {
   const AnswerDataList:QuizAnswer[][] = JSON.parse(data.value)||[];
   return AnswerDataList||[];
 };
-export const setAnswerDataData = async (AnswerData?: QuizAnswer[][]) => {
+export const setAnswerDataData = async (AnswerData?: QuizAnswer[][]) => {  
   if (!AnswerData) {
     await Storage.remove({ key: ANSWER_DATA });
   } else {

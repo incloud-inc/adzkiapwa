@@ -11,6 +11,7 @@ export interface QuizState {
   QuizAttempt?:QuizAttempt,
   QuizAnswerList?:QuizAnswer[][],
   QuizAnswer?:QuizAnswer[][],
+  SavedQuiz?:QuizAttempt[],
   QuizResultList?:QuizResultList,
   QuizResultDetail?:QuizResultDetail[],
   SelectedQuiz?:QuizList

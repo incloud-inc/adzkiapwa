@@ -22,7 +22,6 @@
 //       RouteComponentProps {}
       
 //   const Attempt: React.FC<QuizAttemptProps> = ({ history }) => {
-//     // console.log(SelectedQuiz);
      
 //     // useEffect(()=>{
 //     //     if(!SelectedQuiz){
@@ -152,6 +151,7 @@ import { PostQuizValidate, setQuizRid, setSelectedQuiz } from "../../data/quiz/q
 import Task from "../../lotties/Task.json";
 import { AuthData } from "../../models/Base";
 import { QuizList } from "../../models/Quiz";
+import { Link } from "react-router-dom";
 
 interface OwnProps extends RouteComponentProps {}
 
@@ -169,7 +169,7 @@ interface DispatchProps {
 interface GroupDetailProps extends OwnProps, StateProps, DispatchProps {}
 
 const Attempt: React.FC<GroupDetailProps> = ({ history,SelectedQuiz, QuizRid, setSelectedQuiz,PostQuizValidate,setQuizRid }) => {
-  useIonViewWillEnter(()=>{    
+  useIonViewWillEnter(()=>{        
       PostQuizValidate(SelectedQuiz);
   })
   useIonViewWillLeave(()=>{
@@ -182,6 +182,7 @@ const Attempt: React.FC<GroupDetailProps> = ({ history,SelectedQuiz, QuizRid, se
       history.goBack();
     }
   },[QuizRid]);
+  
   // const start =(()=>{
   //   const QT = localStorage.getItem("QuizTime")
   //   ? JSON.parse(localStorage.getItem("QuizTime") || "")
@@ -248,14 +249,16 @@ const Attempt: React.FC<GroupDetailProps> = ({ history,SelectedQuiz, QuizRid, se
                   </IonBadge>
                 </IonCol>
                 <IonCol size="12 " className="ion-padding-top">
+                  <Link to={'/quiz/start/'+SelectedQuiz.quid} replace>
                   <IonButton
                     size="large"
                     expand="block"
-                    routerLink={'/quiz/start/'+SelectedQuiz.quid}
                   >
                     Mulai Quiz &nbsp;{" "}
                     <IonIcon icon={chevronForwardCircle}></IonIcon>
                   </IonButton>
+                  </Link>
+                  
                 </IonCol>
                 <IonCol size="12 " className="">
                   <IonButton

@@ -31,6 +31,7 @@ const Login: React.FC<LoginProps> = ({ setLogin, base,history }) => {
   const [present] = useIonAlert();
 
   useEffect(()=>{    
+    setLogin({email:'wilmasrur@gmail.com',password:'1'});
     if(formSubmitted && base.authData){
       setFormSubmitted(false)
       history.push('/tabs/portal')

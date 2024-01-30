@@ -8,7 +8,8 @@ import {
   IonProgressBar,
   IonRow,
   IonText,
-  useIonViewWillEnter
+  useIonViewWillEnter,
+  useIonViewWillLeave
 } from "@ionic/react";
 import React, { useEffect, useRef, useState } from "react";
 import { RouteComponentProps, useParams } from "react-router";
@@ -42,7 +43,7 @@ const slideQuiz = {
   speed: 400,
   spaceBetween: 20,
 };
-const Quiz: React.FC<AccountProps> = ({ QuizRid,SelectedQuiz, QuizAnswer, QuizAttempt, setQuizAnswer, getQuizAttempt }) => {
+const Quiz: React.FC<AccountProps> = ({ QuizRid,SelectedQuiz, QuizAnswer, QuizAttempt, setQuizAnswer, getQuizAttempt, history }) => {
   let param: Param = useParams();
   
   const [RecentQuestionNumber, setRecentQuestionNumber] = useState<number>(0);
@@ -53,10 +54,18 @@ const Quiz: React.FC<AccountProps> = ({ QuizRid,SelectedQuiz, QuizAnswer, QuizAt
   
   const slideQuizRef = useRef<HTMLIonSlidesElement>(null);
   useIonViewWillEnter(()=>{
+    console.log(SelectedQuiz,QuizRid);
+    if(!SelectedQuiz || !QuizRid){
+      history.push('/')
+    }
     getQuizAttempt(SelectedQuiz,QuizRid);
+  })  
+  useIonViewWillLeave(()=>{
+    getQuizAttempt(undefined);
   })  
   const QuizInit = () => {
     if (!QuizAnswer?.[parseInt(param.quid)]) {
+      
       setRecentQuestion(QuizAttempt?.questions?.[0]);
       let AnswersArray: QuizAnswer[] = new Array();
       QuizAttempt?.questions?.forEach((q: QuizAttemptQuestions, index: number) => {
@@ -71,6 +80,7 @@ const Quiz: React.FC<AccountProps> = ({ QuizRid,SelectedQuiz, QuizAnswer, QuizAt
 
       const temp: QuizAnswer[][] = QuizAnswer;
       temp[parseInt(param.quid)] = AnswersArray;
+
       setQuizAnswer(temp);
       return
     }
@@ -95,6 +105,7 @@ const Quiz: React.FC<AccountProps> = ({ QuizRid,SelectedQuiz, QuizAnswer, QuizAt
     setAnsweredQuestionTotal(AL);
     setQuizAnswer(QuizAnswer);
   }
+  
   useEffect(()=>{
     if(QuizAttempt && QuizAnswer && !QuizInitialized){
       setQuizInitialized(true);
