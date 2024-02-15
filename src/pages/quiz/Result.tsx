@@ -288,7 +288,7 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
                   <IonText color="medium">Quiz Name</IonText>
                 </IonCol>
                 <IonCol size="2">
-                  <IonText color="medium">(%)</IonText>
+                  <IonText color="medium">Benar (%)</IonText>
                 </IonCol>
               </IonRow>
               {JSON.parse(ResultData.top_10_results).map(
@@ -304,7 +304,7 @@ const Result: React.FC<ResultProps> = ({ authData, history }) => {
                       size="2
                     "
                     >
-                      <IonText color="medium">{TopItem[1]}%</IonText>
+                      <IonText color="medium">{TopItem[1]}</IonText>
                     </IonCol>
                   </IonRow>
                 )

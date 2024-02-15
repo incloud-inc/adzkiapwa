@@ -223,7 +223,7 @@ const Login: React.FC<LoginProps> = ({ setSignUp,base, history }) => {
             )}
             <IonItem>
               <IonLabel position="stacked" color="primary">
-                Alamat Lengkap
+                Kab/Kota
               </IonLabel>
               <IonInput
                 type="text"
@@ -236,12 +236,12 @@ const Login: React.FC<LoginProps> = ({ setSignUp,base, history }) => {
 
             {AlamatLengkapError && (
               <IonText color="danger">
-                <p className="ion-padding-start">Alamat Lengkap is required</p>
+                <p className="ion-padding-start">Kabupaten / Kota is required</p>
               </IonText>
             )}
             <IonItem>
               <IonLabel position="stacked" color="primary">
-                Alamat Sekolah
+                Nama Sekolah
               </IonLabel>
               <IonInput
                 type="text"
@@ -254,7 +254,7 @@ const Login: React.FC<LoginProps> = ({ setSignUp,base, history }) => {
 
             {AlamatSekolahError && (
               <IonText color="danger">
-                <p className="ion-padding-start">Alamat Sekolah is required</p>
+                <p className="ion-padding-start">Nama Sekolah is required</p>
               </IonText>
             )}
           </IonList>

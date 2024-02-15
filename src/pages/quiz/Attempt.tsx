@@ -211,11 +211,7 @@ const Attempt: React.FC<GroupDetailProps> = ({ history,SelectedQuiz, QuizRid, se
                  </IonCol>
                </IonRow>
                <IonRow>
-                 <IonCol size="4">
-                   <IonText>Deskripsi</IonText>
-                 </IonCol>
-                 <IonCol size="8">
-                   <IonText>: </IonText>
+                 <IonCol>
                    <div dangerouslySetInnerHTML={{
                       __html: SelectedQuiz.description || "",
                     }}
