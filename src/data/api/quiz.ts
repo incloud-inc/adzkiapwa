@@ -130,10 +130,7 @@ export const ApiLessonList = async (gids:string)=>{
         return res.json();
       })
       .then((res) => {
-        const LessonList:LessonList[] = res.result?.filter((item:LessonList)=> {
-          const GidsArray = item.gids.split(',');
-          if(GidsArray.includes(gids)){return(item)};
-        });
+        const LessonList:LessonList[] = res.result;
         if (LessonList.length<1) throw new Error(res.message||"Data List Tidak Ditemukan")
         return{data:LessonList,m:''}
       })
